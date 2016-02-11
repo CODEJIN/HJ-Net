@@ -199,15 +199,14 @@
             this.licenseTextBox.BackColor = System.Drawing.SystemColors.Control;
             this.licenseTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.licenseTextBox.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.licenseTextBox.Location = new System.Drawing.Point(315, 293);
+            this.licenseTextBox.Location = new System.Drawing.Point(315, 295);
             this.licenseTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.licenseTextBox.Multiline = true;
             this.licenseTextBox.Name = "licenseTextBox";
             this.licenseTextBox.ReadOnly = true;
-            this.licenseTextBox.Size = new System.Drawing.Size(282, 45);
+            this.licenseTextBox.Size = new System.Drawing.Size(282, 27);
             this.licenseTextBox.TabIndex = 14;
-            this.licenseTextBox.Text = "This program by \"Hee-Jo You\" is licensed under\r\na Creative Commons Attribution-Sh" +
-    "areAlike 4.0\r\nInternational License.";
+            this.licenseTextBox.Text = "Copyright ⓒ 2015-2016 Heejo You\r\nMIT License";
             this.licenseTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // architectureGraphViewButton
@@ -233,7 +232,7 @@
             // 
             // cclPictureBox
             // 
-            this.cclPictureBox.Image = global::ConnectionistModel.Properties.Resources.CCL;
+            this.cclPictureBox.Image = global::ConnectionistModel.Properties.Resources.MIT;
             this.cclPictureBox.Location = new System.Drawing.Point(600, 295);
             this.cclPictureBox.Name = "cclPictureBox";
             this.cclPictureBox.Size = new System.Drawing.Size(95, 35);
