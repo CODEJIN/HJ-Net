@@ -46,7 +46,11 @@ namespace ConnectionistModel
                 layerUnitAmountTextBox.Focus();
                 layerUnitAmountTextBox.SelectAll();
             }
-            else if (layerNameTextBox.Text != "" && layerUnitAmountTextBox.Text != "")
+            else if (layerNameTextBox.Text.Trim() == "")
+            {
+                MessageBox.Show("Layer has to be assigned the name.");
+            }
+            else if (layerUnitAmountTextBox.Text != "")
             {                
                 if(simulator.LayerList.ContainsKey(layerNameTextBox.Text))
                 {
@@ -95,6 +99,10 @@ namespace ConnectionistModel
                 else if (simulator.BundleList.ContainsKey(bundleNameTextBox.Text))
                 {
                     MessageBox.Show("Already the same name exist.");
+                }
+                else if (bundleNameTextBox.Text.Trim() == "")
+                {
+                    MessageBox.Show("Bundle has to be assigned the name.");
                 }
                 else 
                 {
