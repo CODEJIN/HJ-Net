@@ -331,6 +331,7 @@ namespace ConnectionistModel
                         currentEpochTextBox.Text = "0";
                         pauseButton.Text = "Testing...";
                         pauseButton.Enabled = false;
+                        minYAxisTestDisplayTextBox.Enabled = false;
                         maxYAxisTestDisplayTextBox.Enabled = false;
                         useTimeStampCheckBox.Enabled = false;
                         testDisplayButton.Enabled = false;
@@ -349,6 +350,7 @@ namespace ConnectionistModel
                     {
                         pauseButton.Text = "Pause";
                         pauseButton.Enabled = true;
+                        minYAxisTestDisplayTextBox.Enabled = true;
                         maxYAxisTestDisplayTextBox.Enabled = true;
                         useTimeStampCheckBox.Enabled = true;
                         testDisplayButton.Enabled = true;
@@ -422,6 +424,7 @@ namespace ConnectionistModel
                         {
                             pauseButton.Text = "Testing...";
                             pauseButton.Enabled = false;
+                            minYAxisTestDisplayTextBox.Enabled = false;
                             maxYAxisTestDisplayTextBox.Enabled = false;
                             useTimeStampCheckBox.Enabled = false;
                             testDisplayButton.Enabled = false;
@@ -440,6 +443,7 @@ namespace ConnectionistModel
                         {
                             pauseButton.Text = "Pause";
                             pauseButton.Enabled = true;
+                            minYAxisTestDisplayTextBox.Enabled = true;
                             maxYAxisTestDisplayTextBox.Enabled = true;
                             useTimeStampCheckBox.Enabled = true;
                             testDisplayButton.Enabled = true;
@@ -728,17 +732,23 @@ namespace ConnectionistModel
                                 {
                                     if (testData.Epoch == displayData.Epoch)
                                     {
-                                        displayData.InsertValue(testData.MeanActiveUnitActivation);
-                                        isExist = true;
+                                        if (testData.MeanActiveUnitActivation == testData.MeanActiveUnitActivation)
+                                        {
+                                            displayData.InsertValue(testData.MeanActiveUnitActivation);
+                                            isExist = true;
+                                        }
                                         break;
                                     }
                                 }
                                 if (!isExist)
                                 {
-                                    DisplayData newDisplayData = new DisplayData();
-                                    newDisplayData.Epoch = testData.Epoch;
-                                    newDisplayData.InsertValue(testData.MeanActiveUnitActivation);
-                                    displayDataList.Add(newDisplayData);
+                                    if (testData.MeanActiveUnitActivation == testData.MeanActiveUnitActivation)
+                                    {
+                                        DisplayData newDisplayData = new DisplayData();
+                                        newDisplayData.Epoch = testData.Epoch;
+                                        newDisplayData.InsertValue(testData.MeanActiveUnitActivation);
+                                        displayDataList.Add(newDisplayData);
+                                    }
                                 }
                             }
                             break;
@@ -750,17 +760,23 @@ namespace ConnectionistModel
                                 {
                                     if (testData.Epoch == displayData.Epoch)
                                     {
-                                        displayData.InsertValue(testData.MeanInactiveUnitActivation);
-                                        isExist = true;
+                                        if (testData.MeanInactiveUnitActivation == testData.MeanInactiveUnitActivation)
+                                        {
+                                            displayData.InsertValue(testData.MeanInactiveUnitActivation);
+                                            isExist = true;
+                                        }
                                         break;
                                     }
                                 }
                                 if (!isExist)
                                 {
-                                    DisplayData newDisplayData = new DisplayData();
-                                    newDisplayData.Epoch = testData.Epoch;
-                                    newDisplayData.InsertValue(testData.MeanInactiveUnitActivation);
-                                    displayDataList.Add(newDisplayData);
+                                    if (testData.MeanInactiveUnitActivation == testData.MeanInactiveUnitActivation)
+                                    {
+                                        DisplayData newDisplayData = new DisplayData();
+                                        newDisplayData.Epoch = testData.Epoch;
+                                        newDisplayData.InsertValue(testData.MeanInactiveUnitActivation);
+                                        displayDataList.Add(newDisplayData);
+                                    }
                                 }
                             }
                             break;
@@ -782,7 +798,7 @@ namespace ConnectionistModel
                 catch
                 {
 
-                }                
+                }
             }
             else if (useTimeStampCheckBox.Checked)
             {
@@ -905,18 +921,24 @@ namespace ConnectionistModel
                                 {
                                     if (testData.Epoch == displayData.Epoch && testData.TimeStamp == displayData.TimeStamp)
                                     {
-                                        displayData.InsertValue(testData.MeanActiveUnitActivation);
-                                        isExist = true;
+                                        if (testData.MeanInactiveUnitActivation == testData.MeanInactiveUnitActivation)
+                                        {
+                                            displayData.InsertValue(testData.MeanActiveUnitActivation);
+                                            isExist = true;
+                                        }
                                         break;
                                     }
                                 }
                                 if (!isExist)
                                 {
-                                    DisplayData newDisplayData = new DisplayData();
-                                    newDisplayData.Epoch = testData.Epoch;
-                                    newDisplayData.TimeStamp = testData.TimeStamp;
-                                    newDisplayData.InsertValue(testData.MeanActiveUnitActivation);
-                                    displayDataList.Add(newDisplayData);
+                                    if (testData.MeanInactiveUnitActivation == testData.MeanInactiveUnitActivation)
+                                    {
+                                        DisplayData newDisplayData = new DisplayData();
+                                        newDisplayData.Epoch = testData.Epoch;
+                                        newDisplayData.TimeStamp = testData.TimeStamp;
+                                        newDisplayData.InsertValue(testData.MeanActiveUnitActivation);
+                                        displayDataList.Add(newDisplayData);
+                                    }
                                 }
                             }
                             break;
@@ -950,10 +972,10 @@ namespace ConnectionistModel
                     testDisplayChart.Legends[0].Name = "";
 
                     Dictionary<int, Series> dataSeriesDictionary = new Dictionary<int, Series>();
-                    
+
                     foreach (DisplayData displayData in displayDataList)
                     {
-                        if(!dataSeriesDictionary.ContainsKey(displayData.Epoch))
+                        if (!dataSeriesDictionary.ContainsKey(displayData.Epoch))
                         {
                             Series newSeries = new Series();
                             newSeries.ChartType = SeriesChartType.Line;
@@ -961,7 +983,7 @@ namespace ConnectionistModel
                             testDisplayChart.Series.Add(newSeries);
                             dataSeriesDictionary[displayData.Epoch] = newSeries;
 
-                            LegendItem newLegendItem = new LegendItem();                            
+                            LegendItem newLegendItem = new LegendItem();
                             newLegendItem.ImageStyle = LegendImageStyle.Line;
                             //newLegendItem.Name = "Epoch" + displayData.Epoch.ToString();                            
                             newLegendItem.SeriesName = displayData.Epoch.ToString();
@@ -970,7 +992,7 @@ namespace ConnectionistModel
                         DataPoint dataPoint = new DataPoint();
                         dataPoint.SetValueXY(displayData.TimeStamp, displayData.Value);
                         dataSeriesDictionary[displayData.Epoch].Points.Add(dataPoint);
-                    }                    
+                    }
                 }
                 catch
                 {
@@ -978,7 +1000,7 @@ namespace ConnectionistModel
                 }
             }
         }
-        
+
         private void trainingStimuliPackComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             newTrainingPatternSetup.Clear();            

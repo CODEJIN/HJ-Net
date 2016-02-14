@@ -240,12 +240,12 @@ namespace ConnectionistModel
                 if (countActive[rowIndex, 0] > 0) meanAUActivationList[rowIndex] = meanAUActivationList[rowIndex] / countActive[rowIndex,0];
                 else
                 {
-                    meanAUActivationList[rowIndex] = 0;
+                    meanAUActivationList[rowIndex] = double.NaN;
                 }
                 if (countInactive[rowIndex, 0] > 0) meanIUActivationList[rowIndex] = meanIUActivationList[rowIndex] / countInactive[rowIndex,0];
                 else
                 {
-                    meanIUActivationList[rowIndex] = 0;
+                    meanIUActivationList[rowIndex] = double.NaN;
                 }
             }
         }
