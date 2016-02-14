@@ -157,7 +157,6 @@
             this.matrixCalculationSizeTextBox.Name = "matrixCalculationSizeTextBox";
             this.matrixCalculationSizeTextBox.Size = new System.Drawing.Size(49, 21);
             this.matrixCalculationSizeTextBox.TabIndex = 8;
-            this.matrixCalculationSizeTextBox.Text = "1";
             this.matrixCalculationSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // learningSetupMakingButton

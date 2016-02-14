@@ -100,8 +100,16 @@ namespace ConnectionistModel
                     List<TrialInformation> testMatrixTrialInformationList = new List<TrialInformation>();
                     foreach (MatchingInformation testMatchingInformation in currentTestMatchingInformationList)
                     {
-                        List<StimuliMatrix> stimuliMatrixList = simulator.StimuliPackDictionary[testMatchingInformation.StimuliPackName].GetMatrixStimuliData(false, false, simulator.StimuliPackDictionary[testMatchingInformation.StimuliPackName].Count);
-                        foreach(StimuliMatrix stimuliMatrix in stimuliMatrixList)
+                        bool isSRN = false;
+                        foreach (Order order in simulator.ProcessDictionary[testMatchingInformation.ProcessName])
+                        {
+                            if (order.Code == OrderCode.SRNTraining || order.Code == OrderCode.SRNTest) isSRN = true;
+                        }
+
+                        List<StimuliMatrix> stimuliMatrixList;
+                        if (isSRN && learningSetupList[learningSetupIndex].MatrixCalculationSize == 1) stimuliMatrixList = simulator.StimuliPackDictionary[testMatchingInformation.StimuliPackName].GetMatrixStimuliData(true, true, 1);
+                        else stimuliMatrixList = simulator.StimuliPackDictionary[testMatchingInformation.StimuliPackName].GetMatrixStimuliData(false, false, simulator.StimuliPackDictionary[testMatchingInformation.StimuliPackName].Count);
+                        foreach (StimuliMatrix stimuliMatrix in stimuliMatrixList)
                         {
                             TrialInformation newTestTrialInformation = new TrialInformation();
                             newTestTrialInformation.Process = simulator.ProcessDictionary[testMatchingInformation.ProcessName];
@@ -116,7 +124,7 @@ namespace ConnectionistModel
                     {
                         this.Invoke(new MethodInvoker(delegate
                         {
-                            currentEpochTextBox.Text = "0";
+                            currentEpochTextBox.Text = "0" + "/" + learningSetupList[learningSetupIndex].TrainingEpoch.ToString(); ;
                             pauseButton.Text = "Testing...";
                             pauseButton.Enabled = false;
                             minYAxisTestDisplayTextBox.Enabled = false;
@@ -150,7 +158,7 @@ namespace ConnectionistModel
                         currentEpoch = epochIndex;
                         this.Invoke(new MethodInvoker(delegate
                         {
-                            currentEpochTextBox.Text = (epochIndex + 1).ToString();
+                            currentEpochTextBox.Text = (epochIndex + 1).ToString() + "/" + learningSetupList[learningSetupIndex].TrainingEpoch.ToString(); ;
                         }));
 
                         List<TrialInformation> trainingMatrixTrialInformationList = new List<TrialInformation>();
@@ -231,7 +239,7 @@ namespace ConnectionistModel
                             {
                                 pauseButton.Text = "Pause";
                                 pauseButton.Enabled = true;
-                                minYAxisTestDisplayTextBox.Enabled = false;
+                                minYAxisTestDisplayTextBox.Enabled = true;
                                 maxYAxisTestDisplayTextBox.Enabled = true;
                                 useTimeStampCheckBox.Enabled = true;
                                 testDisplayButton.Enabled = true;

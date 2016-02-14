@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConnectionistModel</RootNamespace>
-    <AssemblyName>ConnectionistModel</AssemblyName>
+    <AssemblyName>HJ-Net</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -34,12 +34,13 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -63,8 +64,8 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics, Version=3.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.3.9.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=3.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.3.11.0\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Msagl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=7f84f738e1fc245c, processorArchitecture=MSIL">
@@ -184,6 +185,7 @@
     <EmbeddedResource Include="ProcessControlForm.resx">
       <DependentUpon>ProcessControlForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
     <None Include="ConnectionistModel_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -265,7 +267,11 @@
       <ErrorText>이 프로젝트는 이 컴퓨터에 없는 NuGet 패키지를 참조합니다. 해당 패키지를 다운로드하려면 NuGet 패키지 복원을 사용하십시오. 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=322105를 참조하십시오. 누락된 파일은 {0}입니다.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Accord.3.0.2\build\Accord.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Accord.3.0.2\build\Accord.targets'))" />
+    <Error Condition="!Exists('..\packages\MathNet.Numerics.MKL.Win-x64.2.0.0\build\MathNet.Numerics.MKL.Win-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MathNet.Numerics.MKL.Win-x64.2.0.0\build\MathNet.Numerics.MKL.Win-x64.targets'))" />
+    <Error Condition="!Exists('..\packages\MathNet.Numerics.MKL.Win-x86.2.0.0\build\MathNet.Numerics.MKL.Win-x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MathNet.Numerics.MKL.Win-x86.2.0.0\build\MathNet.Numerics.MKL.Win-x86.targets'))" />
   </Target>
+  <Import Project="..\packages\MathNet.Numerics.MKL.Win-x64.2.0.0\build\MathNet.Numerics.MKL.Win-x64.targets" Condition="Exists('..\packages\MathNet.Numerics.MKL.Win-x64.2.0.0\build\MathNet.Numerics.MKL.Win-x64.targets')" />
+  <Import Project="..\packages\MathNet.Numerics.MKL.Win-x86.2.0.0\build\MathNet.Numerics.MKL.Win-x86.targets" Condition="Exists('..\packages\MathNet.Numerics.MKL.Win-x86.2.0.0\build\MathNet.Numerics.MKL.Win-x86.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

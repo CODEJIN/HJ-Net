@@ -1604,7 +1604,8 @@ namespace ConnectionistModel
 
                 StimuliMatrix newStimuliMatrix = new StimuliMatrix();
                 newStimuliMatrix.PackName = Name;
-                newStimuliMatrix.TimeStamp = this[0].TimeStamp;
+                if(miniBatchSize >  1) newStimuliMatrix.TimeStamp = this[0].TimeStamp;
+                else newStimuliMatrix.TimeStamp = miniStimulusDataList[0].TimeStamp;
 
                 foreach (string patternName in PatternNameList) newStimuliMatrix[patternName] = DenseMatrix.Create(miniStimulusDataList.Count, RepresentationSize(patternName), 0);
 

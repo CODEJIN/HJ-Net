@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // 어셈블리의 일반 정보는 다음 특성 집합을 통해 제어됩니다.
 // 어셈블리와 관련된 정보를 수정하려면
 // 이 특성 값을 변경하십시오.
-[assembly: AssemblyTitle("ConnectionistModel")]
+[assembly: AssemblyTitle("HJ-Net")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ConnectionistModel")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCopyright("Copyright ©  2015-2016 Heejo You")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
