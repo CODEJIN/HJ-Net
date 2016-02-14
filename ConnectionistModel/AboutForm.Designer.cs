@@ -37,8 +37,8 @@
             this.mainLicenseDisplayTextBox = new System.Windows.Forms.TextBox();
             this.licenseDisplayTapControl = new System.Windows.Forms.TabControl();
             this.mathDotNetTapPage = new System.Windows.Forms.TabPage();
-            this.mathDotNetLicenseTextBox = new System.Windows.Forms.TextBox();
             this.mathNetPictureBox = new System.Windows.Forms.PictureBox();
+            this.mathDotNetLicenseTextBox = new System.Windows.Forms.TextBox();
             this.msAGLTapPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.msAGLPictureBox)).BeginInit();
             this.mainTabPage.SuspendLayout();
@@ -103,7 +103,7 @@
             // 
             // cclPictureBox
             // 
-            this.cclPictureBox.Image = global::ConnectionistModel.Properties.Resources.CCL;
+            this.cclPictureBox.Image = global::ConnectionistModel.Properties.Resources.MIT;
             this.cclPictureBox.Location = new System.Drawing.Point(271, 473);
             this.cclPictureBox.Name = "cclPictureBox";
             this.cclPictureBox.Size = new System.Drawing.Size(95, 35);
@@ -143,15 +143,6 @@
             this.mathDotNetTapPage.Text = "Math.NET";
             this.mathDotNetTapPage.UseVisualStyleBackColor = true;
             // 
-            // mathDotNetLicenseTextBox
-            // 
-            this.mathDotNetLicenseTextBox.Location = new System.Drawing.Point(6, 6);
-            this.mathDotNetLicenseTextBox.Multiline = true;
-            this.mathDotNetLicenseTextBox.Name = "mathDotNetLicenseTextBox";
-            this.mathDotNetLicenseTextBox.ReadOnly = true;
-            this.mathDotNetLicenseTextBox.Size = new System.Drawing.Size(360, 461);
-            this.mathDotNetLicenseTextBox.TabIndex = 2;
-            // 
             // mathNetPictureBox
             // 
             this.mathNetPictureBox.Image = global::ConnectionistModel.Properties.Resources.MIT;
@@ -161,6 +152,15 @@
             this.mathNetPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.mathNetPictureBox.TabIndex = 3;
             this.mathNetPictureBox.TabStop = false;
+            // 
+            // mathDotNetLicenseTextBox
+            // 
+            this.mathDotNetLicenseTextBox.Location = new System.Drawing.Point(6, 6);
+            this.mathDotNetLicenseTextBox.Multiline = true;
+            this.mathDotNetLicenseTextBox.Name = "mathDotNetLicenseTextBox";
+            this.mathDotNetLicenseTextBox.ReadOnly = true;
+            this.mathDotNetLicenseTextBox.Size = new System.Drawing.Size(360, 461);
+            this.mathDotNetLicenseTextBox.TabIndex = 2;
             // 
             // AboutForm
             // 
