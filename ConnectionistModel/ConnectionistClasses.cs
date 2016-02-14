@@ -681,6 +681,11 @@ namespace ConnectionistModel
             cloneBundle.WeightMatrix = WeightMatrix;
         }
 
+        public void TransposedDuplicate(Bundle cloneBundle)
+        {
+            cloneBundle.WeightMatrix = WeightMatrix.Transpose();
+        }
+
         public Layer SendLayer
         {
             get;

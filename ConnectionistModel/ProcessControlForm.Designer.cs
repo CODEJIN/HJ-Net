@@ -147,6 +147,7 @@
             this.backwardLayerAddButton = new System.Windows.Forms.Button();
             this.backwardFirstLayerTypeLabel = new System.Windows.Forms.Label();
             this.backwardFirstLayerTypePanel = new System.Windows.Forms.Panel();
+            this.backwardFirstLayerExceptionRadioButton = new System.Windows.Forms.RadioButton();
             this.backwardFirstLayerOutputSoftmaxRadioButton = new System.Windows.Forms.RadioButton();
             this.backwardFirstLayerOutputSigmoidRadioButton = new System.Windows.Forms.RadioButton();
             this.backwardFirstLayerHiddenRadioButton = new System.Windows.Forms.RadioButton();
@@ -161,6 +162,7 @@
             this.forwardLastLayerTypeLabel = new System.Windows.Forms.Label();
             this.forwardFirstLayerTypeLabel = new System.Windows.Forms.Label();
             this.forwardLastLayerTypePanel = new System.Windows.Forms.Panel();
+            this.forwardLastLayerExceptionRadioButton = new System.Windows.Forms.RadioButton();
             this.forwardLastLayerOutputSoftmaxRadioButton = new System.Windows.Forms.RadioButton();
             this.forwardLastLayerOutputSigmoidRadioButton = new System.Windows.Forms.RadioButton();
             this.forwardLastLayerHiddenRadioButton = new System.Windows.Forms.RadioButton();
@@ -171,8 +173,7 @@
             this.forwardLayerLabel = new System.Windows.Forms.Label();
             this.forwardLayerListBox = new System.Windows.Forms.ListBox();
             this.customOrderTabPage = new System.Windows.Forms.TabPage();
-            this.backwardFirstLayerExceptionRadioButton = new System.Windows.Forms.RadioButton();
-            this.forwardLastLayerExceptionRadioButton = new System.Windows.Forms.RadioButton();
+            this.transposedBundleDuplicateButton = new System.Windows.Forms.Button();
             this.bpttOrderGroupBox.SuspendLayout();
             this.processGroupBox.SuspendLayout();
             this.layerControlGroupBox.SuspendLayout();
@@ -273,7 +274,7 @@
             // weightRenewalButton
             // 
             this.weightRenewalButton.Enabled = false;
-            this.weightRenewalButton.Location = new System.Drawing.Point(177, 248);
+            this.weightRenewalButton.Location = new System.Drawing.Point(121, 248);
             this.weightRenewalButton.Name = "weightRenewalButton";
             this.weightRenewalButton.Size = new System.Drawing.Size(106, 55);
             this.weightRenewalButton.TabIndex = 12;
@@ -385,7 +386,7 @@
             // 
             // bundleDuplicateButton
             // 
-            this.bundleDuplicateButton.Location = new System.Drawing.Point(401, 248);
+            this.bundleDuplicateButton.Location = new System.Drawing.Point(345, 248);
             this.bundleDuplicateButton.Name = "bundleDuplicateButton";
             this.bundleDuplicateButton.Size = new System.Drawing.Size(106, 55);
             this.bundleDuplicateButton.TabIndex = 1008;
@@ -418,6 +419,7 @@
             // 
             // baseWeightRenewalButton
             // 
+            this.baseWeightRenewalButton.Enabled = false;
             this.baseWeightRenewalButton.Location = new System.Drawing.Point(342, 20);
             this.baseWeightRenewalButton.Name = "baseWeightRenewalButton";
             this.baseWeightRenewalButton.Size = new System.Drawing.Size(106, 55);
@@ -553,7 +555,7 @@
             // layerDuplicateButton
             // 
             this.layerDuplicateButton.Enabled = false;
-            this.layerDuplicateButton.Location = new System.Drawing.Point(289, 248);
+            this.layerDuplicateButton.Location = new System.Drawing.Point(233, 248);
             this.layerDuplicateButton.Name = "layerDuplicateButton";
             this.layerDuplicateButton.Size = new System.Drawing.Size(106, 55);
             this.layerDuplicateButton.TabIndex = 10;
@@ -575,7 +577,7 @@
             // biasRenewalButton
             // 
             this.biasRenewalButton.Enabled = false;
-            this.biasRenewalButton.Location = new System.Drawing.Point(65, 248);
+            this.biasRenewalButton.Location = new System.Drawing.Point(9, 248);
             this.biasRenewalButton.Name = "biasRenewalButton";
             this.biasRenewalButton.Size = new System.Drawing.Size(106, 55);
             this.biasRenewalButton.TabIndex = 11;
@@ -1441,6 +1443,17 @@
             this.backwardFirstLayerTypePanel.Size = new System.Drawing.Size(255, 43);
             this.backwardFirstLayerTypePanel.TabIndex = 14;
             // 
+            // backwardFirstLayerExceptionRadioButton
+            // 
+            this.backwardFirstLayerExceptionRadioButton.AutoSize = true;
+            this.backwardFirstLayerExceptionRadioButton.Location = new System.Drawing.Point(120, 5);
+            this.backwardFirstLayerExceptionRadioButton.Name = "backwardFirstLayerExceptionRadioButton";
+            this.backwardFirstLayerExceptionRadioButton.Size = new System.Drawing.Size(79, 16);
+            this.backwardFirstLayerExceptionRadioButton.TabIndex = 4;
+            this.backwardFirstLayerExceptionRadioButton.TabStop = true;
+            this.backwardFirstLayerExceptionRadioButton.Text = "Exception";
+            this.backwardFirstLayerExceptionRadioButton.UseVisualStyleBackColor = true;
+            // 
             // backwardFirstLayerOutputSoftmaxRadioButton
             // 
             this.backwardFirstLayerOutputSoftmaxRadioButton.AutoSize = true;
@@ -1591,6 +1604,17 @@
             this.forwardLastLayerTypePanel.Size = new System.Drawing.Size(278, 43);
             this.forwardLastLayerTypePanel.TabIndex = 4;
             // 
+            // forwardLastLayerExceptionRadioButton
+            // 
+            this.forwardLastLayerExceptionRadioButton.AutoSize = true;
+            this.forwardLastLayerExceptionRadioButton.Location = new System.Drawing.Point(120, 3);
+            this.forwardLastLayerExceptionRadioButton.Name = "forwardLastLayerExceptionRadioButton";
+            this.forwardLastLayerExceptionRadioButton.Size = new System.Drawing.Size(79, 16);
+            this.forwardLastLayerExceptionRadioButton.TabIndex = 3;
+            this.forwardLastLayerExceptionRadioButton.TabStop = true;
+            this.forwardLastLayerExceptionRadioButton.Text = "Exception";
+            this.forwardLastLayerExceptionRadioButton.UseVisualStyleBackColor = true;
+            // 
             // forwardLastLayerOutputSoftmaxRadioButton
             // 
             this.forwardLastLayerOutputSoftmaxRadioButton.AutoSize = true;
@@ -1686,6 +1710,7 @@
             // customOrderTabPage
             // 
             this.customOrderTabPage.BackColor = System.Drawing.SystemColors.Control;
+            this.customOrderTabPage.Controls.Add(this.transposedBundleDuplicateButton);
             this.customOrderTabPage.Controls.Add(this.hiddenLayerErrorCalculateSoftmaxButton);
             this.customOrderTabPage.Controls.Add(this.bpttOrderGroupBox);
             this.customOrderTabPage.Controls.Add(this.outputLayerErrorCalculateSoftmaxButton);
@@ -1722,27 +1747,15 @@
             this.customOrderTabPage.TabIndex = 1;
             this.customOrderTabPage.Text = "Custom Order";
             // 
-            // backwardFirstLayerExceptionRadioButton
+            // transposedBundleDuplicateButton
             // 
-            this.backwardFirstLayerExceptionRadioButton.AutoSize = true;
-            this.backwardFirstLayerExceptionRadioButton.Location = new System.Drawing.Point(120, 5);
-            this.backwardFirstLayerExceptionRadioButton.Name = "backwardFirstLayerExceptionRadioButton";
-            this.backwardFirstLayerExceptionRadioButton.Size = new System.Drawing.Size(79, 16);
-            this.backwardFirstLayerExceptionRadioButton.TabIndex = 4;
-            this.backwardFirstLayerExceptionRadioButton.TabStop = true;
-            this.backwardFirstLayerExceptionRadioButton.Text = "Exception";
-            this.backwardFirstLayerExceptionRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // forwardLastLayerExceptionRadioButton
-            // 
-            this.forwardLastLayerExceptionRadioButton.AutoSize = true;
-            this.forwardLastLayerExceptionRadioButton.Location = new System.Drawing.Point(120, 3);
-            this.forwardLastLayerExceptionRadioButton.Name = "forwardLastLayerExceptionRadioButton";
-            this.forwardLastLayerExceptionRadioButton.Size = new System.Drawing.Size(79, 16);
-            this.forwardLastLayerExceptionRadioButton.TabIndex = 3;
-            this.forwardLastLayerExceptionRadioButton.TabStop = true;
-            this.forwardLastLayerExceptionRadioButton.Text = "Exception";
-            this.forwardLastLayerExceptionRadioButton.UseVisualStyleBackColor = true;
+            this.transposedBundleDuplicateButton.Location = new System.Drawing.Point(457, 248);
+            this.transposedBundleDuplicateButton.Name = "transposedBundleDuplicateButton";
+            this.transposedBundleDuplicateButton.Size = new System.Drawing.Size(106, 55);
+            this.transposedBundleDuplicateButton.TabIndex = 1015;
+            this.transposedBundleDuplicateButton.Text = "Transposed\r\nBundle\r\nDuplicate";
+            this.transposedBundleDuplicateButton.UseVisualStyleBackColor = true;
+            this.transposedBundleDuplicateButton.Click += new System.EventHandler(this.transposedBundleDuplicateButton_Click);
             // 
             // ProcessControlForm
             // 
@@ -1955,5 +1968,6 @@
         private System.Windows.Forms.Button bundleOnButton;
         private System.Windows.Forms.RadioButton backwardFirstLayerExceptionRadioButton;
         private System.Windows.Forms.RadioButton forwardLastLayerExceptionRadioButton;
+        private System.Windows.Forms.Button transposedBundleDuplicateButton;
     }
 }

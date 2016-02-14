@@ -371,6 +371,19 @@ namespace ConnectionistModel
                 OrderRefresh();
             }
         }
+        private void transposedBundleDuplicateButton_Click(object sender, EventArgs e)
+        {
+            if (orderBundle1ComboBox.SelectedIndex >= 0 && orderBundle2ComboBox.SelectedIndex >= 0)
+            {
+                Order newOrder = new Order();
+                newOrder.Code = OrderCode.TransposedBundleDuplicate;
+                newOrder.Bundle1Name = (string)orderBundle1ComboBox.SelectedItem;
+                newOrder.Bundle2Name = (string)orderBundle2ComboBox.SelectedItem;
+
+                newProcess.Add(newOrder);
+                OrderRefresh();
+            }
+        }
         private void biasRenewalButton_Click(object sender, EventArgs e)
         {
             Order newOrder = new Order();
@@ -691,6 +704,9 @@ namespace ConnectionistModel
                     case OrderCode.BundleDuplicate: //Bundle Duplicate
                         orderListBox.Items.Add("Bundle Duplicate From (" + order.Bundle1Name + ") To (" + order.Bundle2Name + ")");
                         break;
+                    case OrderCode.TransposedBundleDuplicate: //Bundle Duplicate
+                        orderListBox.Items.Add("Transposed Bundle Duplicate From (" + order.Bundle1Name + ") To (" + order.Bundle2Name + ")");
+                        break;
                     case OrderCode.BiasRenewal: //Weight Renewal
                         orderListBox.Items.Add("Bias Renewal (" + order.Layer1Name + ")");
                         break;
@@ -762,6 +778,7 @@ namespace ConnectionistModel
             interconnectionRenewalButton.Enabled = false;
             layerDuplicateButton.Enabled = false;
             bundleDuplicateButton.Enabled = false;
+            transposedBundleDuplicateButton.Enabled = false;
             testValueStoreButton.Enabled = false;
             weightRenewalButton.Enabled = false;
             biasRenewalButton.Enabled = false;
@@ -954,8 +971,13 @@ namespace ConnectionistModel
         private void orderBundle2ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             bundleDuplicateButton.Enabled = false;
+            transposedBundleDuplicateButton.Enabled = false;
 
-            if (orderBundle1ComboBox.SelectedIndex > -1) bundleDuplicateButton.Enabled = true;
+            if (orderBundle1ComboBox.SelectedIndex > -1)
+            {
+                bundleDuplicateButton.Enabled = true;
+                transposedBundleDuplicateButton.Enabled = true;
+            }
         }
 
         private void saveButton_Click(object sender, EventArgs e)

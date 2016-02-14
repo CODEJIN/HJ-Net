@@ -150,6 +150,9 @@ namespace ConnectionistModel
                     case OrderCode.BundleDuplicate: //Bundle Duplicate                        
                         BundleList[process[i].Bundle1Name].Duplicate(BundleList[process[i].Bundle2Name]);
                         break;
+                    case OrderCode.TransposedBundleDuplicate:
+                        BundleList[process[i].Bundle1Name].TransposedDuplicate(BundleList[process[i].Bundle2Name]);
+                        break;
                     case OrderCode.BiasRenewal:
                         LayerList[process[i].Layer1Name].BiasRenewal(LearningRate, DecayRate);
                         break;
@@ -1438,6 +1441,9 @@ namespace ConnectionistModel
                         case "BundleDuplicate":
                             loadOrder.Code = OrderCode.BundleDuplicate;
                             break;
+                        case "TransposedBundleDuplicate":
+                            loadOrder.Code = OrderCode.TransposedBundleDuplicate;
+                            break;
                         case "BiasRenewal":
                             loadOrder.Code = OrderCode.BiasRenewal;
                             break;
@@ -1761,6 +1767,7 @@ namespace ConnectionistModel
         LayerInitialize,
         BundleInitialize,
         BundleDuplicate,
+        TransposedBundleDuplicate,
         SRNTraining,
         SRNTest,
     }
