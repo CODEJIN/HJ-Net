@@ -54,6 +54,7 @@
             this.saveLayerActivationCheckBox = new System.Windows.Forms.CheckBox();
             this.saveWeightCheckBox = new System.Windows.Forms.CheckBox();
             this.BatchDataListBox = new System.Windows.Forms.ListBox();
+            this.timeLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.testDisplayChart)).BeginInit();
             this.statusGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -76,6 +77,7 @@
             // 
             // statusGroupBox
             // 
+            this.statusGroupBox.Controls.Add(this.timeLabel);
             this.statusGroupBox.Controls.Add(this.yAxisBetweenLabel);
             this.statusGroupBox.Controls.Add(this.minYAxisTestDisplayTextBox);
             this.statusGroupBox.Controls.Add(this.useTimeStampCheckBox);
@@ -311,6 +313,17 @@
             this.BatchDataListBox.Size = new System.Drawing.Size(285, 88);
             this.BatchDataListBox.TabIndex = 8;
             // 
+            // timeLabel
+            // 
+            this.timeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.timeLabel.BackColor = System.Drawing.SystemColors.Window;
+            this.timeLabel.Location = new System.Drawing.Point(601, 322);
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(101, 11);
+            this.timeLabel.TabIndex = 12;
+            this.timeLabel.Text = "0.000000";
+            this.timeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // BatchLearningForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -361,5 +374,6 @@
         private System.Windows.Forms.ListBox BatchDataListBox;
         private System.Windows.Forms.Label yAxisBetweenLabel;
         private System.Windows.Forms.TextBox minYAxisTestDisplayTextBox;
+        private System.Windows.Forms.Label timeLabel;
     }
 }

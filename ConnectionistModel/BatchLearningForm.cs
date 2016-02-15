@@ -16,13 +16,22 @@ namespace ConnectionistModel
         Simulator simulator = new Simulator(SimulatorAccessor.random);
         List<LearningSetup> learningSetupList = new List<LearningSetup>();
 
+
+        LearningStatus learningStatus = LearningStatus.Wating;
+
         Thread processThread;
-        bool isPause = true;
+        Thread controlRefreshThread;
 
         int currentBathDataIndex = 0;
         int currentLearningSetupIndex = 0;
         int currentEpoch = 0;
         int totalEpoch = 0;
+
+        string currentProcessName = "";
+        string currentStimuliPackName = "";
+        int currentTrialInformationCount = 0;
+        int currentTrainingIndex = 0;
+        long currentTick = 0;
 
         public BatchLearningForm()
         {
@@ -44,29 +53,35 @@ namespace ConnectionistModel
             saveLayerActivationCheckBox.Enabled = false;
             saveWeightCheckBox.Enabled = false;
 
-            isPause = false;
+            learningStatus = LearningStatus.Training;
             startButton.Enabled = false;         
             pauseButton.Enabled = true;
             exitButton.Enabled = false;
 
-            
+
             processThread = new Thread(new ThreadStart(ProcessThread));
+            controlRefreshThread = new Thread(new ThreadStart(ControlRefreshThread));
             processThread.Start();
-            
+            controlRefreshThread.Start();
+
         }
         private void pauseButton_Click(object sender, EventArgs e)
         {
-            isPause = true;            
+            learningStatus = LearningStatus.Pausing;
             pauseButton.Enabled = false;            
         }        
         private void exitButton_Click(object sender, EventArgs e)
         {            
             this.Close();            
         }
-        
+
         private void BatchLearningForm_FormClosed(object sender, FormClosedEventArgs e)
-        {            
-            if(!isPause)processThread.Abort();
+        {
+            if (learningStatus == LearningStatus.Training || learningStatus == LearningStatus.Test)
+            {
+                processThread.Abort();
+                controlRefreshThread.Abort();
+            }
             this.Owner.Visible = true;
         }
         
@@ -74,6 +89,8 @@ namespace ConnectionistModel
         {
             for (int batchIndex = currentBathDataIndex; batchIndex < batchDataList.Count; batchIndex++)
             {
+                learningStatus = LearningStatus.Training;
+
                 currentBathDataIndex = batchIndex;
 
                 simulator = batchDataList[batchIndex].Simulator;
@@ -117,49 +134,27 @@ namespace ConnectionistModel
                             newTestTrialInformation.StimuliMatrix = stimuliMatrix;
 
                             testMatrixTrialInformationList.Add(newTestTrialInformation);
-                        }                        
+                        }
                     }
 
                     if (currentEpoch == 0)
                     {
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            currentEpochTextBox.Text = "0" + "/" + learningSetupList[learningSetupIndex].TrainingEpoch.ToString(); ;
-                            pauseButton.Text = "Testing...";
-                            pauseButton.Enabled = false;
-                            minYAxisTestDisplayTextBox.Enabled = false;
-                            maxYAxisTestDisplayTextBox.Enabled = false;
-                            useTimeStampCheckBox.Enabled = false;
-                            testDisplayButton.Enabled = false;
-                        }));
+                        learningStatus = LearningStatus.Test;
                         if (simulator.UseWeightInformation) simulator.WeightInformationReader(totalEpoch + 0);
                         for (int testIndex = 0; testIndex < testMatrixTrialInformationList.Count; testIndex++)
                         {
                             simulator.Process(testMatrixTrialInformationList[testIndex], totalEpoch + 0);
-                            this.Invoke(new MethodInvoker(delegate
-                            {
-                                pauseButton.Text = "Testing...";
-                            }));
-
                         }
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            pauseButton.Text = "Pause";
-                            pauseButton.Enabled = true;
-                            minYAxisTestDisplayTextBox.Enabled = true;
-                            maxYAxisTestDisplayTextBox.Enabled = true;
-                            useTimeStampCheckBox.Enabled = true;
-                            testDisplayButton.Enabled = true;
-                        }));
+
                     }
 
                     for (int epochIndex = currentEpoch; epochIndex < learningSetupList[learningSetupIndex].TrainingEpoch; epochIndex++)
                     {
+                        learningStatus = LearningStatus.Training;
+
+                        currentTick = DateTime.Now.Ticks;
+
                         currentEpoch = epochIndex;
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            currentEpochTextBox.Text = (epochIndex + 1).ToString() + "/" + learningSetupList[learningSetupIndex].TrainingEpoch.ToString(); ;
-                        }));
 
                         List<TrialInformation> trainingMatrixTrialInformationList = new List<TrialInformation>();
                         foreach (MatchingInformation trainingMatchingInformation in currentTrainingMatchingInformationList)
@@ -196,105 +191,145 @@ namespace ConnectionistModel
                                 break;
                         }
 
+                        currentTrialInformationCount = trainingMatrixTrialInformationList.Count;
                         for (int trainingIndex = 0; trainingIndex < trainingMatrixTrialInformationList.Count; trainingIndex++)
                         {
-                            if (trainingMatrixTrialInformationList[trainingIndex].StimuliMatrix.StimuliCount > 0)
-                                simulator.Process(trainingMatrixTrialInformationList[trainingIndex], totalEpoch + epochIndex + 1);
-                            this.Invoke(new MethodInvoker(delegate
-                            {
-                                currentProcessTextBox.Text = trainingMatrixTrialInformationList[trainingIndex].Process.Name;
-                                currentStimuliPackTextBox.Text = trainingMatrixTrialInformationList[trainingIndex].StimuliMatrix.PackName;
-                                currentStimulusTextBox.Text = trainingIndex.ToString() + "/" + trainingMatrixTrialInformationList.Count.ToString();
-                                if (isPause) pauseButton.Text = "Training...";
-                            }));
+                            currentProcessName = trainingMatrixTrialInformationList[trainingIndex].Process.Name;
+                            currentStimuliPackName = trainingMatrixTrialInformationList[trainingIndex].StimuliMatrix.PackName;
+                            simulator.Process(trainingMatrixTrialInformationList[trainingIndex], totalEpoch + epochIndex + 1);
+                            currentTrainingIndex = trainingIndex;
                         }
-
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            pauseButton.Text = "Pause";
-                        }));
 
                         if ((epochIndex + 1) % learningSetupList[learningSetupIndex].TestTiming == 0)
                         {
-                            this.Invoke(new MethodInvoker(delegate
-                            {
-                                pauseButton.Text = "Testing...";
-                                pauseButton.Enabled = false;
-                                minYAxisTestDisplayTextBox.Enabled = false;
-                                maxYAxisTestDisplayTextBox.Enabled = false;
-                                useTimeStampCheckBox.Enabled = false;
-                                testDisplayButton.Enabled = false;
-                            }));
+                            learningStatus = LearningStatus.Test;
                             if (simulator.UseWeightInformation) simulator.WeightInformationReader(totalEpoch + epochIndex + 1);
                             for (int testIndex = 0; testIndex < testMatrixTrialInformationList.Count; testIndex++)
                             {
                                 simulator.Process(testMatrixTrialInformationList[testIndex], totalEpoch + epochIndex + 1);
-                                this.Invoke(new MethodInvoker(delegate
-                                {
-                                    pauseButton.Text = "Testing...";
-                                }));
-
                             }
-                            this.Invoke(new MethodInvoker(delegate
-                            {
-                                pauseButton.Text = "Pause";
-                                pauseButton.Enabled = true;
-                                minYAxisTestDisplayTextBox.Enabled = true;
-                                maxYAxisTestDisplayTextBox.Enabled = true;
-                                useTimeStampCheckBox.Enabled = true;
-                                testDisplayButton.Enabled = true;
-                                TestDisplayRefresh();
-                            }));
                         }
 
-                        if (isPause)
+                        if (learningStatus == LearningStatus.Pausing)
                         {
                             currentEpoch = epochIndex + 1;
                             break;
                         }
+
+                        currentTick = DateTime.Now.Ticks;
                     }
 
-                    if (isPause)
+                    if (learningStatus == LearningStatus.Pausing)
                     {
                         if (currentEpoch >= learningSetupList[learningSetupIndex].TrainingEpoch)
                         {
                             currentEpoch = 0;
                             currentLearningSetupIndex = learningSetupIndex + 1;
                         }
-                        this.Invoke(new MethodInvoker(delegate
+                        if(currentLearningSetupIndex >= learningSetupList.Count)
                         {
-                            startButton.Enabled = true;
-                            exitButton.Enabled = true;
-                        }));
-
+                            currentLearningSetupIndex = 0;
+                            currentBathDataIndex = batchIndex + 1;
+                        }
                         break;
                     }
+                    else
+                    {
+                        string resultPath = simulator.OutputResult();
+                        simulator.WeightSave(resultPath + "Status.WDATA");
+
+                        currentLearningSetupIndex = 0;
+                        currentEpoch = 0;
+                        totalEpoch = 0;
+                    }
                 }
-                if (isPause)
+                if (learningStatus == LearningStatus.Pausing)
                 {
+                    learningStatus = LearningStatus.Paused;
                     break;
                 }
-                else
-                {
-                    string resultPath = simulator.OutputResult();
-                    simulator.WeightSave(resultPath + "Status.WDATA");
-                    currentLearningSetupIndex = 0;
-                    currentEpoch = 0;
-                    totalEpoch = 0;
-                }
             }
-            if (!isPause) this.Invoke(new MethodInvoker(delegate
+            if (learningStatus == LearningStatus.Training || learningStatus == LearningStatus.Test) learningStatus = LearningStatus.End;
+        }
+        private void ControlRefreshThread()
+        {
+            while (true)
             {
-                startButton.Enabled = false;
-                pauseButton.Enabled = false;
-                exitButton.Enabled = true;
+                Thread.Sleep(50);
+                switch (learningStatus)
+                {
+                    case LearningStatus.Training:
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            pauseButton.Text = "Pause";
+                            pauseButton.Enabled = true;
+                            minYAxisTestDisplayTextBox.Enabled = true;
+                            maxYAxisTestDisplayTextBox.Enabled = true;
+                            useTimeStampCheckBox.Enabled = true;
+                            testDisplayButton.Enabled = true;
 
-                MessageBox.Show("Training End");
+                            int trainedEpoch = 0;
+                            for (int i = 0; i < currentLearningSetupIndex; i++) trainedEpoch += learningSetupList[i].TrainingEpoch;
 
-                currentBathDataIndex++;
-                BatchListBoxRefresh();
+                            currentEpochTextBox.Text = (trainedEpoch + currentEpoch).ToString() + "/" + learningSetupList[currentLearningSetupIndex].TrainingEpoch.ToString();
+                            currentProcessTextBox.Text = currentProcessName;
+                            currentStimuliPackTextBox.Text = currentStimuliPackName;
+                            currentStimulusTextBox.Text = currentTrainingIndex.ToString() + "/" + currentTrialInformationCount;
 
-            }));
+                            timeLabel.Text = ((double)(DateTime.Now.Ticks - currentTick) / 1000000).ToString();
+                        }));
+                        break;
+                    case LearningStatus.Test:
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            currentEpochTextBox.Text = "0" + learningSetupList[currentLearningSetupIndex].TrainingEpoch.ToString();
+                            pauseButton.Text = "Testing...";
+                            pauseButton.Enabled = false;
+                            minYAxisTestDisplayTextBox.Enabled = false;
+                            maxYAxisTestDisplayTextBox.Enabled = false;
+                            useTimeStampCheckBox.Enabled = false;
+                            testDisplayButton.Enabled = false;
+                            try { TestDisplayRefresh(); }
+                            catch { }
+                        }));
+                        break;
+                    case LearningStatus.Pausing:
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            pauseButton.Text = "Training...";
+                        }));
+                        break;
+                    case LearningStatus.Paused:
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            pauseButton.Text = "Pause";
+                            startButton.Enabled = true;
+                            exitButton.Enabled = true;
+
+                            int trainedEpoch = 0;
+                            for (int i = 0; i < currentLearningSetupIndex; i++) trainedEpoch += learningSetupList[i].TrainingEpoch;
+
+                            currentEpochTextBox.Text = (trainedEpoch + currentEpoch).ToString() + "/" + learningSetupList[currentLearningSetupIndex].TrainingEpoch.ToString();
+                            currentProcessTextBox.Text = currentProcessName;
+                            currentStimuliPackTextBox.Text = currentStimuliPackName;
+                            currentStimulusTextBox.Text = currentTrainingIndex.ToString() + "/" + currentTrialInformationCount;
+                        }));
+                        break;
+                    case LearningStatus.End:
+                        this.Invoke(new MethodInvoker(delegate
+                        {
+                            startButton.Enabled = false;
+                            pauseButton.Enabled = false;
+                            exitButton.Enabled = true;
+                            MessageBox.Show("Training End");
+
+                            currentBathDataIndex++;
+                            BatchListBoxRefresh();
+                        }));
+                        break;
+                }
+                if (learningStatus == LearningStatus.End || learningStatus == LearningStatus.Paused) break;
+            }
         }
 
         public void TestDisplayRefresh()
