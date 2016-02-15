@@ -202,7 +202,7 @@ namespace ConnectionistModel
                     case OrderCode.LayerInitialize:
                         LayerList[process[i].Layer1Name].Initialize(process.LayerStateDictionary[process[i].Layer1Name], process.LayerDamagedSDDictionary[process[i].Layer1Name], matrixStimuliData.StimuliCount);
                         break;
-                    case OrderCode.EndInitialize: //End Initialize
+                    case OrderCode.EndInitialize:
                         //실제론 아무것도 하지 않으나, 반드시 뒤에 어떤 Order도 올 수없도록 할 것
                         break;
                     case OrderCode.LayerToCleanUpForwardProcess:
@@ -227,8 +227,6 @@ namespace ConnectionistModel
                         ((BPTTLayer)LayerList[process[i].Layer1Name]).WeightRenewal(Momentum, LearningRate, DecayRate);
                         break;
                     case OrderCode.SRNTraining:
-                        //LayerList[process[i].SRNContextLayerName].LayerActivationMatrix = LayerList[process[i].SRNContextLayerName].LayerActivationMatrix.Add(0.5);
-
                         for (int cycle = 0; cycle < matrixStimuliData.TimeStamp; cycle++)
                         {
                             LayerList[process[i].SRNInputLayerName].ActivationInput(matrixStimuliData[process[i].SRNInputPatternName + cycle.ToString()]);
@@ -260,8 +258,6 @@ namespace ConnectionistModel
                         }
                         break;
                     case OrderCode.SRNTest:
-                        //LayerList[process[i].SRNContextLayerName].LayerActivationMatrix = LayerList[process[i].SRNContextLayerName].LayerActivationMatrix.Add(0.5);
-
                         for (int cycle = 0; cycle < matrixStimuliData.TimeStamp; cycle++)
                         {
                             targetPattern = matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()];

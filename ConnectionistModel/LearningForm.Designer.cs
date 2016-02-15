@@ -84,6 +84,7 @@
             this.testTimingLabel = new System.Windows.Forms.Label();
             this.testDisplayChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.statusGroupBox = new System.Windows.Forms.GroupBox();
+            this.timeLabel = new System.Windows.Forms.Label();
             this.yAxisBetweenLabel = new System.Windows.Forms.Label();
             this.minYAxisTestDisplayTextBox = new System.Windows.Forms.TextBox();
             this.useTimeStampCheckBox = new System.Windows.Forms.CheckBox();
@@ -704,6 +705,7 @@
             // 
             // statusGroupBox
             // 
+            this.statusGroupBox.Controls.Add(this.timeLabel);
             this.statusGroupBox.Controls.Add(this.yAxisBetweenLabel);
             this.statusGroupBox.Controls.Add(this.minYAxisTestDisplayTextBox);
             this.statusGroupBox.Controls.Add(this.useTimeStampCheckBox);
@@ -727,6 +729,17 @@
             this.statusGroupBox.TabIndex = 2;
             this.statusGroupBox.TabStop = false;
             this.statusGroupBox.Text = "Status";
+            // 
+            // timeLabel
+            // 
+            this.timeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.timeLabel.BackColor = System.Drawing.SystemColors.Window;
+            this.timeLabel.Location = new System.Drawing.Point(601, 322);
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(101, 11);
+            this.timeLabel.TabIndex = 11;
+            this.timeLabel.Text = "0.000000";
+            this.timeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // yAxisBetweenLabel
             // 
@@ -879,9 +892,9 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(909, 100);
+            this.startButton.Location = new System.Drawing.Point(909, 64);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(189, 40);
+            this.startButton.Size = new System.Drawing.Size(189, 45);
             this.startButton.TabIndex = 3;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
@@ -890,9 +903,9 @@
             // pauseButton
             // 
             this.pauseButton.Enabled = false;
-            this.pauseButton.Location = new System.Drawing.Point(909, 144);
+            this.pauseButton.Location = new System.Drawing.Point(909, 114);
             this.pauseButton.Name = "pauseButton";
-            this.pauseButton.Size = new System.Drawing.Size(189, 40);
+            this.pauseButton.Size = new System.Drawing.Size(189, 45);
             this.pauseButton.TabIndex = 3;
             this.pauseButton.Text = "Pause";
             this.pauseButton.UseVisualStyleBackColor = true;
@@ -901,9 +914,9 @@
             // resultSaveButton
             // 
             this.resultSaveButton.Enabled = false;
-            this.resultSaveButton.Location = new System.Drawing.Point(909, 188);
+            this.resultSaveButton.Location = new System.Drawing.Point(909, 164);
             this.resultSaveButton.Name = "resultSaveButton";
-            this.resultSaveButton.Size = new System.Drawing.Size(189, 40);
+            this.resultSaveButton.Size = new System.Drawing.Size(189, 45);
             this.resultSaveButton.TabIndex = 3;
             this.resultSaveButton.Text = "Result Save";
             this.resultSaveButton.UseVisualStyleBackColor = true;
@@ -911,9 +924,9 @@
             // 
             // exitButton
             // 
-            this.exitButton.Location = new System.Drawing.Point(909, 320);
+            this.exitButton.Location = new System.Drawing.Point(909, 314);
             this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(189, 40);
+            this.exitButton.Size = new System.Drawing.Size(189, 45);
             this.exitButton.TabIndex = 3;
             this.exitButton.Text = "Exit";
             this.exitButton.UseVisualStyleBackColor = true;
@@ -921,9 +934,9 @@
             // 
             // statusSaveButton
             // 
-            this.statusSaveButton.Location = new System.Drawing.Point(909, 232);
+            this.statusSaveButton.Location = new System.Drawing.Point(909, 214);
             this.statusSaveButton.Name = "statusSaveButton";
-            this.statusSaveButton.Size = new System.Drawing.Size(189, 40);
+            this.statusSaveButton.Size = new System.Drawing.Size(189, 45);
             this.statusSaveButton.TabIndex = 4;
             this.statusSaveButton.Text = "Status Save";
             this.statusSaveButton.UseVisualStyleBackColor = true;
@@ -931,9 +944,9 @@
             // 
             // statusLoadButton
             // 
-            this.statusLoadButton.Location = new System.Drawing.Point(909, 276);
+            this.statusLoadButton.Location = new System.Drawing.Point(909, 264);
             this.statusLoadButton.Name = "statusLoadButton";
-            this.statusLoadButton.Size = new System.Drawing.Size(189, 40);
+            this.statusLoadButton.Size = new System.Drawing.Size(189, 45);
             this.statusLoadButton.TabIndex = 5;
             this.statusLoadButton.Text = "Status Load";
             this.statusLoadButton.UseVisualStyleBackColor = true;
@@ -1072,5 +1085,6 @@
         private System.Windows.Forms.TextBox minYAxisTestDisplayTextBox;
         private System.Windows.Forms.TextBox matrixCalculationSizeTextBox;
         private System.Windows.Forms.Label matrixCalculationSizeLabel;
+        private System.Windows.Forms.Label timeLabel;
     }
 }
