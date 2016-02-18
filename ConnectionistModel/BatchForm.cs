@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,9 +15,9 @@ namespace ConnectionistModel
     public partial class BatchForm : Form
     {
         List<BatchData> batchDataList;
+        List<Variable> variableList;
 
         Random random;
-        Simulator newSimulator;
         string batchName;
         Dictionary<string, string> newStimuliPackFileDictionary;
 
@@ -28,9 +29,10 @@ namespace ConnectionistModel
             batchDataList = SimulatorAccessor.batchDataList;
             batchDataList.Clear();
 
+            variableList = new List<Variable>();
+
             random = new Random();
-            newSimulator = new Simulator(random);
-            newStimuliPackFileDictionary = new Dictionary<string, string>();            
+            newStimuliPackFileDictionary = new Dictionary<string, string>();
         }
 
         private void architectureBrowserButton_Click(object sender, EventArgs e)
@@ -47,7 +49,6 @@ namespace ConnectionistModel
                 batchName = openFileDialog.SafeFileName.Substring(0, openFileDialog.SafeFileName.IndexOf('.'));
             }
         }
-
         private void processBrowserButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -61,7 +62,6 @@ namespace ConnectionistModel
                 processTextBox.Text = openFileDialog.FileName;
             }
         }
-
         private void learningBrowserButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -75,7 +75,6 @@ namespace ConnectionistModel
                 learningTextBox.Text = openFileDialog.FileName;
             }
         }
-
         private void stimuliPackBrowserButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -90,7 +89,7 @@ namespace ConnectionistModel
                 stimuliPackNameTextBox.Text = openFileDialog.SafeFileName.Substring(0, openFileDialog.SafeFileName.IndexOf('.'));
             }
         }
-        
+
         private List<LearningSetup> LearningSetup_Load(string fileName)
         {
             List<LearningSetup> learningSetupList = new List<LearningSetup>();
@@ -155,21 +154,15 @@ namespace ConnectionistModel
 
         private void stimuliPackAddButton_Click(object sender, EventArgs e)
         {
-            if (stimuliPackNameTextBox.Text.Trim() == "") MessageBox.Show("Stimuli Data pack Name is worng. Check Please.");
-            else if (newSimulator.StimuliImport(stimuliPackNameTextBox.Text, stimuliPackTextBox.Text))
-            {
-                newStimuliPackFileDictionary[stimuliPackNameTextBox.Text] = stimuliPackTextBox.Text;
-                StimuliPackList_Refresh();
-            }
-            else MessageBox.Show("Stimuli Data pack is worng. Check Please.");
+            if (stimuliPackNameTextBox.Text.Trim() == "") MessageBox.Show("Stimuli Data pack Name is worng. Check Please.");            
+            newStimuliPackFileDictionary[stimuliPackNameTextBox.Text] = stimuliPackTextBox.Text;
+            StimuliPackList_Refresh();            
         }
         private void stimuliPackDeleteButton_Click(object sender, EventArgs e)
         {
             if (stimuliPackListBox.SelectedIndex >= 0)
-            {
-                newSimulator.StimuliPackDictionary.Remove((string)stimuliPackListBox.SelectedItem);
+            {   
                 newStimuliPackFileDictionary.Remove((string)stimuliPackListBox.SelectedItem);
-
                 StimuliPackList_Refresh();
             }
         }
@@ -179,47 +172,151 @@ namespace ConnectionistModel
             stimuliPackTextBox.Text = "";
             stimuliPackNameTextBox.Text = "";
 
-            foreach (string key in newSimulator.StimuliPackDictionary.Keys) stimuliPackListBox.Items.Add(key);
+            foreach (string key in newStimuliPackFileDictionary.Keys) stimuliPackListBox.Items.Add(key);
         }
 
         private void batchAddButton_Click(object sender, EventArgs e)
         {
-            if (architectureTextBox.Text.Trim() == "" || processTextBox.Text.Trim() == "" || learningTextBox.Text.Trim() == "" || newSimulator.StimuliPackDictionary.Count < 1)
+            if (architectureTextBox.Text.Trim() == "" || processTextBox.Text.Trim() == "" || learningTextBox.Text.Trim() == "" || newStimuliPackFileDictionary.Count < 1)
             {
                 MessageBox.Show("Set the simulation files.");
             }
+            else if (!RegularExpression.PositiveIntCheck(repeatTextBox.Text))
+            {
+                MessageBox.Show("Repeat has to be a positive integer.\nIf you do not want repeat, insert 1.");
+            }
             else
             {
-                BatchData newBatchData = new BatchData();
-
-                newBatchData.Name = batchName;
-                newBatchData.ArchitectureFile = architectureTextBox.Text;
-                newBatchData.ProcessFile = processTextBox.Text;
-                newBatchData.LearningSetupFile = learningTextBox.Text;
-                newBatchData.StimuliPackFileDictionary = newStimuliPackFileDictionary;
-
-                newSimulator.Architecture_Load(architectureTextBox.Text);
-                newSimulator.Process_Load(processTextBox.Text);
-
-                newBatchData.Simulator = newSimulator;
-
-                newBatchData.LearningSetupList = LearningSetup_Load(learningTextBox.Text);
-
-                batchDataList.Add(newBatchData);
-
-                newSimulator = new Simulator(random);
-                newStimuliPackFileDictionary = new Dictionary<string, string>();
-
-                foreach(string key in batchDataList[batchDataList.Count-1].StimuliPackFileDictionary.Keys)
+                List<BatchData> newBatchDataList = new List<BatchData>();
+                for (int repeatIndex = 0; repeatIndex < int.Parse(repeatTextBox.Text); repeatIndex++)
                 {
-                    newSimulator.StimuliImport(key, batchDataList[batchDataList.Count - 1].StimuliPackFileDictionary[key]);                
-                    newStimuliPackFileDictionary[key] = batchDataList[batchDataList.Count - 1].StimuliPackFileDictionary[key];
-                }                
+                    BatchData newBatchData = new BatchData();
+
+                    newBatchData.Name = batchName;
+                    newBatchData.ArchitectureFile = architectureTextBox.Text;
+                    newBatchData.ProcessFile = processTextBox.Text;
+                    newBatchData.LearningSetupFile = learningTextBox.Text;
+                    newBatchData.StimuliPackFileDictionary = newStimuliPackFileDictionary;
+
+                    Simulator newSimulator = new Simulator(random);
+                    newSimulator.Architecture_Load(architectureTextBox.Text);
+                    newSimulator.Process_Load(processTextBox.Text);
+                    foreach (string key in newBatchData.StimuliPackFileDictionary.Keys) newSimulator.StimuliImport(key, newBatchData.StimuliPackFileDictionary[key]);
+                    newBatchData.Simulator = newSimulator;
+                    newBatchData.LearningSetupList = LearningSetup_Load(learningTextBox.Text);
+                    newBatchDataList.Add(newBatchData);                    
+                }
+                VariableApply(newBatchDataList);
+                
+                newStimuliPackFileDictionary = new Dictionary<string, string>();
+                architectureTextBox.Text = "";
+                processTextBox.Text = "";
+                learningTextBox.Text = "";
+                repeatTextBox.Text = "1";
 
                 StimuliPackList_Refresh();
                 BatchDataList_Refresh();
             }
         }
+        private void VariableApply(List<BatchData> batchDataList)
+        {
+            int totalVariousSize = 1;
+            foreach (Variable variable in variableList) totalVariousSize *= variable.VariousSize;
+
+            List<List<Change>> changeListList = new List<List<Change>>();
+            for (int index = 0; index < totalVariousSize; index++)
+            {
+                List<Change> newChangeList = new List<Change>();
+                changeListList.Add(newChangeList);
+            }
+            
+            for (int variableIndex = 0; variableIndex < variableList.Count; variableIndex++)
+            {
+                for (int index = 0; index < totalVariousSize; index += variableList[variableIndex].VariousSize)
+                {
+                    int subIndex = 0;
+                    for (decimal point = (decimal)variableList[variableIndex].StartPoint; point <= (decimal)variableList[variableIndex].EndPoint; point += (decimal)variableList[variableIndex].Step)
+                    {
+                        Change newChange = new Change();
+                        newChange.LayerBundleName = variableList[variableIndex].LayerBundleName;
+                        newChange.ProcessName = variableList[variableIndex].ProcessName;
+                        newChange.VariableType = variableList[variableIndex].VariableType;
+                        newChange.Point = (double)point;
+
+                        changeListList[index + subIndex].Add(newChange);
+                        subIndex++;
+                    }
+                }   
+            }
+
+
+            List<BatchData> variableBatchData = new List<BatchData>();
+            foreach (BatchData batchData in batchDataList)
+            {
+                for (int index = 0; index < changeListList.Count; index++)
+                {
+                    BatchData newBatchData = new BatchData();
+
+                    newBatchData.Name = batchName;
+                    newBatchData.ArchitectureFile = batchData.ArchitectureFile;
+                    newBatchData.ProcessFile = batchData.ProcessFile;
+                    newBatchData.LearningSetupFile = batchData.LearningSetupFile;
+                    foreach (string key in batchData.StimuliPackFileDictionary.Keys) newBatchData.StimuliPackFileDictionary[key] = batchData.StimuliPackFileDictionary[key];
+
+                    Simulator newBatchSimulator = new Simulator(random);
+                    newBatchSimulator.Architecture_Load(newBatchData.ArchitectureFile);
+                    newBatchSimulator.Process_Load(newBatchData.ProcessFile);
+                    foreach (string key in newBatchData.StimuliPackFileDictionary.Keys) newBatchSimulator.StimuliImport(key, newBatchData.StimuliPackFileDictionary[key]);
+                    newBatchData.Simulator = newBatchSimulator;
+                    newBatchData.LearningSetupList = LearningSetup_Load(newBatchData.LearningSetupFile);
+                    newBatchData.ChangeList = changeListList[index];
+
+                    variableBatchData.Add(newBatchData);
+                }                
+            }
+
+            foreach (BatchData batchData in variableBatchData)
+            {
+                foreach (Change change in batchData.ChangeList)
+                {
+                    switch (change.VariableType)
+                    {
+                        case VariableType.Layer_Unit:
+                            List<string> renewalBundleKeyList = new List<string>();
+                            foreach (string key in batchData.Simulator.BundleList.Keys)
+                            {
+                                if (batchData.Simulator.BundleList[key].SendLayer.Name == change.LayerBundleName || batchData.Simulator.BundleList[key].ReceiveLayer.Name == change.LayerBundleName) renewalBundleKeyList.Add(key);
+                            }
+                            batchData.Simulator.LayerMaking(change.LayerBundleName, (int)change.Point, batchData.Simulator.LayerList[change.LayerBundleName].CleanupUnitCount);                            
+                            foreach (string key in renewalBundleKeyList)
+                            {
+                                batchData.Simulator.BundleMaking(key, batchData.Simulator.BundleList[key].SendLayer.Name, batchData.Simulator.BundleList[key].ReceiveLayer.Name);
+                            }
+                            break;
+                        case VariableType.Layer_DamagedSD:
+                            if (change.Point != 0) batchData.Simulator.ProcessDictionary[change.ProcessName].LayerStateDictionary[change.LayerBundleName] = LayerState.Damaged;
+                            else batchData.Simulator.ProcessDictionary[change.ProcessName].LayerStateDictionary[change.LayerBundleName] = LayerState.On;
+                            batchData.Simulator.ProcessDictionary[change.ProcessName].LayerDamagedSDDictionary[change.LayerBundleName] = change.Point;
+                            break;
+                        case VariableType.Bundle_DamagedSD:
+                            if (change.Point != 0) batchData.Simulator.ProcessDictionary[change.ProcessName].BundleStateDictionary[change.LayerBundleName] = BundleState.Damaged;
+                            else batchData.Simulator.ProcessDictionary[change.ProcessName].BundleStateDictionary[change.LayerBundleName] = BundleState.On;
+                            batchData.Simulator.ProcessDictionary[change.ProcessName].BundleDamagedSDDictionary[change.LayerBundleName] = change.Point;
+                            break;
+                        case VariableType.LearningRate:
+                            batchData.Simulator.LearningRate = change.Point;
+                            break;
+                        case VariableType.InitialWeight:
+                            batchData.Simulator.WeightRange = change.Point;
+                            break;
+                    }
+                }
+                batchData.Simulator.SimulatorRenewal();
+            }
+
+            this.batchDataList.AddRange(variableBatchData);
+        }
+
         private void BatchDataList_Refresh()
         {
             batchDataListBox.Items.Clear();
@@ -227,7 +324,7 @@ namespace ConnectionistModel
             for (int index = 0; index < batchDataList.Count; index++)
             {
                 batchDataListBox.Items.Add("[" + index + "] " + batchDataList[index].Name);
-            }            
+            }
         }
 
         private void batchDataDeleteButton_Click(object sender, EventArgs e)
@@ -248,68 +345,261 @@ namespace ConnectionistModel
         private void BatchForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Owner.Visible = true;
-        }
-
-        private void currentResetButton_Click(object sender, EventArgs e)
-        {
-            architectureTextBox.Text ="";
-            processTextBox.Text = "";
-            learningTextBox.Text = "";
-            newSimulator.StimuliPackDictionary.Clear();
-            newStimuliPackFileDictionary.Clear();
-            StimuliPackList_Refresh();
-        }
+        }        
 
         private void batchDataListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            BatchDataInformationRichTextBox.Text = "";
+            StringBuilder newText = new StringBuilder();
 
             if (batchDataListBox.SelectedIndex >= 0)
             {
                 BatchData selectedBatchData = batchDataList[batchDataListBox.SelectedIndex];
 
-                BatchDataInformationRichTextBox.Text += "Architecture File: " + selectedBatchData.ArchitectureFile + "\n";
-                BatchDataInformationRichTextBox.Text += "Process File: " + selectedBatchData.ProcessFile + "\n";
-                BatchDataInformationRichTextBox.Text += "Learning Setup File: " + selectedBatchData.LearningSetupFile + "\n";
-                BatchDataInformationRichTextBox.Text += "Stimuli Pack Files \n";
-                foreach(string key in selectedBatchData.StimuliPackFileDictionary.Keys) BatchDataInformationRichTextBox.Text += "- " + key + ": "  + selectedBatchData.StimuliPackFileDictionary[key] + "\n";
+                newText.Append("Architecture File: " + selectedBatchData.ArchitectureFile); newText.AppendLine();
+                newText.Append("Process File: " + selectedBatchData.ProcessFile); newText.AppendLine();
+                newText.Append("Learning Setup File: " + selectedBatchData.LearningSetupFile); newText.AppendLine();
+                newText.AppendLine("Stimuli Pack Files");
+                foreach (string key in selectedBatchData.StimuliPackFileDictionary.Keys) newText.Append("- " + key + ": " + selectedBatchData.StimuliPackFileDictionary[key]); newText.AppendLine();
 
-                BatchDataInformationRichTextBox.Text += "\n";
-                BatchDataInformationRichTextBox.Text += "Layer List \n";
-                foreach (string key in selectedBatchData.Simulator.LayerList.Keys) BatchDataInformationRichTextBox.Text += "- " + key + "(" + selectedBatchData.Simulator.LayerList[key].UnitCount + ")\n";
+                newText.AppendLine();
+                newText.AppendLine("Layer List");
+                foreach (string key in selectedBatchData.Simulator.LayerList.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.LayerList[key].UnitCount + ")");
 
-                BatchDataInformationRichTextBox.Text += "\n";
-                BatchDataInformationRichTextBox.Text += "Connection List \n";
-                foreach (string key in selectedBatchData.Simulator.BundleList.Keys) BatchDataInformationRichTextBox.Text += "- " + key + "(" + selectedBatchData.Simulator.BundleList[key].SendLayer.Name + " -> " + selectedBatchData.Simulator.BundleList[key].ReceiveLayer.Name + ")\n";
+                newText.AppendLine();
+                newText.AppendLine("Connection List");
+                foreach (string key in selectedBatchData.Simulator.BundleList.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.BundleList[key].SendLayer.Name + " -> " + selectedBatchData.Simulator.BundleList[key].ReceiveLayer.Name + ")");
 
-                BatchDataInformationRichTextBox.Text += "\n";
-                BatchDataInformationRichTextBox.Text += "Process List \n";
-                foreach (string key in selectedBatchData.Simulator.ProcessDictionary.Keys) BatchDataInformationRichTextBox.Text += "- " + key + "\n";
+                newText.AppendLine();
+                newText.AppendLine("Process List");
+                foreach (string key in selectedBatchData.Simulator.ProcessDictionary.Keys) newText.Append("- " + key); newText.AppendLine();
 
-                BatchDataInformationRichTextBox.Text += "\n";
-                BatchDataInformationRichTextBox.Text += "Stimuli Pack List \n";
-                foreach (string key in selectedBatchData.Simulator.StimuliPackDictionary.Keys) BatchDataInformationRichTextBox.Text += "- " + key + "(" + selectedBatchData.Simulator.StimuliPackDictionary[key].Count + ")\n";
+                newText.AppendLine();
+                newText.Append("Stimuli Pack List \n");
+                foreach (string key in selectedBatchData.Simulator.StimuliPackDictionary.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.StimuliPackDictionary[key].Count + ")");
 
-                BatchDataInformationRichTextBox.Text += "\n";
-                BatchDataInformationRichTextBox.Text += "Learning Setup List \n";
-                foreach (LearningSetup learningSetup in selectedBatchData.LearningSetupList) BatchDataInformationRichTextBox.Text += "-Training Info.(" + learningSetup.TrainingMatchingInformationList.Count + ")/" + "Test Info.(" + learningSetup.TestMatchingInformationList.Count + ")";
-                        
+                newText.AppendLine();
+                newText.Append("Learning Setup List \n");
+                foreach (LearningSetup learningSetup in selectedBatchData.LearningSetupList) newText.AppendLine("-Training Info.(" + learningSetup.TrainingMatchingInformationList.Count + ")/" + "Test Info.(" + learningSetup.TestMatchingInformationList.Count + ")");
+
+                newText.AppendLine();
+                newText.AppendLine("Applied Variable");
+                foreach (Change change in selectedBatchData.ChangeList)
+                {
+                    switch (change.VariableType)
+                    {
+                        case VariableType.Layer_Unit:
+                            newText.Append("Layer Unit Variable | ");
+                            break;
+                        case VariableType.Layer_DamagedSD:
+                            newText.Append("Layer Damaged SD Variable | ");
+                            break;
+                        case VariableType.Bundle_DamagedSD:
+                            newText.Append("Bundle Damaged SD Variable | ");
+                            break;
+                        case VariableType.LearningRate:
+                            newText.Append("Learning Rate Variable | ");
+                            break;
+                        case VariableType.InitialWeight:
+                            newText.Append("Initial Weight Variable | ");
+                            break;
+                    }
+                    switch (change.VariableType)
+                    {
+                        case VariableType.Layer_Unit:
+                        case VariableType.Layer_DamagedSD:
+                            newText.Append("Layer: " + change.LayerBundleName + " | ");
+                            break;
+                        case VariableType.Bundle_DamagedSD:
+                            newText.Append("Bundle: " + change.LayerBundleName + " | ");
+                            break;
+                    }
+                    switch (change.VariableType)
+                    {
+                        case VariableType.Layer_DamagedSD:
+                        case VariableType.Bundle_DamagedSD:
+                            newText.Append("Process: " + change.ProcessName + " | ");
+                            break;
+                    }
+                    newText.Append(change.Point.ToString());
+                    newText.AppendLine();
+                }
             }
-            
+            BatchDataInformationRichTextBox.Text = newText.ToString();
         }
 
         private void learningButton_Click(object sender, EventArgs e)
         {
-            BatchLearningForm batchLearningForm = new BatchLearningForm();
-            batchLearningForm.Owner = this.Owner;
-            batchLearningForm.Show();
-            this.FormClosed -= BatchForm_FormClosed;
-            this.Close();
+            if (batchDataList.Count < 1)
+            {
+                MessageBox.Show("At least, there has to be a batch data.");
+            }
+            else
+            {
+                BatchLearningForm batchLearningForm = new BatchLearningForm();
+                batchLearningForm.Owner = this.Owner;
+                batchLearningForm.Show();
+                this.FormClosed -= BatchForm_FormClosed;
+                this.Close();
+            }
+        }
+
+        private void variableDeleteButton_Click(object sender, EventArgs e)
+        {
+            if (variableListBox.SelectedIndex >= 0)
+            {
+                variableList.RemoveAt(variableListBox.SelectedIndex);
+                VariableList_Refresh();
+            }
+        }
+
+        private void variableAddButton_Click(object sender, EventArgs e)
+        {
+            if (!RegularExpression.DoubleCheck(startPointTextBox.Text))
+            {
+                MessageBox.Show("Start point is wrong. Check Please.");
+            }
+            else if (!RegularExpression.DoubleCheck(endPointTextBox.Text))
+            {
+                MessageBox.Show("End point is wrong. Check Please.");
+            }
+            else if (!RegularExpression.DoubleCheck(stepTextBox.Text))
+            {
+                MessageBox.Show("Step is wrong. Check Please.");
+            }
+            else if (double.Parse(startPointTextBox.Text) > double.Parse(endPointTextBox.Text))
+            {
+                MessageBox.Show("Start point is bigger than end point. Check Please.");
+            }
+            else
+            {
+                if ((string)variableComboBox.SelectedItem == "Layer-Unit" && (!RegularExpression.PositiveIntCheck(startPointTextBox.Text) || !RegularExpression.PositiveIntCheck(endPointTextBox.Text) || !RegularExpression.PositiveIntCheck(stepTextBox.Text)))
+                {
+                    MessageBox.Show("Unit always has to be a positive integer.");
+                }
+                else if (decimal.Parse(endPointTextBox.Text) - decimal.Parse(startPointTextBox.Text) != 0 && (decimal.Parse(endPointTextBox.Text) - decimal.Parse(startPointTextBox.Text)) % decimal.Parse(stepTextBox.Text) != 0.0m)
+                {
+                    MessageBox.Show("There has to be no remainder in the dividing of the range and the step.");
+                }
+                else
+                {
+                    Variable newVariable = new Variable();
+                    switch ((string)variableComboBox.SelectedItem)
+                    {
+                        case "Layer-Unit":
+                            newVariable.VariableType = VariableType.Layer_Unit;
+                            break;
+                        case "Layer-DamagedSD":
+                            newVariable.VariableType = VariableType.Layer_DamagedSD;
+                            break;
+                        case "Bundle-DamagedSD":
+                            newVariable.VariableType = VariableType.Bundle_DamagedSD;
+                            break;
+                        case "Learning Rate":
+                            newVariable.VariableType = VariableType.LearningRate;
+                            break;
+                        case "Initial Weight":
+                            newVariable.VariableType = VariableType.InitialWeight;
+                            break;
+                    }
+                    newVariable.LayerBundleName = layerBundleNameTextBox.Text;
+                    newVariable.ProcessName = processNameTextBox.Text;
+                    newVariable.StartPoint = double.Parse(startPointTextBox.Text);
+                    newVariable.EndPoint = double.Parse(endPointTextBox.Text);
+                    newVariable.Step = double.Parse(stepTextBox.Text);
+
+                    bool isExist = false;
+                    foreach (Variable variable in variableList)
+                    {
+                        if (newVariable.VariableType == variable.VariableType && newVariable.LayerBundleName == variable.LayerBundleName)
+                        {
+                            isExist = true;
+                            break;
+                        }
+                    }
+
+                    if (isExist)
+                    {
+                        MessageBox.Show("There is already same variable.\nIt is impossible to make another variable which has same name and variable type.");
+                    }
+                    else
+                    {
+                        variableList.Add(newVariable);
+                        VariableList_Refresh();
+                    }
+                }
+            }
+        }
+
+        private void VariableList_Refresh()
+        {
+            variableListBox.Items.Clear();
+            foreach (Variable variable in variableList)
+            {
+                StringBuilder newItem = new StringBuilder();
+                newItem.Append(variable.VariousSize.ToString() + " | ");
+                switch (variable.VariableType)
+                {
+                    case VariableType.Layer_Unit:
+                        newItem.Append("Layer Unit Variable | ");
+                        break;
+                    case VariableType.Layer_DamagedSD:
+                        newItem.Append("Layer Damaged SD Variable | ");
+                        break;
+                    case VariableType.Bundle_DamagedSD:
+                        newItem.Append("Bundle Damaged SD Variable | ");
+                        break;
+                    case VariableType.LearningRate:
+                        newItem.Append("Learning Rate Variable | ");
+                        break;
+                    case VariableType.InitialWeight:
+                        newItem.Append("Initial Weight Variable | ");
+                        break;
+                }
+                switch (variable.VariableType)
+                {
+                    case VariableType.Layer_Unit:
+                    case VariableType.Layer_DamagedSD:
+                        newItem.Append("Layer: " + variable.LayerBundleName + " | ");
+                        break;
+                    case VariableType.Bundle_DamagedSD:
+                        newItem.Append("Bundle: " + variable.LayerBundleName + " | ");
+                        break;
+                }
+                switch (variable.VariableType)
+                {
+                    case VariableType.Layer_DamagedSD:
+                    case VariableType.Bundle_DamagedSD:
+                        newItem.Append("Process: " + variable.ProcessName + " | ");
+                        break;
+                }
+                newItem.Append(variable.StartPoint.ToString() + " to " + variable.EndPoint.ToString() + " | ");
+                newItem.Append("Step: " + variable.Step.ToString());
+
+                variableListBox.Items.Add(newItem.ToString());
+            }
+
+            int totalVariousSize = 0;
+            if (variableList.Count > 0)
+            {
+                totalVariousSize = 1;
+                foreach (Variable variable in variableList)
+                {
+                    totalVariousSize *= variable.VariousSize;
+                }
+
+                totalVariousSizeLabel.Text = "Total: " + totalVariousSize;
+            }
+            else totalVariousSizeLabel.Text = "";
         }
     }
 
     class BatchData
     {
+        public BatchData()
+        {
+            StimuliPackFileDictionary = new Dictionary<string, string>();
+            ChangeList = new List<Change>();
+        }
         public Simulator Simulator
         {
             get;
@@ -346,5 +636,84 @@ namespace ConnectionistModel
             get;
             set;
         }
+        public List<Change> ChangeList
+        {
+            get;
+            set;
+        }
+    }
+
+    class Variable
+    {
+        public VariableType VariableType
+        {
+            get;
+            set;
+        }
+        public string LayerBundleName
+        {
+            get;
+            set;
+        }
+        public string ProcessName
+        {
+            get;
+            set;
+        }
+        public double StartPoint
+        {
+            get;
+            set;
+        }
+        public double EndPoint
+        {
+            get;
+            set;
+        }
+        public double Step
+        {
+            get;
+            set;
+        }
+
+        public int VariousSize
+        {
+            get
+            {
+                if ((decimal)Step != 0) return (int)((((decimal)EndPoint - (decimal)StartPoint) / (decimal)Step) + 1m);
+                else return 1;
+            }
+        }
+    }
+    class Change
+    {
+        public VariableType VariableType
+        {
+            get;
+            set;
+        }
+        public string LayerBundleName
+        {
+            get;
+            set;
+        }
+        public string ProcessName
+        {
+            get;
+            set;
+        }
+        public double Point
+        {
+            get;
+            set;
+        }        
+    }
+    public enum VariableType
+    {
+        Layer_Unit,
+        Layer_DamagedSD,
+        Bundle_DamagedSD,
+        LearningRate,
+        InitialWeight,
     }
 }

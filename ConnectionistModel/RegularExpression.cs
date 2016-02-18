@@ -11,6 +11,11 @@ using System.Text.RegularExpressions;
 
 public static class RegularExpression
 {
+    public static bool PositiveIntCheck(string checkString)
+    {
+        if (checkString == "0") return false;
+        return UIntCheck(checkString);
+    }
     public static bool UIntCheck(string checkString)
     {
         if (checkString == "") return false;
@@ -18,7 +23,7 @@ public static class RegularExpression
         Regex regex = new Regex(@"^[0-9]*$");
 
         return regex.IsMatch(checkString);
-    }
+    }    
     public static bool IntCheck(string checkString)
     {
         if (checkString == "") return false;

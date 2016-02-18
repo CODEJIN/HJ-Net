@@ -84,7 +84,7 @@ namespace ConnectionistModel
         private void learningSetupInsertButton_Click(object sender, EventArgs e)
         {            
             if(newTrainingMatchingInformationList.Count < 0) MessageBox.Show("Insert the matching of training process and stimluli pack.");            
-            else if (!RegularExpression.UIntCheck(trainingEpochTextBox.Text))
+            else if (!RegularExpression.PositiveIntCheck(trainingEpochTextBox.Text))
             {
                 MessageBox.Show("Inserted training epoch is worng. Check Please.");
 
@@ -99,7 +99,7 @@ namespace ConnectionistModel
                 trainingEpochTextBox.SelectAll();
             }
             else if (newTestMatchingInformationList.Count < 0) MessageBox.Show("Insert the matching of test process and stimluli pack.");
-            else if (!RegularExpression.UIntCheck(testTimingTextBox.Text))
+            else if (!RegularExpression.PositiveIntCheck(testTimingTextBox.Text))
             {
                 MessageBox.Show("Inserted test timing is worng. Check Please.");
 
@@ -113,7 +113,7 @@ namespace ConnectionistModel
                 testTimingTextBox.Focus();
                 testTimingTextBox.SelectAll();
             }
-            else if (!RegularExpression.UIntCheck(matrixCalculationSizeTextBox.Text))
+            else if (!RegularExpression.PositiveIntCheck(matrixCalculationSizeTextBox.Text))
             {
                 MessageBox.Show("Inserted matrix calculation size is wrong. Check Please");
             }
@@ -414,6 +414,9 @@ namespace ConnectionistModel
                         {
                             simulator.Process(testMatrixTrialInformationList[testIndex], totalEpoch + epochIndex + 1);
                         }
+
+                        try { this.Invoke(new MethodInvoker(delegate { TestDisplayRefresh(); })); }
+                        catch { }
                     }
 
                     if (learningStatus == LearningStatus.Pausing)
@@ -441,9 +444,9 @@ namespace ConnectionistModel
         }
         private void ControlRefreshThread()
         {
-            while (true)
+            while (learningStatus != LearningStatus.End)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(100);
                 switch (learningStatus)
                 {
                     case LearningStatus.Training:
@@ -469,16 +472,13 @@ namespace ConnectionistModel
                         break;
                     case LearningStatus.Test:
                         this.Invoke(new MethodInvoker(delegate
-                        {
-                            currentEpochTextBox.Text = "0" + learningSetupList[currentLearningSetupIndex].TrainingEpoch.ToString();
+                        {   
                             pauseButton.Text = "Testing...";
                             pauseButton.Enabled = false;
                             minYAxisTestDisplayTextBox.Enabled = false;
                             maxYAxisTestDisplayTextBox.Enabled = false;
                             useTimeStampCheckBox.Enabled = false;
                             testDisplayButton.Enabled = false;
-                            try { TestDisplayRefresh(); }
-                            catch { }
                         }));
                         break;
                     case LearningStatus.Pausing:
@@ -505,20 +505,26 @@ namespace ConnectionistModel
                             currentStimulusTextBox.Text = currentTrainingIndex.ToString() + "/" + currentTrialInformationCount;
                         }));
                         break;
-                    case LearningStatus.End:
-                        this.Invoke(new MethodInvoker(delegate
-                        {
-                            startButton.Enabled = false;
-                            pauseButton.Enabled = false;
-                            resultSaveButton.Enabled = true;
-                            statusSaveButton.Enabled = true;
-                            exitButton.Enabled = true;
-                            simulator.OutputResult();
-                            MessageBox.Show("Training End");
-                        }));
-                        break;
                 }
                 if (learningStatus == LearningStatus.End || learningStatus == LearningStatus.Paused) break;                
+            }
+            if(learningStatus == LearningStatus.End)
+            {
+                this.Invoke(new MethodInvoker(delegate
+                {
+                    currentEpochTextBox.Text = "";
+                    currentProcessTextBox.Text = "";
+                    currentStimuliPackTextBox.Text = "";
+                    currentStimulusTextBox.Text = "";
+
+                    startButton.Enabled = false;
+                    pauseButton.Enabled = false;
+                    resultSaveButton.Enabled = true;
+                    statusSaveButton.Enabled = true;
+                    exitButton.Enabled = true;
+                    simulator.OutputResult();
+                    MessageBox.Show("Training End");
+                }));
             }
         }
 

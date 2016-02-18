@@ -39,7 +39,7 @@ namespace ConnectionistModel
 
         private void layerAddButton_Click(object sender, EventArgs e)
         {
-            if (!RegularExpression.UIntCheck(layerUnitAmountTextBox.Text) || !RegularExpression.UIntCheck(cleanUpUnitAmountTextBox.Text) || (!RegularExpression.UIntCheck(tickTextBox.Text) && bpttUseCheckBox.Checked))
+            if (!RegularExpression.PositiveIntCheck(layerUnitAmountTextBox.Text) || !RegularExpression.UIntCheck(cleanUpUnitAmountTextBox.Text) || (!RegularExpression.PositiveIntCheck(tickTextBox.Text) && bpttUseCheckBox.Checked))
             {
                 MessageBox.Show("Inserted Data is worng. Check Please.");
 

@@ -188,7 +188,6 @@
     <EmbeddedResource Include="ProcessControlForm.resx">
       <DependentUpon>ProcessControlForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="ClassDiagram1.cd" />
     <None Include="ConnectionistModel_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

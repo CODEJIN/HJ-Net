@@ -52,6 +52,12 @@ namespace ConnectionistModel
             BundleList[bundleName] = newBundle;
         }
 
+        public void SimulatorRenewal()
+        {
+            foreach (string key in LayerList.Keys) LayerList[key].InitialWeightSetting(WeightRange);
+            foreach (string key in BundleList.Keys) BundleList[key].InitialWeightSetting(WeightRange);
+        }
+
         public bool StimuliImport(string packName, string fileName)
         {
             StimuliPack newStimuliPack = new StimuliPack();
@@ -327,56 +333,8 @@ namespace ConnectionistModel
             string resultPath = Application.StartupPath + "\\" + String.Format("{0:yyyy MM dd HH mm ss}", DateTime.Now) + "\\";
             if (!Directory.Exists(resultPath)) Directory.CreateDirectory(resultPath);
 
-            
-            StreamWriter rawStreamWriter = new StreamWriter(resultPath + "rawData.txt");
-            rawStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tEpoch\tTimeStamp\tMeanSquredError\tMeanSemanticStress\tMeanCrossEntropy\tCorrectness\tCorrectUnit\tIncorrectActUnit\tIncorrectInactUnit\tMeanActiveUnitActivation\tMeanInactiveUnitActivation\tUnit");
-            foreach (TestData testData in TestDataList)
-            {
-                int incorrectAct = 0;
-                int incorrectInact = 0;
-                int correct = 0;
-                StringBuilder unitData = new StringBuilder();
-                for (int unitIndex = 0; unitIndex < testData.OutputActivation.ColumnCount; unitIndex++)
-                {
-                    if (testData.TargetPattern[0, unitIndex] > ActivationCriterion && testData.OutputActivation[0, unitIndex] < ActivationCriterion)
-                    {
-                        unitData.Append("▲");
-                        incorrectAct++;
-
-                    }
-                    else if (testData.TargetPattern[0, unitIndex] < InactivationCriterion && testData.OutputActivation[0, unitIndex] > InactivationCriterion)
-                    {
-                        unitData.Append("▼");
-                        incorrectInact++;
-                    }
-                    else
-                    {
-                        unitData.Append("◎");
-                        correct++;
-                    }
-                    unitData.Append(testData.OutputActivation[0, unitIndex] + "\t");
-                }
-
-                rawStreamWriter.Write(testData.ProcessName + "\t");
-                rawStreamWriter.Write(testData.StimuliPackName + "\t");
-                rawStreamWriter.Write(testData.Name + "\t");
-                rawStreamWriter.Write(testData.Epoch + "\t");
-                rawStreamWriter.Write(testData.TimeStamp + "\t");
-                rawStreamWriter.Write(testData.MeanSquredError + "\t");
-                rawStreamWriter.Write(testData.MeanSemanticStress + "\t");
-                rawStreamWriter.Write(testData.MeanCrossEntropy + "\t");
-                rawStreamWriter.Write(testData.Correctness.ToString() + "\t");
-                rawStreamWriter.Write(correct.ToString() + "\t");
-                rawStreamWriter.Write(incorrectAct.ToString() + "\t");
-                rawStreamWriter.Write(incorrectInact.ToString() + "\t");
-                rawStreamWriter.Write(testData.MeanActiveUnitActivation + "\t");
-                rawStreamWriter.Write(testData.MeanInactiveUnitActivation + "\t");
-                rawStreamWriter.Write(unitData);
-                rawStreamWriter.WriteLine();
-            }
-
-            rawStreamWriter.Flush();
-            rawStreamWriter.Close();
+            InformationDataSave(resultPath + "Inforamtion.txt");
+            RawDataSave(resultPath + "RawData.txt");
 
             StreamWriter seStreamWriter = new StreamWriter(resultPath + "SimulationResult-SquaredError.txt");
             StreamWriter ssStreamWriter = new StreamWriter(resultPath + "SimulationResult-SemanticStress.txt");
@@ -492,6 +450,136 @@ namespace ConnectionistModel
             if (UseWeightInformation) WeightInformationWriter(resultPath + "WeightData.txt");
 
             return resultPath;
+        }
+        private void InformationDataSave(string fileName)
+        {
+            StreamWriter informationStreamWriter = new StreamWriter(fileName);
+            StringBuilder informationData = new StringBuilder();
+            informationData.AppendLine("Momentum: " + Momentum);
+            informationData.AppendLine("Activation Criterion: " + ActivationCriterion);
+            informationData.AppendLine("Inactivation Criterion: " + InactivationCriterion);
+            informationData.AppendLine("Decay Rate: " + DecayRate);
+            informationData.AppendLine("Initial Weight Range: " + WeightRange);
+            informationData.AppendLine("Learning Rate: " + LearningRate);            
+            informationData.AppendLine();
+
+            informationData.AppendLine("Layer Information");
+            foreach (string key in LayerList.Keys)
+            {
+                informationData.Append("-" + LayerList[key].Name + "(");
+                informationData.Append(LayerList[key].LayerType + ", " + LayerList[key].UnitCount + ", " + LayerList[key].CleanupUnitCount);
+                if (LayerList[key].LayerType == LayerType.BPTTLayer) informationData.Append(", " + ((BPTTLayer)LayerList[key]).Tick);
+                informationData.AppendLine(")");
+            }
+
+            informationData.AppendLine();
+            informationData.AppendLine("Connection Information");
+            foreach (string key in BundleList.Keys)
+            {
+                informationData.Append("-" + BundleList[key].Name + "(");
+                informationData.Append(BundleList[key].SendLayer.Name + " -> " + BundleList[key].ReceiveLayer.Name);
+                informationData.AppendLine(")");
+            }
+
+            informationData.AppendLine();
+            informationData.AppendLine("Layer Status Information");
+            foreach (string key in ProcessDictionary.Keys)
+            {
+                informationData.AppendLine("-" + ProcessDictionary[key].Name);
+                foreach(string layerKey in ProcessDictionary[key].LayerStateDictionary.Keys)
+                {
+                    switch(ProcessDictionary[key].LayerStateDictionary[layerKey])
+                    {
+                        case LayerState.On:
+                        case LayerState.Off:
+                            informationData.AppendLine("--" + key + ": "+ ProcessDictionary[key].LayerStateDictionary[layerKey].ToString());
+                            break;
+                        case LayerState.Damaged:
+                            informationData.Append("--" + key + ": " + ProcessDictionary[key].LayerStateDictionary[layerKey].ToString() + "(");
+                            informationData.Append(ProcessDictionary[key].LayerDamagedSDDictionary[layerKey]);
+                            informationData.AppendLine(")");
+                            break;
+                    }
+                }
+            }
+
+            informationData.AppendLine();
+            informationData.AppendLine("Connection Status Information");
+            foreach (string key in ProcessDictionary.Keys)
+            {
+                informationData.AppendLine("-" + ProcessDictionary[key].Name);
+                foreach (string bundleKey in ProcessDictionary[key].BundleStateDictionary.Keys)
+                {
+                    switch (ProcessDictionary[key].BundleStateDictionary[bundleKey])
+                    {
+                        case BundleState.On:
+                        case BundleState.Off:
+                            informationData.AppendLine("--" + key + ": " + ProcessDictionary[key].BundleStateDictionary[bundleKey].ToString());
+                            break;
+                        case BundleState.Damaged:
+                            informationData.Append("--" + key + ": " + ProcessDictionary[key].BundleStateDictionary[bundleKey].ToString() + "(");
+                            informationData.Append(ProcessDictionary[key].BundleDamagedSDDictionary[bundleKey]);
+                            informationData.AppendLine(")");
+                            break;
+                    }
+                }
+            }
+
+            informationStreamWriter.Write(informationData);
+            informationStreamWriter.Flush();
+            informationStreamWriter.Close();
+        }
+        private void RawDataSave(string fileName)
+        {
+            StreamWriter rawStreamWriter = new StreamWriter(fileName);
+            rawStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tEpoch\tTimeStamp\tMeanSquredError\tMeanSemanticStress\tMeanCrossEntropy\tCorrectness\tCorrectUnit\tIncorrectActUnit\tIncorrectInactUnit\tMeanActiveUnitActivation\tMeanInactiveUnitActivation\tUnit");
+            foreach (TestData testData in TestDataList)
+            {
+                int incorrectAct = 0;
+                int incorrectInact = 0;
+                int correct = 0;
+                StringBuilder unitData = new StringBuilder();
+                for (int unitIndex = 0; unitIndex < testData.OutputActivation.ColumnCount; unitIndex++)
+                {
+                    if (testData.TargetPattern[0, unitIndex] > ActivationCriterion && testData.OutputActivation[0, unitIndex] < ActivationCriterion)
+                    {
+                        unitData.Append("▲");
+                        incorrectAct++;
+
+                    }
+                    else if (testData.TargetPattern[0, unitIndex] < InactivationCriterion && testData.OutputActivation[0, unitIndex] > InactivationCriterion)
+                    {
+                        unitData.Append("▼");
+                        incorrectInact++;
+                    }
+                    else
+                    {
+                        unitData.Append("◎");
+                        correct++;
+                    }
+                    unitData.Append(testData.OutputActivation[0, unitIndex] + "\t");
+                }
+
+                rawStreamWriter.Write(testData.ProcessName + "\t");
+                rawStreamWriter.Write(testData.StimuliPackName + "\t");
+                rawStreamWriter.Write(testData.Name + "\t");
+                rawStreamWriter.Write(testData.Epoch + "\t");
+                rawStreamWriter.Write(testData.TimeStamp + "\t");
+                rawStreamWriter.Write(testData.MeanSquredError + "\t");
+                rawStreamWriter.Write(testData.MeanSemanticStress + "\t");
+                rawStreamWriter.Write(testData.MeanCrossEntropy + "\t");
+                rawStreamWriter.Write(testData.Correctness.ToString() + "\t");
+                rawStreamWriter.Write(correct.ToString() + "\t");
+                rawStreamWriter.Write(incorrectAct.ToString() + "\t");
+                rawStreamWriter.Write(incorrectInact.ToString() + "\t");
+                rawStreamWriter.Write(testData.MeanActiveUnitActivation + "\t");
+                rawStreamWriter.Write(testData.MeanInactiveUnitActivation + "\t");
+                rawStreamWriter.Write(unitData);
+                rawStreamWriter.WriteLine();
+            }
+
+            rawStreamWriter.Flush();
+            rawStreamWriter.Close();
         }
         public void WeightSave(string fileName)
         {
