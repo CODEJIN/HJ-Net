@@ -413,6 +413,7 @@
             this.variableComboBox.Name = "variableComboBox";
             this.variableComboBox.Size = new System.Drawing.Size(108, 20);
             this.variableComboBox.TabIndex = 13;
+            this.variableComboBox.SelectedIndexChanged += new System.EventHandler(this.variableComboBox_SelectedIndexChanged);
             // 
             // variableListBox
             // 

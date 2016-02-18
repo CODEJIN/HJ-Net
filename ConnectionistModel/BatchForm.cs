@@ -483,10 +483,18 @@ namespace ConnectionistModel
                 else
                 {
                     Variable newVariable = new Variable();
+
+                    newVariable.LayerBundleName = layerBundleNameTextBox.Text;
+                    newVariable.ProcessName = processNameTextBox.Text;
+                    newVariable.StartPoint = double.Parse(startPointTextBox.Text);
+                    newVariable.EndPoint = double.Parse(endPointTextBox.Text);
+                    newVariable.Step = double.Parse(stepTextBox.Text);
+
                     switch ((string)variableComboBox.SelectedItem)
                     {
                         case "Layer-Unit":
                             newVariable.VariableType = VariableType.Layer_Unit;
+                            newVariable.ProcessName = "";
                             break;
                         case "Layer-DamagedSD":
                             newVariable.VariableType = VariableType.Layer_DamagedSD;
@@ -496,16 +504,15 @@ namespace ConnectionistModel
                             break;
                         case "Learning Rate":
                             newVariable.VariableType = VariableType.LearningRate;
+                            newVariable.LayerBundleName = "";
+                            newVariable.ProcessName = "";
                             break;
                         case "Initial Weight":
                             newVariable.VariableType = VariableType.InitialWeight;
+                            newVariable.LayerBundleName = "";
+                            newVariable.ProcessName = "";
                             break;
-                    }
-                    newVariable.LayerBundleName = layerBundleNameTextBox.Text;
-                    newVariable.ProcessName = processNameTextBox.Text;
-                    newVariable.StartPoint = double.Parse(startPointTextBox.Text);
-                    newVariable.EndPoint = double.Parse(endPointTextBox.Text);
-                    newVariable.Step = double.Parse(stepTextBox.Text);
+                    }                    
 
                     bool isExist = false;
                     foreach (Variable variable in variableList)
@@ -525,6 +532,13 @@ namespace ConnectionistModel
                     {
                         variableList.Add(newVariable);
                         VariableList_Refresh();
+
+                        variableComboBox.SelectedIndex = -1;
+                        layerBundleNameTextBox.Text = "";
+                        processNameTextBox.Text = "";
+                        startPointTextBox.Text = "";
+                        endPointTextBox.Text = "";
+                        stepTextBox.Text = "";
                     }
                 }
             }
@@ -590,6 +604,31 @@ namespace ConnectionistModel
                 totalVariousSizeLabel.Text = "Total: " + totalVariousSize;
             }
             else totalVariousSizeLabel.Text = "";
+        }
+
+        private void variableComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch ((string)variableComboBox.SelectedItem)
+            {
+                case "Layer-Unit":
+                    layerBundleNameTextBox.Enabled = true;
+                    processNameTextBox.Enabled = false;
+                    break;
+                case "Layer-DamagedSD":
+                case "Bundle-DamagedSD":
+                    layerBundleNameTextBox.Enabled = true;
+                    processNameTextBox.Enabled = true;
+                    break;
+                case "Learning Rate":
+                case "Initial Weight":                    
+                    layerBundleNameTextBox.Enabled = false;
+                    processNameTextBox.Enabled = false;
+                    break;
+                default:
+                    layerBundleNameTextBox.Enabled = true;
+                    processNameTextBox.Enabled = true;
+                    break;
+            }
         }
     }
 
