@@ -21,8 +21,8 @@ namespace ConnectionistModel
             this.Name = name;
             this.LayerType = LayerType.NormalLayer;
 
-            this.SendBundleList = new Dictionary<string, Bundle>();
-            this.ReceiveBundleList = new Dictionary<string, Bundle>();
+            this.SendConnectionList = new Dictionary<string, Connection>();
+            this.ReceiveConnectionList = new Dictionary<string, Connection>();
 
             BiasMatrix = DenseMatrix.Create(1,UnitCount, 0);
             InterConnectionMatrix = DenseMatrix.Create(UnitCount, UnitCount, 0);
@@ -75,9 +75,9 @@ namespace ConnectionistModel
         }
         public void SendActivation()
         {
-            foreach(string key in SendBundleList.Keys)
+            foreach(string key in SendConnectionList.Keys)
             {                
-                SendBundleList[key].ReceiveLayer.LayerStroageMatrix += LayerActivationMatrix * SendBundleList[key].WeightMatrix;
+                SendConnectionList[key].ReceiveLayer.LayerStroageMatrix += LayerActivationMatrix * SendConnectionList[key].WeightMatrix;
             }
         }
         public virtual void ErrorRateCalculate_Sigmoid(Matrix<double> targetPattern, double momentum)
@@ -90,16 +90,16 @@ namespace ConnectionistModel
         }
         public virtual void ErrorRateCalculate_Sigmoid(double momentum)
         {
-            foreach (string key in SendBundleList.Keys)
+            foreach (string key in SendConnectionList.Keys)
             {
-                LayerErrorMatrix += (SendBundleList[key].ReceiveLayer.LayerErrorMatrix * SendBundleList[key].WeightMatrix.Transpose()).PointwiseMultiply(momentum * layerActivationMatrix.PointwiseMultiply(1 - layerActivationMatrix));
+                LayerErrorMatrix += (SendConnectionList[key].ReceiveLayer.LayerErrorMatrix * SendConnectionList[key].WeightMatrix.Transpose()).PointwiseMultiply(momentum * layerActivationMatrix.PointwiseMultiply(1 - layerActivationMatrix));
             }
         }
         public virtual void ErrorRateCalculate_Softmax()
         {
-            foreach (string key in SendBundleList.Keys)
+            foreach (string key in SendConnectionList.Keys)
             {
-                LayerErrorMatrix += SendBundleList[key].ReceiveLayer.LayerErrorMatrix * SendBundleList[key].WeightMatrix.Transpose() ;
+                LayerErrorMatrix += SendConnectionList[key].ReceiveLayer.LayerErrorMatrix * SendConnectionList[key].WeightMatrix.Transpose() ;
             }
         }
         public void Interact()
@@ -404,12 +404,12 @@ namespace ConnectionistModel
             }
         }
 
-        public Dictionary<string, Bundle> SendBundleList
+        public Dictionary<string, Connection> SendConnectionList
         {
             get;
             set;
         }
-        public Dictionary<string, Bundle> ReceiveBundleList
+        public Dictionary<string, Connection> ReceiveConnectionList
         {
             get;
             set;
@@ -512,9 +512,9 @@ namespace ConnectionistModel
                     ((BPTTLayer)cloneLayer).HideLayerList[hideLayerIndex].BiasMatrix = HideLayerList[hideLayerIndex].BiasMatrix.Clone();
                     ((BPTTLayer)cloneLayer).HideLayerList[hideLayerIndex].InterConnectionMatrix = HideLayerList[hideLayerIndex].InterConnectionMatrix.Clone();
                 }
-                for (int hideBundleIndex = 0; hideBundleIndex < HideBundleList.Count; hideBundleIndex++)
+                for (int hideConnectionIndex = 0; hideConnectionIndex < HideConnectionList.Count; hideConnectionIndex++)
                 {
-                    ((BPTTLayer)cloneLayer).HideBundleList[hideBundleIndex].WeightMatrix = HideBundleList[hideBundleIndex].WeightMatrix;
+                    ((BPTTLayer)cloneLayer).HideConnectionList[hideConnectionIndex].WeightMatrix = HideConnectionList[hideConnectionIndex].WeightMatrix;
                 }
                 ((BPTTLayer)cloneLayer).BaseHideWeightMatrix = BaseHideWeightMatrix.Clone();
                 ((BPTTLayer)cloneLayer).BaseHideBiasMatrix = BaseHideBiasMatrix.Clone();
@@ -560,7 +560,7 @@ namespace ConnectionistModel
                 BaseHideWeightMatrix.CoerceZero(decayRate);
             }
 
-            //BPTT Layer에 Sending하는 Layer 및 Bundle의 값을 구하기 위함
+            //BPTT Layer에 Sending하는 Layer 및 Connection의 값을 구하기 위함
             Matrix<double> hideLayerErrorMatrixSum = DenseMatrix.Create(HideLayerList[0].LayerErrorMatrix.RowCount, UnitCount, 0);
             for (int i = CurrentTick; i >= 0; i--) hideLayerErrorMatrixSum += HideLayerList[i].LayerErrorMatrix;
             LayerErrorMatrix = hideLayerErrorMatrixSum / CurrentTick;
@@ -579,13 +579,13 @@ namespace ConnectionistModel
                 HideLayerList.Add(newLayer);
 
             }
-            HideBundleList = new List<Bundle>();
-            for (int bundleIndex = 0; bundleIndex < Tick; bundleIndex++)
+            HideConnectionList = new List<Connection>();
+            for (int connectionIndex = 0; connectionIndex < Tick; connectionIndex++)
             {
-                Bundle newBundle = new Bundle(random, Name + "-Hide" + bundleIndex, HideLayerList[bundleIndex], HideLayerList[bundleIndex + 1], 0);
-                newBundle.WeightMatrix = (Matrix<double>)BaseHideWeightMatrix.Clone();
-                newBundle.Initialize(BundleState.On, 0);                
-                HideBundleList.Add(newBundle);
+                Connection newConnection = new Connection(random, Name + "-Hide" + connectionIndex, HideLayerList[connectionIndex], HideLayerList[connectionIndex + 1], 0);
+                newConnection.WeightMatrix = (Matrix<double>)BaseHideWeightMatrix.Clone();
+                newConnection.Initialize(ConnectionState.On, 0);                
+                HideConnectionList.Add(newConnection);
             }
         }
 
@@ -594,7 +594,7 @@ namespace ConnectionistModel
             get;
             set;
         }
-        public List<Bundle> HideBundleList
+        public List<Connection> HideConnectionList
         {
             get;
             set;
@@ -623,11 +623,11 @@ namespace ConnectionistModel
             get;
         }
     }
-    public class Bundle
+    public class Connection
     {
         protected Random random;
         
-        public Bundle(Random random, string name, Layer sendLayer, Layer receiveLayer, double initialWeightRange)
+        public Connection(Random random, string name, Layer sendLayer, Layer receiveLayer, double initialWeightRange)
         {
             this.random = random;
 
@@ -635,8 +635,8 @@ namespace ConnectionistModel
             this.SendLayer = sendLayer;
             this.ReceiveLayer = receiveLayer;
             
-            sendLayer.SendBundleList[name] = this;
-            receiveLayer.ReceiveBundleList[name] = this;
+            sendLayer.SendConnectionList[name] = this;
+            receiveLayer.ReceiveConnectionList[name] = this;
 
             weightMatrix = DenseMatrix.Create(sendLayer.UnitCount, receiveLayer.UnitCount,0);
 
@@ -671,19 +671,19 @@ namespace ConnectionistModel
             }
         }
 
-        public void Initialize(BundleState bundleState, double damagedSD)
+        public void Initialize(ConnectionState connectionState, double damagedSD)
         {
-            this.SetState(bundleState, damagedSD);
+            this.SetState(connectionState, damagedSD);
         }        
 
-        public void Duplicate(Bundle cloneBundle)
+        public void Duplicate(Connection cloneConnection)
         {
-            cloneBundle.WeightMatrix = WeightMatrix;
+            cloneConnection.WeightMatrix = WeightMatrix;
         }
 
-        public void TransposedDuplicate(Bundle cloneBundle)
+        public void TransposedDuplicate(Connection cloneConnection)
         {
-            cloneBundle.WeightMatrix = WeightMatrix.Transpose();
+            cloneConnection.WeightMatrix = WeightMatrix.Transpose();
         }
 
         public Layer SendLayer
@@ -711,11 +711,11 @@ namespace ConnectionistModel
             {
                 switch(state)
                 {
-                    case BundleState.On:
+                    case ConnectionState.On:
                         return weightMatrix;
-                    case BundleState.Off:
+                    case ConnectionState.Off:
                         return stateMatrix;
-                    case BundleState.Damaged:
+                    case ConnectionState.Damaged:
                         return weightMatrix + stateMatrix;
                     default:
                         return weightMatrix;
@@ -727,20 +727,20 @@ namespace ConnectionistModel
             }
         }
         
-        private BundleState state;
+        private ConnectionState state;
         private Matrix<double> stateMatrix;
-        public void SetState(BundleState bundleState, double damagedSD)
+        public void SetState(ConnectionState connectionState, double damagedSD)
         {
-            state = bundleState;
-            switch (bundleState)
+            state = connectionState;
+            switch (connectionState)
             {
-                case BundleState.On:
+                case ConnectionState.On:
                     stateMatrix = DenseMatrix.Create(SendLayer.UnitCount, ReceiveLayer.UnitCount, 1);
                     break;
-                case BundleState.Off:
+                case ConnectionState.Off:
                     stateMatrix = DenseMatrix.Create(SendLayer.UnitCount, ReceiveLayer.UnitCount, 0);
                     break;
-                case BundleState.Damaged:
+                case ConnectionState.Damaged:
                     stateMatrix = RandomizeGaussianMatrixMaker(damagedSD);
                     break;
             }
@@ -756,7 +756,7 @@ namespace ConnectionistModel
         }
     }
 
-    public enum BundleState
+    public enum ConnectionState
     {
         On,
         Off,

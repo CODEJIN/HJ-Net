@@ -33,7 +33,7 @@
             this.processSetupGroupBox = new System.Windows.Forms.GroupBox();
             this.matrixCalculationSizeLabel = new System.Windows.Forms.Label();
             this.matrixCalculationSizeTextBox = new System.Windows.Forms.TextBox();
-            this.learningSetupMakingButton = new System.Windows.Forms.Button();
+            this.learningSetupCreateButton = new System.Windows.Forms.Button();
             this.learningSetupLoadButton = new System.Windows.Forms.Button();
             this.learningSetupSaveButton = new System.Windows.Forms.Button();
             this.testGroupBox = new System.Windows.Forms.GroupBox();
@@ -120,7 +120,7 @@
             // 
             this.processSetupGroupBox.Controls.Add(this.matrixCalculationSizeLabel);
             this.processSetupGroupBox.Controls.Add(this.matrixCalculationSizeTextBox);
-            this.processSetupGroupBox.Controls.Add(this.learningSetupMakingButton);
+            this.processSetupGroupBox.Controls.Add(this.learningSetupCreateButton);
             this.processSetupGroupBox.Controls.Add(this.learningSetupLoadButton);
             this.processSetupGroupBox.Controls.Add(this.learningSetupSaveButton);
             this.processSetupGroupBox.Controls.Add(this.testGroupBox);
@@ -160,15 +160,15 @@
             this.matrixCalculationSizeTextBox.TabIndex = 8;
             this.matrixCalculationSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // learningSetupMakingButton
+            // learningSetupCreateButton
             // 
-            this.learningSetupMakingButton.Location = new System.Drawing.Point(897, 289);
-            this.learningSetupMakingButton.Name = "learningSetupMakingButton";
-            this.learningSetupMakingButton.Size = new System.Drawing.Size(85, 35);
-            this.learningSetupMakingButton.TabIndex = 14;
-            this.learningSetupMakingButton.Text = "Making";
-            this.learningSetupMakingButton.UseVisualStyleBackColor = true;
-            this.learningSetupMakingButton.Click += new System.EventHandler(this.learningSetupMakingButton_Click);
+            this.learningSetupCreateButton.Location = new System.Drawing.Point(897, 289);
+            this.learningSetupCreateButton.Name = "learningSetupCreateButton";
+            this.learningSetupCreateButton.Size = new System.Drawing.Size(85, 35);
+            this.learningSetupCreateButton.TabIndex = 14;
+            this.learningSetupCreateButton.Text = "Create";
+            this.learningSetupCreateButton.UseVisualStyleBackColor = true;
+            this.learningSetupCreateButton.Click += new System.EventHandler(this.learningSetupCreateButton_Click);
             // 
             // learningSetupLoadButton
             // 
@@ -606,7 +606,7 @@
             this.learningSetupInsertButton.Name = "learningSetupInsertButton";
             this.learningSetupInsertButton.Size = new System.Drawing.Size(85, 35);
             this.learningSetupInsertButton.TabIndex = 5;
-            this.learningSetupInsertButton.Text = "End";
+            this.learningSetupInsertButton.Text = "Finish";
             this.learningSetupInsertButton.UseVisualStyleBackColor = true;
             this.learningSetupInsertButton.Click += new System.EventHandler(this.learningSetupInsertButton_Click);
             // 
@@ -892,7 +892,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(909, 64);
+            this.startButton.Location = new System.Drawing.Point(909, 23);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(189, 45);
             this.startButton.TabIndex = 3;
@@ -903,7 +903,7 @@
             // pauseButton
             // 
             this.pauseButton.Enabled = false;
-            this.pauseButton.Location = new System.Drawing.Point(909, 114);
+            this.pauseButton.Location = new System.Drawing.Point(909, 73);
             this.pauseButton.Name = "pauseButton";
             this.pauseButton.Size = new System.Drawing.Size(189, 45);
             this.pauseButton.TabIndex = 3;
@@ -914,7 +914,7 @@
             // resultSaveButton
             // 
             this.resultSaveButton.Enabled = false;
-            this.resultSaveButton.Location = new System.Drawing.Point(909, 164);
+            this.resultSaveButton.Location = new System.Drawing.Point(909, 144);
             this.resultSaveButton.Name = "resultSaveButton";
             this.resultSaveButton.Size = new System.Drawing.Size(189, 45);
             this.resultSaveButton.TabIndex = 3;
@@ -924,7 +924,7 @@
             // 
             // exitButton
             // 
-            this.exitButton.Location = new System.Drawing.Point(909, 314);
+            this.exitButton.Location = new System.Drawing.Point(909, 309);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(189, 45);
             this.exitButton.TabIndex = 3;
@@ -934,42 +934,42 @@
             // 
             // statusSaveButton
             // 
-            this.statusSaveButton.Location = new System.Drawing.Point(909, 214);
+            this.statusSaveButton.Location = new System.Drawing.Point(909, 238);
             this.statusSaveButton.Name = "statusSaveButton";
-            this.statusSaveButton.Size = new System.Drawing.Size(189, 45);
+            this.statusSaveButton.Size = new System.Drawing.Size(90, 45);
             this.statusSaveButton.TabIndex = 4;
-            this.statusSaveButton.Text = "Status Save";
+            this.statusSaveButton.Text = "Model Save\r\n(Weight Info.)";
             this.statusSaveButton.UseVisualStyleBackColor = true;
             this.statusSaveButton.Click += new System.EventHandler(this.statusSaveButton_Click);
             // 
             // statusLoadButton
             // 
-            this.statusLoadButton.Location = new System.Drawing.Point(909, 264);
+            this.statusLoadButton.Location = new System.Drawing.Point(1008, 238);
             this.statusLoadButton.Name = "statusLoadButton";
-            this.statusLoadButton.Size = new System.Drawing.Size(189, 45);
+            this.statusLoadButton.Size = new System.Drawing.Size(90, 45);
             this.statusLoadButton.TabIndex = 5;
-            this.statusLoadButton.Text = "Status Load";
+            this.statusLoadButton.Text = "Model Load\r\n(Weight Info.)";
             this.statusLoadButton.UseVisualStyleBackColor = true;
             this.statusLoadButton.Click += new System.EventHandler(this.statusLoadButton_Click);
             // 
             // saveLayerActivationCheckBox
             // 
             this.saveLayerActivationCheckBox.AutoSize = true;
-            this.saveLayerActivationCheckBox.Location = new System.Drawing.Point(909, 20);
+            this.saveLayerActivationCheckBox.Location = new System.Drawing.Point(909, 195);
             this.saveLayerActivationCheckBox.Name = "saveLayerActivationCheckBox";
-            this.saveLayerActivationCheckBox.Size = new System.Drawing.Size(146, 16);
+            this.saveLayerActivationCheckBox.Size = new System.Drawing.Size(114, 16);
             this.saveLayerActivationCheckBox.TabIndex = 6;
-            this.saveLayerActivationCheckBox.Text = "Save Layer Activation";
+            this.saveLayerActivationCheckBox.Text = "Layer Activation";
             this.saveLayerActivationCheckBox.UseVisualStyleBackColor = true;
             // 
             // saveWeightCheckBox
             // 
             this.saveWeightCheckBox.AutoSize = true;
-            this.saveWeightCheckBox.Location = new System.Drawing.Point(909, 42);
+            this.saveWeightCheckBox.Location = new System.Drawing.Point(1037, 195);
             this.saveWeightCheckBox.Name = "saveWeightCheckBox";
-            this.saveWeightCheckBox.Size = new System.Drawing.Size(93, 16);
+            this.saveWeightCheckBox.Size = new System.Drawing.Size(61, 16);
             this.saveWeightCheckBox.TabIndex = 7;
-            this.saveWeightCheckBox.Text = "Save Weight";
+            this.saveWeightCheckBox.Text = "Weight";
             this.saveWeightCheckBox.UseVisualStyleBackColor = true;
             // 
             // LearningForm
@@ -1077,7 +1077,7 @@
         private System.Windows.Forms.RichTextBox testMatchingInformationRichTextBox;
         private System.Windows.Forms.Button testMatchingAddButton;
         private System.Windows.Forms.Button trainingMatchingAddButton;
-        private System.Windows.Forms.Button learningSetupMakingButton;
+        private System.Windows.Forms.Button learningSetupCreateButton;
         private System.Windows.Forms.CheckBox saveLayerActivationCheckBox;
         private System.Windows.Forms.CheckBox saveWeightCheckBox;
         private System.Windows.Forms.CheckBox useTimeStampCheckBox;

@@ -20,7 +20,7 @@ namespace ConnectionistModel
             this.random = random;
 
             LayerList = new Dictionary<string, Layer>();
-            BundleList = new Dictionary<string, Bundle>();
+            ConnectionList = new Dictionary<string, Connection>();
             StimuliPackDictionary = new Dictionary<string, StimuliPack>();
             ProcessDictionary = new Dictionary<string, ConnectionistModel.Process>();
             TestDataList = new List<TestData>();
@@ -46,16 +46,16 @@ namespace ConnectionistModel
             LayerList[layerName] = newLayer;
         }
 
-        public void BundleMaking(string bundleName, string sendLayerName, string receiveLayerName)
+        public void ConnectionMaking(string connectionName, string sendLayerName, string receiveLayerName)
         {
-            Bundle newBundle = new Bundle(this.random, bundleName, LayerList[sendLayerName], LayerList[receiveLayerName], WeightRange);
-            BundleList[bundleName] = newBundle;
+            Connection newConnection = new Connection(this.random, connectionName, LayerList[sendLayerName], LayerList[receiveLayerName], WeightRange);
+            ConnectionList[connectionName] = newConnection;
         }
 
         public void SimulatorRenewal()
         {
             foreach (string key in LayerList.Keys) LayerList[key].InitialWeightSetting(WeightRange);
-            foreach (string key in BundleList.Keys) BundleList[key].InitialWeightSetting(WeightRange);
+            foreach (string key in ConnectionList.Keys) ConnectionList[key].InitialWeightSetting(WeightRange);
         }
 
         public bool StimuliImport(string packName, string fileName)
@@ -110,7 +110,7 @@ namespace ConnectionistModel
             Dictionary<int, string> patternSetup = matrixTrialInformation.PatternSetup;
 
             foreach (string key in LayerList.Keys) LayerList[key].Initialize(process.LayerStateDictionary[key], process.LayerDamagedSDDictionary[key], matrixStimuliData.StimuliCount);
-            foreach (string key in BundleList.Keys) BundleList[key].Initialize(process.BundleStateDictionary[key], process.BundleDamagedSDDictionary[key]);
+            foreach (string key in ConnectionList.Keys) ConnectionList[key].Initialize(process.ConnectionStateDictionary[key], process.ConnectionDamagedSDDictionary[key]);
 
             int timeStamp = 0;
 
@@ -153,17 +153,17 @@ namespace ConnectionistModel
                     case OrderCode.LayerDuplicate: //Layer Duplicate                        
                         LayerList[process[i].Layer1Name].Duplicate(LayerList[process[i].Layer2Name]);
                         break;
-                    case OrderCode.BundleDuplicate: //Bundle Duplicate                        
-                        BundleList[process[i].Bundle1Name].Duplicate(BundleList[process[i].Bundle2Name]);
+                    case OrderCode.ConnectionDuplicate: //Connection Duplicate                        
+                        ConnectionList[process[i].Connection1Name].Duplicate(ConnectionList[process[i].Connection2Name]);
                         break;
-                    case OrderCode.TransposedBundleDuplicate:
-                        BundleList[process[i].Bundle1Name].TransposedDuplicate(BundleList[process[i].Bundle2Name]);
+                    case OrderCode.TransposedConnectionDuplicate:
+                        ConnectionList[process[i].Connection1Name].TransposedDuplicate(ConnectionList[process[i].Connection2Name]);
                         break;
                     case OrderCode.BiasRenewal:
                         LayerList[process[i].Layer1Name].BiasRenewal(LearningRate, DecayRate);
                         break;
                     case OrderCode.WeightRenewal: //Weight Renewal                        
-                        BundleList[process[i].Bundle1Name].WeightRenewal(this.LearningRate, this.DecayRate);
+                        ConnectionList[process[i].Connection1Name].WeightRenewal(this.LearningRate, this.DecayRate);
                         break;
                     case OrderCode.TestValueStore:
                         List<double> meanSEList;
@@ -249,9 +249,9 @@ namespace ConnectionistModel
                             else if (process[i].SRNErrorCalculation == "Softmax") LayerList[process[i].SRNOutputLayerName].ErrorRateCalculate_Softmax(matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()]);
                             LayerList[process[i].SRNHiddenLayerName].ErrorRateCalculate_Sigmoid(Momentum);
 
-                            BundleList[process[i].SRNIHBundleName].WeightRenewal(LearningRate, DecayRate);
-                            BundleList[process[i].SRNCHBundleName].WeightRenewal(LearningRate, DecayRate);
-                            BundleList[process[i].SRNHOBundleName].WeightRenewal(LearningRate, DecayRate);
+                            ConnectionList[process[i].SRNIHConnectionName].WeightRenewal(LearningRate, DecayRate);
+                            ConnectionList[process[i].SRNCHConnectionName].WeightRenewal(LearningRate, DecayRate);
+                            ConnectionList[process[i].SRNHOConnectionName].WeightRenewal(LearningRate, DecayRate);
 
                             LayerList[process[i].SRNOutputLayerName].BiasRenewal(LearningRate, DecayRate);
                             LayerList[process[i].SRNHiddenLayerName].BiasRenewal(LearningRate, DecayRate);
@@ -474,10 +474,10 @@ namespace ConnectionistModel
 
             informationData.AppendLine();
             informationData.AppendLine("Connection Information");
-            foreach (string key in BundleList.Keys)
+            foreach (string key in ConnectionList.Keys)
             {
-                informationData.Append("-" + BundleList[key].Name + "(");
-                informationData.Append(BundleList[key].SendLayer.Name + " -> " + BundleList[key].ReceiveLayer.Name);
+                informationData.Append("-" + ConnectionList[key].Name + "(");
+                informationData.Append(ConnectionList[key].SendLayer.Name + " -> " + ConnectionList[key].ReceiveLayer.Name);
                 informationData.AppendLine(")");
             }
 
@@ -508,17 +508,17 @@ namespace ConnectionistModel
             foreach (string key in ProcessDictionary.Keys)
             {
                 informationData.AppendLine("-" + ProcessDictionary[key].Name);
-                foreach (string bundleKey in ProcessDictionary[key].BundleStateDictionary.Keys)
+                foreach (string connectionKey in ProcessDictionary[key].ConnectionStateDictionary.Keys)
                 {
-                    switch (ProcessDictionary[key].BundleStateDictionary[bundleKey])
+                    switch (ProcessDictionary[key].ConnectionStateDictionary[connectionKey])
                     {
-                        case BundleState.On:
-                        case BundleState.Off:
-                            informationData.AppendLine("--" + key + ": " + ProcessDictionary[key].BundleStateDictionary[bundleKey].ToString());
+                        case ConnectionState.On:
+                        case ConnectionState.Off:
+                            informationData.AppendLine("--" + key + ": " + ProcessDictionary[key].ConnectionStateDictionary[connectionKey].ToString());
                             break;
-                        case BundleState.Damaged:
-                            informationData.Append("--" + key + ": " + ProcessDictionary[key].BundleStateDictionary[bundleKey].ToString() + "(");
-                            informationData.Append(ProcessDictionary[key].BundleDamagedSDDictionary[bundleKey]);
+                        case ConnectionState.Damaged:
+                            informationData.Append("--" + key + ": " + ProcessDictionary[key].ConnectionStateDictionary[connectionKey].ToString() + "(");
+                            informationData.Append(ProcessDictionary[key].ConnectionDamagedSDDictionary[connectionKey]);
                             informationData.AppendLine(")");
                             break;
                     }
@@ -585,20 +585,20 @@ namespace ConnectionistModel
         {
             StreamWriter streamWriter = new StreamWriter(fileName);
 
-            //Bundle-WeightMatrix
+            //Connection-WeightMatrix
 
-            foreach (string key in BundleList.Keys)
+            foreach (string key in ConnectionList.Keys)
             {
-                streamWriter.WriteLine("!Bundle");
+                streamWriter.WriteLine("!Connection");
                 streamWriter.WriteLine("@" + key);
-                streamWriter.WriteLine("#" + BundleList[key].SendLayer.UnitCount);
-                streamWriter.WriteLine("$" + BundleList[key].ReceiveLayer.UnitCount);
-                for (int sendIndex =0; sendIndex< BundleList[key].SendLayer.UnitCount;sendIndex++)
+                streamWriter.WriteLine("#" + ConnectionList[key].SendLayer.UnitCount);
+                streamWriter.WriteLine("$" + ConnectionList[key].ReceiveLayer.UnitCount);
+                for (int sendIndex =0; sendIndex< ConnectionList[key].SendLayer.UnitCount;sendIndex++)
                 {
                     StringBuilder newLine = new StringBuilder();
-                    for (int receiveIndex = 0; receiveIndex < BundleList[key].ReceiveLayer.UnitCount; receiveIndex++)
+                    for (int receiveIndex = 0; receiveIndex < ConnectionList[key].ReceiveLayer.UnitCount; receiveIndex++)
                     {
-                        newLine.Append(BundleList[key].WeightMatrix[sendIndex, receiveIndex]);
+                        newLine.Append(ConnectionList[key].WeightMatrix[sendIndex, receiveIndex]);
                         newLine.Append("\t");
                     }
                     streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString()); //Tap이 들어가는지 체크
@@ -707,7 +707,7 @@ namespace ConnectionistModel
             foreach (string key in LayerList.Keys)
             {
                 if (LayerList[key].LayerType != LayerType.BPTTLayer) continue;
-                streamWriter.WriteLine("!BPTTLayer_BaseHideBundle");
+                streamWriter.WriteLine("!BPTTLayer_BaseHideConnection");
                 streamWriter.WriteLine("@" + key);
                 streamWriter.WriteLine("#" + LayerList[key].UnitCount);
                 streamWriter.WriteLine("$" + LayerList[key].UnitCount);                
@@ -763,14 +763,14 @@ namespace ConnectionistModel
 
                 switch (type)
                 {
-                    case "Bundle":                        
-                        BundleList[name].WeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
+                    case "Connection":                        
+                        ConnectionList[name].WeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                BundleList[name].WeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                ConnectionList[name].WeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
@@ -829,7 +829,7 @@ namespace ConnectionistModel
                             }
                         }
                         break;
-                    case "BPTTLayer_BaseHideBundle":
+                    case "BPTTLayer_BaseHideConnection":
                         ((BPTTLayer)LayerList[name]).BaseHideWeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
@@ -987,13 +987,13 @@ namespace ConnectionistModel
         public void WeightInformationReader(int epoch)
         {
             foreach (string key in LayerList.Keys) LayerList[key].Initialize(LayerState.On, 0, 1);
-            foreach (string key in BundleList.Keys) BundleList[key].Initialize(BundleState.On, 0);
+            foreach (string key in ConnectionList.Keys) ConnectionList[key].Initialize(ConnectionState.On, 0);
 
             Dictionary<string, Matrix<double>> currentWeightData = new Dictionary<string, Matrix<double>>();
                 
-            foreach (string key in BundleList.Keys)
+            foreach (string key in ConnectionList.Keys)
             {
-                currentWeightData.Add("Bundle_" + key, BundleList[key].WeightMatrix);
+                currentWeightData.Add("Connection_" + key, ConnectionList[key].WeightMatrix);
             }
 
             foreach (string key in LayerList.Keys)
@@ -1008,7 +1008,7 @@ namespace ConnectionistModel
                 currentWeightData.Add("Layer_Interconnection_" + key, LayerList[key].InterConnectionMatrix);
                 if (LayerList[key].LayerType == LayerType.BPTTLayer)
                 {
-                    currentWeightData.Add("BPTTLayer_BaseHideBundle_" + key, ((BPTTLayer)LayerList[key]).BaseHideWeightMatrix);
+                    currentWeightData.Add("BPTTLayer_BaseHideConnection_" + key, ((BPTTLayer)LayerList[key]).BaseHideWeightMatrix);
                     currentWeightData.Add("BPTTLayer_BaseHideBias_" + key, ((BPTTLayer)LayerList[key]).BaseHideBiasMatrix);
                 }
             }
@@ -1022,13 +1022,13 @@ namespace ConnectionistModel
             StringBuilder newLine = new StringBuilder();
             newLine.Append("Epoch\t");
 
-            foreach (string key in BundleList.Keys)
+            foreach (string key in ConnectionList.Keys)
             {
-                for (int fromIndex = 0; fromIndex < BundleList[key].SendLayer.UnitCount; fromIndex++)
+                for (int fromIndex = 0; fromIndex < ConnectionList[key].SendLayer.UnitCount; fromIndex++)
                 {
-                    for (int toIndex = 0; toIndex < BundleList[key].ReceiveLayer.UnitCount; toIndex++)
+                    for (int toIndex = 0; toIndex < ConnectionList[key].ReceiveLayer.UnitCount; toIndex++)
                     {
-                        newLine.Append("Bundle_" + key + "[" + fromIndex + ", " + toIndex + "]");
+                        newLine.Append("Connection_" + key + "[" + fromIndex + ", " + toIndex + "]");
                         newLine.Append("\t");
                     }
                 }
@@ -1084,7 +1084,7 @@ namespace ConnectionistModel
                     {
                         for (int toIndex = 0; toIndex < LayerList[key].UnitCount; toIndex++)
                         {
-                            newLine.Append("BPTTLayer_BaseHideBundle_" + key + "[" + fromIndex + ", " + toIndex + "]");
+                            newLine.Append("BPTTLayer_BaseHideConnection_" + key + "[" + fromIndex + ", " + toIndex + "]");
                             newLine.Append("\t");
                         }
                     }
@@ -1104,13 +1104,13 @@ namespace ConnectionistModel
                 newLine.Clear();
                 newLine.Append(epochKey + "\t");
 
-                foreach (string key in BundleList.Keys)
+                foreach (string key in ConnectionList.Keys)
                 {
-                    for (int fromIndex = 0; fromIndex < BundleList[key].SendLayer.UnitCount; fromIndex++)
+                    for (int fromIndex = 0; fromIndex < ConnectionList[key].SendLayer.UnitCount; fromIndex++)
                     {
-                        for (int toIndex = 0; toIndex < BundleList[key].ReceiveLayer.UnitCount; toIndex++)
+                        for (int toIndex = 0; toIndex < ConnectionList[key].ReceiveLayer.UnitCount; toIndex++)
                         {
-                            newLine.Append(WeightDataDictionary[epochKey]["Bundle_" + key][fromIndex, toIndex]);
+                            newLine.Append(WeightDataDictionary[epochKey]["Connection_" + key][fromIndex, toIndex]);
                             newLine.Append("\t");
                         }
                     }
@@ -1166,7 +1166,7 @@ namespace ConnectionistModel
                         {
                             for (int toIndex = 0; toIndex < LayerList[key].UnitCount; toIndex++)
                             {
-                                newLine.Append(WeightDataDictionary[epochKey]["BPTTLayer_BaseHideBundle_" + key][fromIndex, toIndex]);
+                                newLine.Append(WeightDataDictionary[epochKey]["BPTTLayer_BaseHideConnection_" + key][fromIndex, toIndex]);
                                 newLine.Append("\t");
                             }
                         }
@@ -1217,7 +1217,7 @@ namespace ConnectionistModel
             set
             {
                 this.weightRange = value;
-                foreach (string key in BundleList.Keys) BundleList[key].InitialWeightSetting(value);
+                foreach (string key in ConnectionList.Keys) ConnectionList[key].InitialWeightSetting(value);
                 foreach (string key in LayerList.Keys) LayerList[key].InitialWeightSetting(value);
             }
         }
@@ -1239,7 +1239,7 @@ namespace ConnectionistModel
             get;
             private set;
         }        
-        public Dictionary<string, Bundle> BundleList
+        public Dictionary<string, Connection> ConnectionList
         {
             get;
             private set;
@@ -1312,23 +1312,23 @@ namespace ConnectionistModel
             }
             rootNode.AppendChild(layerListNode);
 
-            XmlNode bundleListNode = xmlDocument.CreateElement("BundleList");
-            foreach (string key in BundleList.Keys)
+            XmlNode connectionListNode = xmlDocument.CreateElement("ConnectionList");
+            foreach (string key in ConnectionList.Keys)
             {
-                XmlElement bundleElement = xmlDocument.CreateElement("Bundle");
-                bundleElement.SetAttribute("Name", BundleList[key].Name);
-                bundleElement.SetAttribute("SendLayerName", BundleList[key].SendLayer.Name);
-                bundleElement.SetAttribute("ReceiveLayerName", BundleList[key].ReceiveLayer.Name);
-                bundleListNode.AppendChild(bundleElement);
+                XmlElement connectionElement = xmlDocument.CreateElement("Connection");
+                connectionElement.SetAttribute("Name", ConnectionList[key].Name);
+                connectionElement.SetAttribute("SendLayerName", ConnectionList[key].SendLayer.Name);
+                connectionElement.SetAttribute("ReceiveLayerName", ConnectionList[key].ReceiveLayer.Name);
+                connectionListNode.AppendChild(connectionElement);
             }
-            rootNode.AppendChild(bundleListNode);
+            rootNode.AppendChild(connectionListNode);
 
             xmlDocument.Save(fileName);
         }
         public void Architecture_Load(string fileName)
         {
             LayerList.Clear();
-            BundleList.Clear();
+            ConnectionList.Clear();
 
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.Load(fileName);
@@ -1348,15 +1348,15 @@ namespace ConnectionistModel
                 else if (layerNode.Attributes["BPTTUse"].Value == "1") LayerMaking(layerNode.Attributes["Name"].Value, int.Parse(layerNode.Attributes["UnitCount"].Value), int.Parse(layerNode.Attributes["CleanUpUnitCount"].Value), int.Parse(layerNode.Attributes["Tick"].Value));
             }
 
-            XmlNodeList bundleNodeList = xmlDocument.SelectNodes("/Root/BundleList/Bundle");
-            foreach (XmlNode bundleNode in bundleNodeList)
+            XmlNodeList connectionNodeList = xmlDocument.SelectNodes("/Root/ConnectionList/Connection");
+            foreach (XmlNode connectionNode in connectionNodeList)
             {
                 Layer sendLayer, receiveLayer;
 
-                sendLayer = LayerList[bundleNode.Attributes["SendLayerName"].Value];
-                receiveLayer = LayerList[bundleNode.Attributes["ReceiveLayerName"].Value];
+                sendLayer = LayerList[connectionNode.Attributes["SendLayerName"].Value];
+                receiveLayer = LayerList[connectionNode.Attributes["ReceiveLayerName"].Value];
 
-                BundleMaking(bundleNode.Attributes["Name"].Value, bundleNode.Attributes["SendLayerName"].Value, bundleNode.Attributes["ReceiveLayerName"].Value);
+                ConnectionMaking(connectionNode.Attributes["Name"].Value, connectionNode.Attributes["SendLayerName"].Value, connectionNode.Attributes["ReceiveLayerName"].Value);
             }
 
             IsSet = true;
@@ -1387,16 +1387,16 @@ namespace ConnectionistModel
                 }
                 processElement.AppendChild(layerStateDictionaryElement);
 
-                XmlElement bundleStateDictionaryElement = xmlDocument.CreateElement("BundleStateDictionary");
-                foreach (string bundleName in ProcessDictionary[key].BundleStateDictionary.Keys)
+                XmlElement connectionStateDictionaryElement = xmlDocument.CreateElement("ConnectionStateDictionary");
+                foreach (string connectionName in ProcessDictionary[key].ConnectionStateDictionary.Keys)
                 {
-                    XmlElement bundleStateElement = xmlDocument.CreateElement("BundleState");
-                    bundleStateElement.SetAttribute("Name", bundleName);
-                    bundleStateElement.SetAttribute("State", ProcessDictionary[key].BundleStateDictionary[bundleName].ToString());
-                    bundleStateElement.SetAttribute("SD", ProcessDictionary[key].BundleDamagedSDDictionary[bundleName].ToString());
-                    bundleStateDictionaryElement.AppendChild(bundleStateElement);
+                    XmlElement connectionStateElement = xmlDocument.CreateElement("ConnectionState");
+                    connectionStateElement.SetAttribute("Name", connectionName);
+                    connectionStateElement.SetAttribute("State", ProcessDictionary[key].ConnectionStateDictionary[connectionName].ToString());
+                    connectionStateElement.SetAttribute("SD", ProcessDictionary[key].ConnectionDamagedSDDictionary[connectionName].ToString());
+                    connectionStateDictionaryElement.AppendChild(connectionStateElement);
                 }
-                processElement.AppendChild(bundleStateDictionaryElement);
+                processElement.AppendChild(connectionStateDictionaryElement);
 
                 XmlElement orderListElement = xmlDocument.CreateElement("OrderList");
                 foreach (Order order in ProcessDictionary[key])
@@ -1405,8 +1405,8 @@ namespace ConnectionistModel
                     orderElement.SetAttribute("Code", order.Code.ToString());
                     orderElement.SetAttribute("Layer1", order.Layer1Name);
                     orderElement.SetAttribute("Layer2", order.Layer2Name);
-                    orderElement.SetAttribute("Bundle1", order.Bundle1Name);
-                    orderElement.SetAttribute("Bundle2", order.Bundle2Name);
+                    orderElement.SetAttribute("Connection1", order.Connection1Name);
+                    orderElement.SetAttribute("Connection2", order.Connection2Name);
 
                     switch (order.Code)
                     {
@@ -1416,9 +1416,9 @@ namespace ConnectionistModel
                             orderElement.SetAttribute("SRNContextLayerName", order.SRNContextLayerName);
                             orderElement.SetAttribute("SRNHiddenLayerName", order.SRNHiddenLayerName);
                             orderElement.SetAttribute("SRNOutputLayerName", order.SRNOutputLayerName);
-                            orderElement.SetAttribute("SRNIHBundleName", order.SRNIHBundleName);
-                            orderElement.SetAttribute("SRNCHBundleName", order.SRNCHBundleName);
-                            orderElement.SetAttribute("SRNHOBundleName", order.SRNHOBundleName);
+                            orderElement.SetAttribute("SRNIHConnectionName", order.SRNIHConnectionName);
+                            orderElement.SetAttribute("SRNCHConnectionName", order.SRNCHConnectionName);
+                            orderElement.SetAttribute("SRNHOConnectionName", order.SRNHOConnectionName);
                             orderElement.SetAttribute("SRNInputPatternName", order.SRNInputPatternName);
                             orderElement.SetAttribute("SRNOutputPatternName", order.SRNOutputPatternName);
                             orderElement.SetAttribute("SRNErrorCalculation", order.SRNErrorCalculation);
@@ -1465,21 +1465,21 @@ namespace ConnectionistModel
                             break;
                     }
                 }
-                foreach (XmlNode bundleStateNode in processNode.SelectNodes("BundleStateDictionary/BundleState"))
+                foreach (XmlNode connectionStateNode in processNode.SelectNodes("ConnectionStateDictionary/ConnectionState"))
                 {
-                    switch (bundleStateNode.Attributes["State"].Value)
+                    switch (connectionStateNode.Attributes["State"].Value)
                     {
                         case "On":
-                            loadProcess.BundleStateDictionary[bundleStateNode.Attributes["Name"].Value] = BundleState.On;
-                            loadProcess.BundleDamagedSDDictionary[bundleStateNode.Attributes["Name"].Value] = 0;
+                            loadProcess.ConnectionStateDictionary[connectionStateNode.Attributes["Name"].Value] = ConnectionState.On;
+                            loadProcess.ConnectionDamagedSDDictionary[connectionStateNode.Attributes["Name"].Value] = 0;
                             break;
                         case "Off":
-                            loadProcess.BundleStateDictionary[bundleStateNode.Attributes["Name"].Value] = BundleState.Off;
-                            loadProcess.BundleDamagedSDDictionary[bundleStateNode.Attributes["Name"].Value] = 0;
+                            loadProcess.ConnectionStateDictionary[connectionStateNode.Attributes["Name"].Value] = ConnectionState.Off;
+                            loadProcess.ConnectionDamagedSDDictionary[connectionStateNode.Attributes["Name"].Value] = 0;
                             break;
                         case "Damaged":
-                            loadProcess.BundleStateDictionary[bundleStateNode.Attributes["Name"].Value] = BundleState.Damaged;
-                            loadProcess.BundleDamagedSDDictionary[bundleStateNode.Attributes["Name"].Value] = double.Parse(bundleStateNode.Attributes["SD"].Value);
+                            loadProcess.ConnectionStateDictionary[connectionStateNode.Attributes["Name"].Value] = ConnectionState.Damaged;
+                            loadProcess.ConnectionDamagedSDDictionary[connectionStateNode.Attributes["Name"].Value] = double.Parse(connectionStateNode.Attributes["SD"].Value);
                             break;
                     }
                 }
@@ -1522,11 +1522,11 @@ namespace ConnectionistModel
                         case "LayerDuplicate":
                             loadOrder.Code = OrderCode.LayerDuplicate;
                             break;
-                        case "BundleDuplicate":
-                            loadOrder.Code = OrderCode.BundleDuplicate;
+                        case "ConnectionDuplicate":
+                            loadOrder.Code = OrderCode.ConnectionDuplicate;
                             break;
-                        case "TransposedBundleDuplicate":
-                            loadOrder.Code = OrderCode.TransposedBundleDuplicate;
+                        case "TransposedConnectionDuplicate":
+                            loadOrder.Code = OrderCode.TransposedConnectionDuplicate;
                             break;
                         case "BiasRenewal":
                             loadOrder.Code = OrderCode.BiasRenewal;
@@ -1540,8 +1540,8 @@ namespace ConnectionistModel
                         case "LayerInitialize":
                             loadOrder.Code = OrderCode.LayerInitialize;
                             break;
-                        case "BundleInitialize":
-                            loadOrder.Code = OrderCode.BundleInitialize;
+                        case "ConnectionInitialize":
+                            loadOrder.Code = OrderCode.ConnectionInitialize;
                             break;
                         case "EndInitialize":
                             loadOrder.Code = OrderCode.EndInitialize;
@@ -1576,8 +1576,8 @@ namespace ConnectionistModel
                     }
                     loadOrder.Layer1Name = orderNode.Attributes["Layer1"].Value;
                     loadOrder.Layer2Name = orderNode.Attributes["Layer2"].Value;
-                    loadOrder.Bundle1Name = orderNode.Attributes["Bundle1"].Value;
-                    loadOrder.Bundle2Name = orderNode.Attributes["Bundle2"].Value;
+                    loadOrder.Connection1Name = orderNode.Attributes["Connection1"].Value;
+                    loadOrder.Connection2Name = orderNode.Attributes["Connection2"].Value;
 
                     switch (orderNode.Attributes["Code"].Value)
                     {                        
@@ -1587,9 +1587,9 @@ namespace ConnectionistModel
                             loadOrder.SRNContextLayerName = orderNode.Attributes["SRNContextLayerName"].Value;
                             loadOrder.SRNHiddenLayerName = orderNode.Attributes["SRNHiddenLayerName"].Value;
                             loadOrder.SRNOutputLayerName = orderNode.Attributes["SRNOutputLayerName"].Value;
-                            loadOrder.SRNIHBundleName = orderNode.Attributes["SRNIHBundleName"].Value;
-                            loadOrder.SRNCHBundleName = orderNode.Attributes["SRNCHBundleName"].Value;
-                            loadOrder.SRNHOBundleName = orderNode.Attributes["SRNHOBundleName"].Value;
+                            loadOrder.SRNIHConnectionName = orderNode.Attributes["SRNIHConnectionName"].Value;
+                            loadOrder.SRNCHConnectionName = orderNode.Attributes["SRNCHConnectionName"].Value;
+                            loadOrder.SRNHOConnectionName = orderNode.Attributes["SRNHOConnectionName"].Value;
                             loadOrder.SRNInputPatternName = orderNode.Attributes["SRNInputPatternName"].Value;
                             loadOrder.SRNOutputPatternName = orderNode.Attributes["SRNOutputPatternName"].Value;
                             loadOrder.SRNErrorCalculation = orderNode.Attributes["SRNErrorCalculation"].Value;
@@ -1762,12 +1762,12 @@ namespace ConnectionistModel
             get;
             set;
         }
-        public string Bundle1Name
+        public string Connection1Name
         {
             get;
             set;
         }
-        public string Bundle2Name
+        public string Connection2Name
         {
             get;
             set;
@@ -1793,17 +1793,17 @@ namespace ConnectionistModel
             get;
             set;
         }
-        public string SRNIHBundleName
+        public string SRNIHConnectionName
         {
             get;
             set;
         }
-        public string SRNCHBundleName
+        public string SRNCHConnectionName
         {
             get;
             set;
         }
-        public string SRNHOBundleName
+        public string SRNHOConnectionName
         {
             get;
             set;
@@ -1849,9 +1849,9 @@ namespace ConnectionistModel
         TickOut,
         BaseWeightRenewal,
         LayerInitialize,
-        BundleInitialize,
-        BundleDuplicate,
-        TransposedBundleDuplicate,
+        ConnectionInitialize,
+        ConnectionDuplicate,
+        TransposedConnectionDuplicate,
         SRNTraining,
         SRNTest,
     }
@@ -1868,8 +1868,8 @@ namespace ConnectionistModel
         {
             LayerStateDictionary = new Dictionary<string, LayerState>();
             LayerDamagedSDDictionary = new Dictionary<string, double>();
-            BundleStateDictionary = new Dictionary<string, BundleState>();
-            BundleDamagedSDDictionary = new Dictionary<string, double>();
+            ConnectionStateDictionary = new Dictionary<string, ConnectionState>();
+            ConnectionDamagedSDDictionary = new Dictionary<string, double>();
         }
 
         public string Name
@@ -1888,12 +1888,12 @@ namespace ConnectionistModel
             get;
             set;
         }
-        public Dictionary<string, BundleState> BundleStateDictionary
+        public Dictionary<string, ConnectionState> ConnectionStateDictionary
         {
             get;
             set;
         }
-        public Dictionary<string, double> BundleDamagedSDDictionary
+        public Dictionary<string, double> ConnectionDamagedSDDictionary
         {
             get;
             set;

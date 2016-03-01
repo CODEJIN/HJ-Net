@@ -42,16 +42,16 @@
             this.layerNameLabel = new System.Windows.Forms.Label();
             this.layerAddButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
-            this.bundleSetupGroupBox = new System.Windows.Forms.GroupBox();
-            this.bundleNameTextBox = new System.Windows.Forms.TextBox();
-            this.bundleNameLabel = new System.Windows.Forms.Label();
-            this.bundleAddButton = new System.Windows.Forms.Button();
-            this.bundleToComboBox = new System.Windows.Forms.ComboBox();
-            this.bundleToLabel = new System.Windows.Forms.Label();
-            this.bundleFromComboBox = new System.Windows.Forms.ComboBox();
-            this.bundleFromLabel = new System.Windows.Forms.Label();
-            this.bundleDeleteButton = new System.Windows.Forms.Button();
-            this.bundleListBox = new System.Windows.Forms.ListBox();
+            this.connectionSetupGroupBox = new System.Windows.Forms.GroupBox();
+            this.connectionNameTextBox = new System.Windows.Forms.TextBox();
+            this.connectionNameLabel = new System.Windows.Forms.Label();
+            this.connectionAddButton = new System.Windows.Forms.Button();
+            this.connectionToComboBox = new System.Windows.Forms.ComboBox();
+            this.connectionToLabel = new System.Windows.Forms.Label();
+            this.connectionFromComboBox = new System.Windows.Forms.ComboBox();
+            this.connectionFromLabel = new System.Windows.Forms.Label();
+            this.connectionDeleteButton = new System.Windows.Forms.Button();
+            this.connectionListBox = new System.Windows.Forms.ListBox();
             this.configGroupBox = new System.Windows.Forms.GroupBox();
             this.configSubmitButton = new System.Windows.Forms.Button();
             this.learningRateTextBox = new System.Windows.Forms.TextBox();
@@ -69,7 +69,7 @@
             this.structureLoadButton = new System.Windows.Forms.Button();
             this.structureSaveButton = new System.Windows.Forms.Button();
             this.layerSetupGroupBox.SuspendLayout();
-            this.bundleSetupGroupBox.SuspendLayout();
+            this.connectionSetupGroupBox.SuspendLayout();
             this.configGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -212,107 +212,107 @@
             this.exitButton.UseVisualStyleBackColor = true;
             this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
             // 
-            // bundleSetupGroupBox
+            // connectionSetupGroupBox
             // 
-            this.bundleSetupGroupBox.Controls.Add(this.bundleNameTextBox);
-            this.bundleSetupGroupBox.Controls.Add(this.bundleNameLabel);
-            this.bundleSetupGroupBox.Controls.Add(this.bundleAddButton);
-            this.bundleSetupGroupBox.Controls.Add(this.bundleToComboBox);
-            this.bundleSetupGroupBox.Controls.Add(this.bundleToLabel);
-            this.bundleSetupGroupBox.Controls.Add(this.bundleFromComboBox);
-            this.bundleSetupGroupBox.Controls.Add(this.bundleFromLabel);
-            this.bundleSetupGroupBox.Controls.Add(this.bundleDeleteButton);
-            this.bundleSetupGroupBox.Controls.Add(this.bundleListBox);
-            this.bundleSetupGroupBox.Enabled = false;
-            this.bundleSetupGroupBox.Location = new System.Drawing.Point(282, 194);
-            this.bundleSetupGroupBox.Name = "bundleSetupGroupBox";
-            this.bundleSetupGroupBox.Size = new System.Drawing.Size(270, 322);
-            this.bundleSetupGroupBox.TabIndex = 3;
-            this.bundleSetupGroupBox.TabStop = false;
-            this.bundleSetupGroupBox.Text = "Bundle Setup";
+            this.connectionSetupGroupBox.Controls.Add(this.connectionNameTextBox);
+            this.connectionSetupGroupBox.Controls.Add(this.connectionNameLabel);
+            this.connectionSetupGroupBox.Controls.Add(this.connectionAddButton);
+            this.connectionSetupGroupBox.Controls.Add(this.connectionToComboBox);
+            this.connectionSetupGroupBox.Controls.Add(this.connectionToLabel);
+            this.connectionSetupGroupBox.Controls.Add(this.connectionFromComboBox);
+            this.connectionSetupGroupBox.Controls.Add(this.connectionFromLabel);
+            this.connectionSetupGroupBox.Controls.Add(this.connectionDeleteButton);
+            this.connectionSetupGroupBox.Controls.Add(this.connectionListBox);
+            this.connectionSetupGroupBox.Enabled = false;
+            this.connectionSetupGroupBox.Location = new System.Drawing.Point(282, 194);
+            this.connectionSetupGroupBox.Name = "connectionSetupGroupBox";
+            this.connectionSetupGroupBox.Size = new System.Drawing.Size(270, 322);
+            this.connectionSetupGroupBox.TabIndex = 3;
+            this.connectionSetupGroupBox.TabStop = false;
+            this.connectionSetupGroupBox.Text = "Connection Setup";
             // 
-            // bundleNameTextBox
+            // connectionNameTextBox
             // 
-            this.bundleNameTextBox.Location = new System.Drawing.Point(51, 162);
-            this.bundleNameTextBox.Name = "bundleNameTextBox";
-            this.bundleNameTextBox.Size = new System.Drawing.Size(213, 21);
-            this.bundleNameTextBox.TabIndex = 11;
+            this.connectionNameTextBox.Location = new System.Drawing.Point(51, 162);
+            this.connectionNameTextBox.Name = "connectionNameTextBox";
+            this.connectionNameTextBox.Size = new System.Drawing.Size(213, 21);
+            this.connectionNameTextBox.TabIndex = 11;
             // 
-            // bundleNameLabel
+            // connectionNameLabel
             // 
-            this.bundleNameLabel.AutoSize = true;
-            this.bundleNameLabel.Location = new System.Drawing.Point(6, 165);
-            this.bundleNameLabel.Name = "bundleNameLabel";
-            this.bundleNameLabel.Size = new System.Drawing.Size(39, 12);
-            this.bundleNameLabel.TabIndex = 13;
-            this.bundleNameLabel.Text = "Name";
+            this.connectionNameLabel.AutoSize = true;
+            this.connectionNameLabel.Location = new System.Drawing.Point(6, 165);
+            this.connectionNameLabel.Name = "connectionNameLabel";
+            this.connectionNameLabel.Size = new System.Drawing.Size(39, 12);
+            this.connectionNameLabel.TabIndex = 13;
+            this.connectionNameLabel.Text = "Name";
             // 
-            // bundleAddButton
+            // connectionAddButton
             // 
-            this.bundleAddButton.Location = new System.Drawing.Point(6, 286);
-            this.bundleAddButton.Name = "bundleAddButton";
-            this.bundleAddButton.Size = new System.Drawing.Size(258, 30);
-            this.bundleAddButton.TabIndex = 14;
-            this.bundleAddButton.Text = "Add";
-            this.bundleAddButton.UseVisualStyleBackColor = true;
-            this.bundleAddButton.Click += new System.EventHandler(this.bundleAddButton_Click);
+            this.connectionAddButton.Location = new System.Drawing.Point(6, 286);
+            this.connectionAddButton.Name = "connectionAddButton";
+            this.connectionAddButton.Size = new System.Drawing.Size(258, 30);
+            this.connectionAddButton.TabIndex = 14;
+            this.connectionAddButton.Text = "Add";
+            this.connectionAddButton.UseVisualStyleBackColor = true;
+            this.connectionAddButton.Click += new System.EventHandler(this.connectionAddButton_Click);
             // 
-            // bundleToComboBox
+            // connectionToComboBox
             // 
-            this.bundleToComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.bundleToComboBox.FormattingEnabled = true;
-            this.bundleToComboBox.Location = new System.Drawing.Point(50, 219);
-            this.bundleToComboBox.Name = "bundleToComboBox";
-            this.bundleToComboBox.Size = new System.Drawing.Size(214, 20);
-            this.bundleToComboBox.TabIndex = 13;
+            this.connectionToComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.connectionToComboBox.FormattingEnabled = true;
+            this.connectionToComboBox.Location = new System.Drawing.Point(50, 219);
+            this.connectionToComboBox.Name = "connectionToComboBox";
+            this.connectionToComboBox.Size = new System.Drawing.Size(214, 20);
+            this.connectionToComboBox.TabIndex = 13;
             // 
-            // bundleToLabel
+            // connectionToLabel
             // 
-            this.bundleToLabel.AutoSize = true;
-            this.bundleToLabel.Location = new System.Drawing.Point(25, 222);
-            this.bundleToLabel.Name = "bundleToLabel";
-            this.bundleToLabel.Size = new System.Drawing.Size(20, 12);
-            this.bundleToLabel.TabIndex = 10;
-            this.bundleToLabel.Text = "To";
+            this.connectionToLabel.AutoSize = true;
+            this.connectionToLabel.Location = new System.Drawing.Point(25, 222);
+            this.connectionToLabel.Name = "connectionToLabel";
+            this.connectionToLabel.Size = new System.Drawing.Size(20, 12);
+            this.connectionToLabel.TabIndex = 10;
+            this.connectionToLabel.Text = "To";
             // 
-            // bundleFromComboBox
+            // connectionFromComboBox
             // 
-            this.bundleFromComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.bundleFromComboBox.FormattingEnabled = true;
-            this.bundleFromComboBox.Location = new System.Drawing.Point(50, 189);
-            this.bundleFromComboBox.Name = "bundleFromComboBox";
-            this.bundleFromComboBox.Size = new System.Drawing.Size(214, 20);
-            this.bundleFromComboBox.TabIndex = 12;
+            this.connectionFromComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.connectionFromComboBox.FormattingEnabled = true;
+            this.connectionFromComboBox.Location = new System.Drawing.Point(50, 189);
+            this.connectionFromComboBox.Name = "connectionFromComboBox";
+            this.connectionFromComboBox.Size = new System.Drawing.Size(214, 20);
+            this.connectionFromComboBox.TabIndex = 12;
             // 
-            // bundleFromLabel
+            // connectionFromLabel
             // 
-            this.bundleFromLabel.AutoSize = true;
-            this.bundleFromLabel.Location = new System.Drawing.Point(11, 192);
-            this.bundleFromLabel.Name = "bundleFromLabel";
-            this.bundleFromLabel.Size = new System.Drawing.Size(34, 12);
-            this.bundleFromLabel.TabIndex = 8;
-            this.bundleFromLabel.Text = "From";
+            this.connectionFromLabel.AutoSize = true;
+            this.connectionFromLabel.Location = new System.Drawing.Point(11, 192);
+            this.connectionFromLabel.Name = "connectionFromLabel";
+            this.connectionFromLabel.Size = new System.Drawing.Size(34, 12);
+            this.connectionFromLabel.TabIndex = 8;
+            this.connectionFromLabel.Text = "From";
             // 
-            // bundleDeleteButton
+            // connectionDeleteButton
             // 
-            this.bundleDeleteButton.Location = new System.Drawing.Point(6, 126);
-            this.bundleDeleteButton.Name = "bundleDeleteButton";
-            this.bundleDeleteButton.Size = new System.Drawing.Size(258, 30);
-            this.bundleDeleteButton.TabIndex = 999;
-            this.bundleDeleteButton.TabStop = false;
-            this.bundleDeleteButton.Text = "Delete";
-            this.bundleDeleteButton.UseVisualStyleBackColor = true;
-            this.bundleDeleteButton.Click += new System.EventHandler(this.bundleDeleteButton_Click);
+            this.connectionDeleteButton.Location = new System.Drawing.Point(6, 126);
+            this.connectionDeleteButton.Name = "connectionDeleteButton";
+            this.connectionDeleteButton.Size = new System.Drawing.Size(258, 30);
+            this.connectionDeleteButton.TabIndex = 999;
+            this.connectionDeleteButton.TabStop = false;
+            this.connectionDeleteButton.Text = "Delete";
+            this.connectionDeleteButton.UseVisualStyleBackColor = true;
+            this.connectionDeleteButton.Click += new System.EventHandler(this.connectionDeleteButton_Click);
             // 
-            // bundleListBox
+            // connectionListBox
             // 
-            this.bundleListBox.FormattingEnabled = true;
-            this.bundleListBox.ItemHeight = 12;
-            this.bundleListBox.Location = new System.Drawing.Point(6, 20);
-            this.bundleListBox.Name = "bundleListBox";
-            this.bundleListBox.Size = new System.Drawing.Size(258, 100);
-            this.bundleListBox.TabIndex = 999;
-            this.bundleListBox.TabStop = false;
+            this.connectionListBox.FormattingEnabled = true;
+            this.connectionListBox.ItemHeight = 12;
+            this.connectionListBox.Location = new System.Drawing.Point(6, 20);
+            this.connectionListBox.Name = "connectionListBox";
+            this.connectionListBox.Size = new System.Drawing.Size(258, 100);
+            this.connectionListBox.TabIndex = 999;
+            this.connectionListBox.TabStop = false;
             // 
             // configGroupBox
             // 
@@ -477,7 +477,7 @@
             this.Controls.Add(this.structureSaveButton);
             this.Controls.Add(this.structureLoadButton);
             this.Controls.Add(this.configGroupBox);
-            this.Controls.Add(this.bundleSetupGroupBox);
+            this.Controls.Add(this.connectionSetupGroupBox);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.layerSetupGroupBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -485,8 +485,8 @@
             this.Text = "Architecture";
             this.layerSetupGroupBox.ResumeLayout(false);
             this.layerSetupGroupBox.PerformLayout();
-            this.bundleSetupGroupBox.ResumeLayout(false);
-            this.bundleSetupGroupBox.PerformLayout();
+            this.connectionSetupGroupBox.ResumeLayout(false);
+            this.connectionSetupGroupBox.PerformLayout();
             this.configGroupBox.ResumeLayout(false);
             this.configGroupBox.PerformLayout();
             this.ResumeLayout(false);
@@ -504,14 +504,14 @@
         private System.Windows.Forms.Label layerNameLabel;
         private System.Windows.Forms.Button layerAddButton;
         private System.Windows.Forms.Button exitButton;
-        private System.Windows.Forms.GroupBox bundleSetupGroupBox;
-        private System.Windows.Forms.ComboBox bundleToComboBox;
-        private System.Windows.Forms.Label bundleToLabel;
-        private System.Windows.Forms.ComboBox bundleFromComboBox;
-        private System.Windows.Forms.Label bundleFromLabel;
-        private System.Windows.Forms.Button bundleDeleteButton;
-        private System.Windows.Forms.ListBox bundleListBox;
-        private System.Windows.Forms.Button bundleAddButton;
+        private System.Windows.Forms.GroupBox connectionSetupGroupBox;
+        private System.Windows.Forms.ComboBox connectionToComboBox;
+        private System.Windows.Forms.Label connectionToLabel;
+        private System.Windows.Forms.ComboBox connectionFromComboBox;
+        private System.Windows.Forms.Label connectionFromLabel;
+        private System.Windows.Forms.Button connectionDeleteButton;
+        private System.Windows.Forms.ListBox connectionListBox;
+        private System.Windows.Forms.Button connectionAddButton;
         private System.Windows.Forms.GroupBox configGroupBox;
         private System.Windows.Forms.TextBox momentumTextBox;
         private System.Windows.Forms.Label momentumLabel;
@@ -524,8 +524,8 @@
         private System.Windows.Forms.Label decayRateLabel;
         private System.Windows.Forms.TextBox initialWeightRangeTextBox;
         private System.Windows.Forms.Label initialWeightRangeLabel;
-        private System.Windows.Forms.TextBox bundleNameTextBox;
-        private System.Windows.Forms.Label bundleNameLabel;
+        private System.Windows.Forms.TextBox connectionNameTextBox;
+        private System.Windows.Forms.Label connectionNameLabel;
         private System.Windows.Forms.Button structureLoadButton;
         private System.Windows.Forms.Button structureSaveButton;
         private System.Windows.Forms.TextBox learningRateTextBox;

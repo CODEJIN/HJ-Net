@@ -44,9 +44,9 @@
             this.outputLayerErrorCalculateSoftmaxButton = new System.Windows.Forms.Button();
             this.activationCalculateSoftmaxButton = new System.Windows.Forms.Button();
             this.cleanupToLayerProcessButton = new System.Windows.Forms.Button();
-            this.orderBundle2ComboBox = new System.Windows.Forms.ComboBox();
-            this.orderBundle2Label = new System.Windows.Forms.Label();
-            this.bundleDuplicateButton = new System.Windows.Forms.Button();
+            this.orderConnection2ComboBox = new System.Windows.Forms.ComboBox();
+            this.orderConnection2Label = new System.Windows.Forms.Label();
+            this.connectionDuplicateButton = new System.Windows.Forms.Button();
             this.layerInitializeButton = new System.Windows.Forms.Button();
             this.bpttOrderGroupBox = new System.Windows.Forms.GroupBox();
             this.baseWeightRenewalButton = new System.Windows.Forms.Button();
@@ -59,17 +59,17 @@
             this.orderLayer2ComboBox = new System.Windows.Forms.ComboBox();
             this.orderLayer2Label = new System.Windows.Forms.Label();
             this.outputLayerErrorCalculateSigmoidButton = new System.Windows.Forms.Button();
-            this.orderBundle1Label = new System.Windows.Forms.Label();
-            this.orderBundle1ComboBox = new System.Windows.Forms.ComboBox();
+            this.orderConnection1Label = new System.Windows.Forms.Label();
+            this.orderConnection1ComboBox = new System.Windows.Forms.ComboBox();
             this.interactButton = new System.Windows.Forms.Button();
             this.layerDuplicateButton = new System.Windows.Forms.Button();
             this.testValueStoreButton = new System.Windows.Forms.Button();
             this.biasRenewalButton = new System.Windows.Forms.Button();
             this.processGroupBox = new System.Windows.Forms.GroupBox();
-            this.processModifyButton = new System.Windows.Forms.Button();
-            this.processMakingEndButton = new System.Windows.Forms.Button();
+            this.processEditButton = new System.Windows.Forms.Button();
+            this.processFinishButton = new System.Windows.Forms.Button();
             this.processDeleteButton = new System.Windows.Forms.Button();
-            this.processMakingStartButton = new System.Windows.Forms.Button();
+            this.processCreateButton = new System.Windows.Forms.Button();
             this.processListBox = new System.Windows.Forms.ListBox();
             this.processNameLabel = new System.Windows.Forms.Label();
             this.processNameTextBox = new System.Windows.Forms.TextBox();
@@ -81,13 +81,13 @@
             this.layerOnButton = new System.Windows.Forms.Button();
             this.layerDamageButton = new System.Windows.Forms.Button();
             this.layerControlListBox = new System.Windows.Forms.ListBox();
-            this.bundleControlGroupBox = new System.Windows.Forms.GroupBox();
-            this.bundleDamagedSDLabel = new System.Windows.Forms.Label();
-            this.bundleDamagedSDTextBox = new System.Windows.Forms.TextBox();
-            this.bundleOffButton = new System.Windows.Forms.Button();
-            this.bundleOnButton = new System.Windows.Forms.Button();
-            this.bundleDamageButton = new System.Windows.Forms.Button();
-            this.bundleControlListBox = new System.Windows.Forms.ListBox();
+            this.connectionControlGroupBox = new System.Windows.Forms.GroupBox();
+            this.connectionDamagedSDLabel = new System.Windows.Forms.Label();
+            this.connectionDamagedSDTextBox = new System.Windows.Forms.TextBox();
+            this.connectionOffButton = new System.Windows.Forms.Button();
+            this.connectionOnButton = new System.Windows.Forms.Button();
+            this.connectionDamageButton = new System.Windows.Forms.Button();
+            this.connectionControlListBox = new System.Windows.Forms.ListBox();
             this.loadButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -173,11 +173,12 @@
             this.forwardLayerLabel = new System.Windows.Forms.Label();
             this.forwardLayerListBox = new System.Windows.Forms.ListBox();
             this.customOrderTabPage = new System.Windows.Forms.TabPage();
-            this.transposedBundleDuplicateButton = new System.Windows.Forms.Button();
+            this.transposedConnectionDuplicateButton = new System.Windows.Forms.Button();
+            this.processCancelButton = new System.Windows.Forms.Button();
             this.bpttOrderGroupBox.SuspendLayout();
             this.processGroupBox.SuspendLayout();
             this.layerControlGroupBox.SuspendLayout();
-            this.bundleControlGroupBox.SuspendLayout();
+            this.connectionControlGroupBox.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -212,7 +213,7 @@
             // 
             this.orderLayer1ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.orderLayer1ComboBox.FormattingEnabled = true;
-            this.orderLayer1ComboBox.Location = new System.Drawing.Point(63, 6);
+            this.orderLayer1ComboBox.Location = new System.Drawing.Point(88, 6);
             this.orderLayer1ComboBox.Name = "orderLayer1ComboBox";
             this.orderLayer1ComboBox.Size = new System.Drawing.Size(242, 20);
             this.orderLayer1ComboBox.TabIndex = 4;
@@ -221,7 +222,7 @@
             // orderLayer1Label
             // 
             this.orderLayer1Label.AutoSize = true;
-            this.orderLayer1Label.Location = new System.Drawing.Point(13, 9);
+            this.orderLayer1Label.Location = new System.Drawing.Point(39, 9);
             this.orderLayer1Label.Name = "orderLayer1Label";
             this.orderLayer1Label.Size = new System.Drawing.Size(43, 12);
             this.orderLayer1Label.TabIndex = 2;
@@ -365,34 +366,34 @@
             this.cleanupToLayerProcessButton.UseVisualStyleBackColor = true;
             this.cleanupToLayerProcessButton.Click += new System.EventHandler(this.cleanupToLayerProcessButton_Click);
             // 
-            // orderBundle2ComboBox
+            // orderConnection2ComboBox
             // 
-            this.orderBundle2ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.orderBundle2ComboBox.FormattingEnabled = true;
-            this.orderBundle2ComboBox.Location = new System.Drawing.Point(63, 94);
-            this.orderBundle2ComboBox.Name = "orderBundle2ComboBox";
-            this.orderBundle2ComboBox.Size = new System.Drawing.Size(242, 20);
-            this.orderBundle2ComboBox.TabIndex = 1010;
-            this.orderBundle2ComboBox.SelectedIndexChanged += new System.EventHandler(this.orderBundle2ComboBox_SelectedIndexChanged);
+            this.orderConnection2ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderConnection2ComboBox.FormattingEnabled = true;
+            this.orderConnection2ComboBox.Location = new System.Drawing.Point(88, 94);
+            this.orderConnection2ComboBox.Name = "orderConnection2ComboBox";
+            this.orderConnection2ComboBox.Size = new System.Drawing.Size(242, 20);
+            this.orderConnection2ComboBox.TabIndex = 1010;
+            this.orderConnection2ComboBox.SelectedIndexChanged += new System.EventHandler(this.orderConnection2ComboBox_SelectedIndexChanged);
             // 
-            // orderBundle2Label
+            // orderConnection2Label
             // 
-            this.orderBundle2Label.AutoSize = true;
-            this.orderBundle2Label.Location = new System.Drawing.Point(7, 97);
-            this.orderBundle2Label.Name = "orderBundle2Label";
-            this.orderBundle2Label.Size = new System.Drawing.Size(50, 12);
-            this.orderBundle2Label.TabIndex = 1009;
-            this.orderBundle2Label.Text = "Bundle2";
+            this.orderConnection2Label.AutoSize = true;
+            this.orderConnection2Label.Location = new System.Drawing.Point(7, 97);
+            this.orderConnection2Label.Name = "orderConnection2Label";
+            this.orderConnection2Label.Size = new System.Drawing.Size(75, 12);
+            this.orderConnection2Label.TabIndex = 1009;
+            this.orderConnection2Label.Text = "Connection2";
             // 
-            // bundleDuplicateButton
+            // connectionDuplicateButton
             // 
-            this.bundleDuplicateButton.Location = new System.Drawing.Point(345, 248);
-            this.bundleDuplicateButton.Name = "bundleDuplicateButton";
-            this.bundleDuplicateButton.Size = new System.Drawing.Size(106, 55);
-            this.bundleDuplicateButton.TabIndex = 1008;
-            this.bundleDuplicateButton.Text = "Bundle Duplicate";
-            this.bundleDuplicateButton.UseVisualStyleBackColor = true;
-            this.bundleDuplicateButton.Click += new System.EventHandler(this.bundleDuplicateButton_Click);
+            this.connectionDuplicateButton.Location = new System.Drawing.Point(345, 248);
+            this.connectionDuplicateButton.Name = "connectionDuplicateButton";
+            this.connectionDuplicateButton.Size = new System.Drawing.Size(106, 55);
+            this.connectionDuplicateButton.TabIndex = 1008;
+            this.connectionDuplicateButton.Text = "Connection Duplicate";
+            this.connectionDuplicateButton.UseVisualStyleBackColor = true;
+            this.connectionDuplicateButton.Click += new System.EventHandler(this.connectionDuplicateButton_Click);
             // 
             // layerInitializeButton
             // 
@@ -496,7 +497,7 @@
             this.orderLayer2ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.orderLayer2ComboBox.Enabled = false;
             this.orderLayer2ComboBox.FormattingEnabled = true;
-            this.orderLayer2ComboBox.Location = new System.Drawing.Point(63, 31);
+            this.orderLayer2ComboBox.Location = new System.Drawing.Point(88, 31);
             this.orderLayer2ComboBox.Name = "orderLayer2ComboBox";
             this.orderLayer2ComboBox.Size = new System.Drawing.Size(242, 20);
             this.orderLayer2ComboBox.TabIndex = 1001;
@@ -505,7 +506,7 @@
             // orderLayer2Label
             // 
             this.orderLayer2Label.AutoSize = true;
-            this.orderLayer2Label.Location = new System.Drawing.Point(13, 34);
+            this.orderLayer2Label.Location = new System.Drawing.Point(39, 34);
             this.orderLayer2Label.Name = "orderLayer2Label";
             this.orderLayer2Label.Size = new System.Drawing.Size(43, 12);
             this.orderLayer2Label.TabIndex = 1000;
@@ -522,24 +523,24 @@
             this.outputLayerErrorCalculateSigmoidButton.UseVisualStyleBackColor = true;
             this.outputLayerErrorCalculateSigmoidButton.Click += new System.EventHandler(this.outputLayerErrorCalculateSigmoidButton_Click);
             // 
-            // orderBundle1Label
+            // orderConnection1Label
             // 
-            this.orderBundle1Label.AutoSize = true;
-            this.orderBundle1Label.Location = new System.Drawing.Point(7, 71);
-            this.orderBundle1Label.Name = "orderBundle1Label";
-            this.orderBundle1Label.Size = new System.Drawing.Size(50, 12);
-            this.orderBundle1Label.TabIndex = 2;
-            this.orderBundle1Label.Text = "Bundle1";
+            this.orderConnection1Label.AutoSize = true;
+            this.orderConnection1Label.Location = new System.Drawing.Point(7, 71);
+            this.orderConnection1Label.Name = "orderConnection1Label";
+            this.orderConnection1Label.Size = new System.Drawing.Size(75, 12);
+            this.orderConnection1Label.TabIndex = 2;
+            this.orderConnection1Label.Text = "Connection1";
             // 
-            // orderBundle1ComboBox
+            // orderConnection1ComboBox
             // 
-            this.orderBundle1ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.orderBundle1ComboBox.FormattingEnabled = true;
-            this.orderBundle1ComboBox.Location = new System.Drawing.Point(63, 68);
-            this.orderBundle1ComboBox.Name = "orderBundle1ComboBox";
-            this.orderBundle1ComboBox.Size = new System.Drawing.Size(242, 20);
-            this.orderBundle1ComboBox.TabIndex = 5;
-            this.orderBundle1ComboBox.SelectedIndexChanged += new System.EventHandler(this.orderBundle1ComboBox_SelectedIndexChanged);
+            this.orderConnection1ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.orderConnection1ComboBox.FormattingEnabled = true;
+            this.orderConnection1ComboBox.Location = new System.Drawing.Point(88, 68);
+            this.orderConnection1ComboBox.Name = "orderConnection1ComboBox";
+            this.orderConnection1ComboBox.Size = new System.Drawing.Size(242, 20);
+            this.orderConnection1ComboBox.TabIndex = 5;
+            this.orderConnection1ComboBox.SelectedIndexChanged += new System.EventHandler(this.orderConnection1ComboBox_SelectedIndexChanged);
             // 
             // interactButton
             // 
@@ -587,10 +588,11 @@
             // 
             // processGroupBox
             // 
-            this.processGroupBox.Controls.Add(this.processModifyButton);
-            this.processGroupBox.Controls.Add(this.processMakingEndButton);
+            this.processGroupBox.Controls.Add(this.processCancelButton);
+            this.processGroupBox.Controls.Add(this.processEditButton);
+            this.processGroupBox.Controls.Add(this.processFinishButton);
             this.processGroupBox.Controls.Add(this.processDeleteButton);
-            this.processGroupBox.Controls.Add(this.processMakingStartButton);
+            this.processGroupBox.Controls.Add(this.processCreateButton);
             this.processGroupBox.Controls.Add(this.processListBox);
             this.processGroupBox.Controls.Add(this.processNameLabel);
             this.processGroupBox.Controls.Add(this.processNameTextBox);
@@ -601,27 +603,27 @@
             this.processGroupBox.TabStop = false;
             this.processGroupBox.Text = "Process";
             // 
-            // processModifyButton
+            // processEditButton
             // 
-            this.processModifyButton.Enabled = false;
-            this.processModifyButton.Location = new System.Drawing.Point(318, 66);
-            this.processModifyButton.Name = "processModifyButton";
-            this.processModifyButton.Size = new System.Drawing.Size(100, 30);
-            this.processModifyButton.TabIndex = 1000;
-            this.processModifyButton.Text = "Modify";
-            this.processModifyButton.UseVisualStyleBackColor = true;
-            this.processModifyButton.Click += new System.EventHandler(this.processModifyButton_Click);
+            this.processEditButton.Enabled = false;
+            this.processEditButton.Location = new System.Drawing.Point(318, 66);
+            this.processEditButton.Name = "processEditButton";
+            this.processEditButton.Size = new System.Drawing.Size(100, 30);
+            this.processEditButton.TabIndex = 1000;
+            this.processEditButton.Text = "Edit";
+            this.processEditButton.UseVisualStyleBackColor = true;
+            this.processEditButton.Click += new System.EventHandler(this.processEditButton_Click);
             // 
-            // processMakingEndButton
+            // processFinishButton
             // 
-            this.processMakingEndButton.Enabled = false;
-            this.processMakingEndButton.Location = new System.Drawing.Point(265, 102);
-            this.processMakingEndButton.Name = "processMakingEndButton";
-            this.processMakingEndButton.Size = new System.Drawing.Size(100, 30);
-            this.processMakingEndButton.TabIndex = 3;
-            this.processMakingEndButton.Text = "End";
-            this.processMakingEndButton.UseVisualStyleBackColor = true;
-            this.processMakingEndButton.Click += new System.EventHandler(this.processMakingEndButton_Click);
+            this.processFinishButton.Enabled = false;
+            this.processFinishButton.Location = new System.Drawing.Point(318, 102);
+            this.processFinishButton.Name = "processFinishButton";
+            this.processFinishButton.Size = new System.Drawing.Size(100, 30);
+            this.processFinishButton.TabIndex = 3;
+            this.processFinishButton.Text = "Finish";
+            this.processFinishButton.UseVisualStyleBackColor = true;
+            this.processFinishButton.Click += new System.EventHandler(this.processFinishButton_Click);
             // 
             // processDeleteButton
             // 
@@ -633,15 +635,15 @@
             this.processDeleteButton.UseVisualStyleBackColor = true;
             this.processDeleteButton.Click += new System.EventHandler(this.processDeleteButton_Click);
             // 
-            // processMakingStartButton
+            // processCreateButton
             // 
-            this.processMakingStartButton.Location = new System.Drawing.Point(212, 66);
-            this.processMakingStartButton.Name = "processMakingStartButton";
-            this.processMakingStartButton.Size = new System.Drawing.Size(100, 30);
-            this.processMakingStartButton.TabIndex = 2;
-            this.processMakingStartButton.Text = "Start";
-            this.processMakingStartButton.UseVisualStyleBackColor = true;
-            this.processMakingStartButton.Click += new System.EventHandler(this.processMakingStartButton_Click);
+            this.processCreateButton.Location = new System.Drawing.Point(212, 66);
+            this.processCreateButton.Name = "processCreateButton";
+            this.processCreateButton.Size = new System.Drawing.Size(100, 30);
+            this.processCreateButton.TabIndex = 2;
+            this.processCreateButton.Text = "Create";
+            this.processCreateButton.UseVisualStyleBackColor = true;
+            this.processCreateButton.Click += new System.EventHandler(this.processCreateButton_Click);
             // 
             // processListBox
             // 
@@ -752,78 +754,78 @@
             this.layerControlListBox.Size = new System.Drawing.Size(207, 64);
             this.layerControlListBox.TabIndex = 0;
             // 
-            // bundleControlGroupBox
+            // connectionControlGroupBox
             // 
-            this.bundleControlGroupBox.Controls.Add(this.bundleDamagedSDLabel);
-            this.bundleControlGroupBox.Controls.Add(this.bundleDamagedSDTextBox);
-            this.bundleControlGroupBox.Controls.Add(this.bundleOffButton);
-            this.bundleControlGroupBox.Controls.Add(this.bundleOnButton);
-            this.bundleControlGroupBox.Controls.Add(this.bundleDamageButton);
-            this.bundleControlGroupBox.Controls.Add(this.bundleControlListBox);
-            this.bundleControlGroupBox.Enabled = false;
-            this.bundleControlGroupBox.Location = new System.Drawing.Point(667, 12);
-            this.bundleControlGroupBox.Name = "bundleControlGroupBox";
-            this.bundleControlGroupBox.Size = new System.Drawing.Size(219, 140);
-            this.bundleControlGroupBox.TabIndex = 1001;
-            this.bundleControlGroupBox.TabStop = false;
-            this.bundleControlGroupBox.Text = "Bundle Control";
+            this.connectionControlGroupBox.Controls.Add(this.connectionDamagedSDLabel);
+            this.connectionControlGroupBox.Controls.Add(this.connectionDamagedSDTextBox);
+            this.connectionControlGroupBox.Controls.Add(this.connectionOffButton);
+            this.connectionControlGroupBox.Controls.Add(this.connectionOnButton);
+            this.connectionControlGroupBox.Controls.Add(this.connectionDamageButton);
+            this.connectionControlGroupBox.Controls.Add(this.connectionControlListBox);
+            this.connectionControlGroupBox.Enabled = false;
+            this.connectionControlGroupBox.Location = new System.Drawing.Point(667, 12);
+            this.connectionControlGroupBox.Name = "connectionControlGroupBox";
+            this.connectionControlGroupBox.Size = new System.Drawing.Size(219, 140);
+            this.connectionControlGroupBox.TabIndex = 1001;
+            this.connectionControlGroupBox.TabStop = false;
+            this.connectionControlGroupBox.Text = "Connection Control";
             // 
-            // bundleDamagedSDLabel
+            // connectionDamagedSDLabel
             // 
-            this.bundleDamagedSDLabel.AutoSize = true;
-            this.bundleDamagedSDLabel.Location = new System.Drawing.Point(4, 117);
-            this.bundleDamagedSDLabel.Name = "bundleDamagedSDLabel";
-            this.bundleDamagedSDLabel.Size = new System.Drawing.Size(21, 12);
-            this.bundleDamagedSDLabel.TabIndex = 7;
-            this.bundleDamagedSDLabel.Text = "SD";
+            this.connectionDamagedSDLabel.AutoSize = true;
+            this.connectionDamagedSDLabel.Location = new System.Drawing.Point(4, 117);
+            this.connectionDamagedSDLabel.Name = "connectionDamagedSDLabel";
+            this.connectionDamagedSDLabel.Size = new System.Drawing.Size(21, 12);
+            this.connectionDamagedSDLabel.TabIndex = 7;
+            this.connectionDamagedSDLabel.Text = "SD";
             // 
-            // bundleDamagedSDTextBox
+            // connectionDamagedSDTextBox
             // 
-            this.bundleDamagedSDTextBox.Location = new System.Drawing.Point(31, 113);
-            this.bundleDamagedSDTextBox.Name = "bundleDamagedSDTextBox";
-            this.bundleDamagedSDTextBox.Size = new System.Drawing.Size(75, 21);
-            this.bundleDamagedSDTextBox.TabIndex = 6;
-            this.bundleDamagedSDTextBox.Text = "0.1";
-            this.bundleDamagedSDTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.connectionDamagedSDTextBox.Location = new System.Drawing.Point(31, 113);
+            this.connectionDamagedSDTextBox.Name = "connectionDamagedSDTextBox";
+            this.connectionDamagedSDTextBox.Size = new System.Drawing.Size(75, 21);
+            this.connectionDamagedSDTextBox.TabIndex = 6;
+            this.connectionDamagedSDTextBox.Text = "0.1";
+            this.connectionDamagedSDTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // bundleOffButton
+            // connectionOffButton
             // 
-            this.bundleOffButton.Location = new System.Drawing.Point(113, 88);
-            this.bundleOffButton.Name = "bundleOffButton";
-            this.bundleOffButton.Size = new System.Drawing.Size(100, 21);
-            this.bundleOffButton.TabIndex = 4;
-            this.bundleOffButton.Text = "Off";
-            this.bundleOffButton.UseVisualStyleBackColor = true;
-            this.bundleOffButton.Click += new System.EventHandler(this.bundleOffButton_Click);
+            this.connectionOffButton.Location = new System.Drawing.Point(113, 88);
+            this.connectionOffButton.Name = "connectionOffButton";
+            this.connectionOffButton.Size = new System.Drawing.Size(100, 21);
+            this.connectionOffButton.TabIndex = 4;
+            this.connectionOffButton.Text = "Off";
+            this.connectionOffButton.UseVisualStyleBackColor = true;
+            this.connectionOffButton.Click += new System.EventHandler(this.connectionOffButton_Click);
             // 
-            // bundleOnButton
+            // connectionOnButton
             // 
-            this.bundleOnButton.Location = new System.Drawing.Point(6, 88);
-            this.bundleOnButton.Name = "bundleOnButton";
-            this.bundleOnButton.Size = new System.Drawing.Size(100, 21);
-            this.bundleOnButton.TabIndex = 5;
-            this.bundleOnButton.Text = "On";
-            this.bundleOnButton.UseVisualStyleBackColor = true;
-            this.bundleOnButton.Click += new System.EventHandler(this.bundleOnButton_Click);
+            this.connectionOnButton.Location = new System.Drawing.Point(6, 88);
+            this.connectionOnButton.Name = "connectionOnButton";
+            this.connectionOnButton.Size = new System.Drawing.Size(100, 21);
+            this.connectionOnButton.TabIndex = 5;
+            this.connectionOnButton.Text = "On";
+            this.connectionOnButton.UseVisualStyleBackColor = true;
+            this.connectionOnButton.Click += new System.EventHandler(this.connectionOnButton_Click);
             // 
-            // bundleDamageButton
+            // connectionDamageButton
             // 
-            this.bundleDamageButton.Location = new System.Drawing.Point(113, 113);
-            this.bundleDamageButton.Name = "bundleDamageButton";
-            this.bundleDamageButton.Size = new System.Drawing.Size(100, 21);
-            this.bundleDamageButton.TabIndex = 2;
-            this.bundleDamageButton.Text = "Damage";
-            this.bundleDamageButton.UseVisualStyleBackColor = true;
-            this.bundleDamageButton.Click += new System.EventHandler(this.bundleDamageButton_Click);
+            this.connectionDamageButton.Location = new System.Drawing.Point(113, 113);
+            this.connectionDamageButton.Name = "connectionDamageButton";
+            this.connectionDamageButton.Size = new System.Drawing.Size(100, 21);
+            this.connectionDamageButton.TabIndex = 2;
+            this.connectionDamageButton.Text = "Damage";
+            this.connectionDamageButton.UseVisualStyleBackColor = true;
+            this.connectionDamageButton.Click += new System.EventHandler(this.connectionDamageButton_Click);
             // 
-            // bundleControlListBox
+            // connectionControlListBox
             // 
-            this.bundleControlListBox.FormattingEnabled = true;
-            this.bundleControlListBox.ItemHeight = 12;
-            this.bundleControlListBox.Location = new System.Drawing.Point(6, 20);
-            this.bundleControlListBox.Name = "bundleControlListBox";
-            this.bundleControlListBox.Size = new System.Drawing.Size(207, 64);
-            this.bundleControlListBox.TabIndex = 1;
+            this.connectionControlListBox.FormattingEnabled = true;
+            this.connectionControlListBox.ItemHeight = 12;
+            this.connectionControlListBox.Location = new System.Drawing.Point(6, 20);
+            this.connectionControlListBox.Name = "connectionControlListBox";
+            this.connectionControlListBox.Size = new System.Drawing.Size(207, 64);
+            this.connectionControlListBox.TabIndex = 1;
             // 
             // loadButton
             // 
@@ -986,7 +988,7 @@
             // 
             this.panel2.Controls.Add(this.bpErrorSoftmaxRadioButton);
             this.panel2.Controls.Add(this.bpErrorSigmoidRadioButton);
-            this.panel2.Location = new System.Drawing.Point(30, 90);
+            this.panel2.Location = new System.Drawing.Point(30, 94);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(188, 27);
             this.panel2.TabIndex = 19;
@@ -1016,7 +1018,7 @@
             // bpTestCheckBox
             // 
             this.bpTestCheckBox.AutoSize = true;
-            this.bpTestCheckBox.Location = new System.Drawing.Point(6, 143);
+            this.bpTestCheckBox.Location = new System.Drawing.Point(6, 147);
             this.bpTestCheckBox.Name = "bpTestCheckBox";
             this.bpTestCheckBox.Size = new System.Drawing.Size(100, 16);
             this.bpTestCheckBox.TabIndex = 18;
@@ -1026,7 +1028,7 @@
             // bpOutputLayerLabel
             // 
             this.bpOutputLayerLabel.AutoSize = true;
-            this.bpOutputLayerLabel.Location = new System.Drawing.Point(31, 67);
+            this.bpOutputLayerLabel.Location = new System.Drawing.Point(31, 71);
             this.bpOutputLayerLabel.Name = "bpOutputLayerLabel";
             this.bpOutputLayerLabel.Size = new System.Drawing.Size(41, 12);
             this.bpOutputLayerLabel.TabIndex = 17;
@@ -1035,7 +1037,7 @@
             // bpHiddenLayerLabel
             // 
             this.bpHiddenLayerLabel.AutoSize = true;
-            this.bpHiddenLayerLabel.Location = new System.Drawing.Point(28, 41);
+            this.bpHiddenLayerLabel.Location = new System.Drawing.Point(28, 45);
             this.bpHiddenLayerLabel.Name = "bpHiddenLayerLabel";
             this.bpHiddenLayerLabel.Size = new System.Drawing.Size(44, 12);
             this.bpHiddenLayerLabel.TabIndex = 16;
@@ -1044,7 +1046,7 @@
             // bpInputLayerLabel
             // 
             this.bpInputLayerLabel.AutoSize = true;
-            this.bpInputLayerLabel.Location = new System.Drawing.Point(40, 15);
+            this.bpInputLayerLabel.Location = new System.Drawing.Point(40, 19);
             this.bpInputLayerLabel.Name = "bpInputLayerLabel";
             this.bpInputLayerLabel.Size = new System.Drawing.Size(32, 12);
             this.bpInputLayerLabel.TabIndex = 15;
@@ -1052,7 +1054,7 @@
             // 
             // bpButton
             // 
-            this.bpButton.Location = new System.Drawing.Point(112, 123);
+            this.bpButton.Location = new System.Drawing.Point(112, 127);
             this.bpButton.Name = "bpButton";
             this.bpButton.Size = new System.Drawing.Size(106, 55);
             this.bpButton.TabIndex = 14;
@@ -1064,7 +1066,7 @@
             // 
             this.bpOutputLayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.bpOutputLayerComboBox.FormattingEnabled = true;
-            this.bpOutputLayerComboBox.Location = new System.Drawing.Point(78, 64);
+            this.bpOutputLayerComboBox.Location = new System.Drawing.Point(78, 68);
             this.bpOutputLayerComboBox.Name = "bpOutputLayerComboBox";
             this.bpOutputLayerComboBox.Size = new System.Drawing.Size(140, 20);
             this.bpOutputLayerComboBox.TabIndex = 13;
@@ -1073,7 +1075,7 @@
             // 
             this.bpHiddenLayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.bpHiddenLayerComboBox.FormattingEnabled = true;
-            this.bpHiddenLayerComboBox.Location = new System.Drawing.Point(78, 38);
+            this.bpHiddenLayerComboBox.Location = new System.Drawing.Point(78, 42);
             this.bpHiddenLayerComboBox.Name = "bpHiddenLayerComboBox";
             this.bpHiddenLayerComboBox.Size = new System.Drawing.Size(140, 20);
             this.bpHiddenLayerComboBox.TabIndex = 12;
@@ -1082,7 +1084,7 @@
             // 
             this.bpInputLayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.bpInputLayerComboBox.FormattingEnabled = true;
-            this.bpInputLayerComboBox.Location = new System.Drawing.Point(78, 12);
+            this.bpInputLayerComboBox.Location = new System.Drawing.Point(78, 16);
             this.bpInputLayerComboBox.Name = "bpInputLayerComboBox";
             this.bpInputLayerComboBox.Size = new System.Drawing.Size(140, 20);
             this.bpInputLayerComboBox.TabIndex = 11;
@@ -1710,7 +1712,7 @@
             // customOrderTabPage
             // 
             this.customOrderTabPage.BackColor = System.Drawing.SystemColors.Control;
-            this.customOrderTabPage.Controls.Add(this.transposedBundleDuplicateButton);
+            this.customOrderTabPage.Controls.Add(this.transposedConnectionDuplicateButton);
             this.customOrderTabPage.Controls.Add(this.hiddenLayerErrorCalculateSoftmaxButton);
             this.customOrderTabPage.Controls.Add(this.bpttOrderGroupBox);
             this.customOrderTabPage.Controls.Add(this.outputLayerErrorCalculateSoftmaxButton);
@@ -1719,11 +1721,11 @@
             this.customOrderTabPage.Controls.Add(this.testValueStoreButton);
             this.customOrderTabPage.Controls.Add(this.cleanupToLayerProcessButton);
             this.customOrderTabPage.Controls.Add(this.hiddenLayerErrorCalculateSigmoidButton);
-            this.customOrderTabPage.Controls.Add(this.orderBundle2ComboBox);
+            this.customOrderTabPage.Controls.Add(this.orderConnection2ComboBox);
             this.customOrderTabPage.Controls.Add(this.layerDuplicateButton);
-            this.customOrderTabPage.Controls.Add(this.orderBundle2Label);
+            this.customOrderTabPage.Controls.Add(this.orderConnection2Label);
             this.customOrderTabPage.Controls.Add(this.interactButton);
-            this.customOrderTabPage.Controls.Add(this.bundleDuplicateButton);
+            this.customOrderTabPage.Controls.Add(this.connectionDuplicateButton);
             this.customOrderTabPage.Controls.Add(this.weightRenewalButton);
             this.customOrderTabPage.Controls.Add(this.layerInitializeButton);
             this.customOrderTabPage.Controls.Add(this.activationCalculateSigmoidButton);
@@ -1735,11 +1737,11 @@
             this.customOrderTabPage.Controls.Add(this.interconnectionRenewalButton);
             this.customOrderTabPage.Controls.Add(this.orderLayer1ComboBox);
             this.customOrderTabPage.Controls.Add(this.orderLayer2ComboBox);
-            this.customOrderTabPage.Controls.Add(this.orderBundle1ComboBox);
+            this.customOrderTabPage.Controls.Add(this.orderConnection1ComboBox);
             this.customOrderTabPage.Controls.Add(this.orderLayer2Label);
             this.customOrderTabPage.Controls.Add(this.orderLayer1Label);
             this.customOrderTabPage.Controls.Add(this.outputLayerErrorCalculateSigmoidButton);
-            this.customOrderTabPage.Controls.Add(this.orderBundle1Label);
+            this.customOrderTabPage.Controls.Add(this.orderConnection1Label);
             this.customOrderTabPage.Location = new System.Drawing.Point(4, 22);
             this.customOrderTabPage.Name = "customOrderTabPage";
             this.customOrderTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -1747,15 +1749,25 @@
             this.customOrderTabPage.TabIndex = 1;
             this.customOrderTabPage.Text = "Custom Order";
             // 
-            // transposedBundleDuplicateButton
+            // transposedConnectionDuplicateButton
             // 
-            this.transposedBundleDuplicateButton.Location = new System.Drawing.Point(457, 248);
-            this.transposedBundleDuplicateButton.Name = "transposedBundleDuplicateButton";
-            this.transposedBundleDuplicateButton.Size = new System.Drawing.Size(106, 55);
-            this.transposedBundleDuplicateButton.TabIndex = 1015;
-            this.transposedBundleDuplicateButton.Text = "Transposed\r\nBundle\r\nDuplicate";
-            this.transposedBundleDuplicateButton.UseVisualStyleBackColor = true;
-            this.transposedBundleDuplicateButton.Click += new System.EventHandler(this.transposedBundleDuplicateButton_Click);
+            this.transposedConnectionDuplicateButton.Location = new System.Drawing.Point(457, 248);
+            this.transposedConnectionDuplicateButton.Name = "transposedConnectionDuplicateButton";
+            this.transposedConnectionDuplicateButton.Size = new System.Drawing.Size(106, 55);
+            this.transposedConnectionDuplicateButton.TabIndex = 1015;
+            this.transposedConnectionDuplicateButton.Text = "Transposed\r\nConnection\r\nDuplicate";
+            this.transposedConnectionDuplicateButton.UseVisualStyleBackColor = true;
+            this.transposedConnectionDuplicateButton.Click += new System.EventHandler(this.transposedConnectionDuplicateButton_Click);
+            // 
+            // processCancelButton
+            // 
+            this.processCancelButton.Location = new System.Drawing.Point(212, 102);
+            this.processCancelButton.Name = "processCancelButton";
+            this.processCancelButton.Size = new System.Drawing.Size(100, 30);
+            this.processCancelButton.TabIndex = 1001;
+            this.processCancelButton.Text = "Cancel";
+            this.processCancelButton.UseVisualStyleBackColor = true;
+            this.processCancelButton.Click += new System.EventHandler(this.processCancelButton_Click);
             // 
             // ProcessControlForm
             // 
@@ -1766,7 +1778,7 @@
             this.Controls.Add(this.orderTabControl);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.loadButton);
-            this.Controls.Add(this.bundleControlGroupBox);
+            this.Controls.Add(this.connectionControlGroupBox);
             this.Controls.Add(this.layerControlGroupBox);
             this.Controls.Add(this.exitButton);
             this.Controls.Add(this.processGroupBox);
@@ -1782,8 +1794,8 @@
             this.processGroupBox.PerformLayout();
             this.layerControlGroupBox.ResumeLayout(false);
             this.layerControlGroupBox.PerformLayout();
-            this.bundleControlGroupBox.ResumeLayout(false);
-            this.bundleControlGroupBox.PerformLayout();
+            this.connectionControlGroupBox.ResumeLayout(false);
+            this.connectionControlGroupBox.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -1841,10 +1853,10 @@
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.Label processNameLabel;
         private System.Windows.Forms.TextBox processNameTextBox;
-        private System.Windows.Forms.Button processMakingStartButton;
-        private System.Windows.Forms.Button processMakingEndButton;
-        private System.Windows.Forms.Label orderBundle1Label;
-        private System.Windows.Forms.ComboBox orderBundle1ComboBox;
+        private System.Windows.Forms.Button processCreateButton;
+        private System.Windows.Forms.Button processFinishButton;
+        private System.Windows.Forms.Label orderConnection1Label;
+        private System.Windows.Forms.ComboBox orderConnection1ComboBox;
         private System.Windows.Forms.Button outputLayerErrorCalculateSigmoidButton;
         private System.Windows.Forms.Button interactButton;
         private System.Windows.Forms.Button layerDuplicateButton;
@@ -1852,9 +1864,9 @@
         private System.Windows.Forms.GroupBox layerControlGroupBox;
         private System.Windows.Forms.Button layerDamageButton;
         private System.Windows.Forms.ListBox layerControlListBox;
-        private System.Windows.Forms.GroupBox bundleControlGroupBox;
-        private System.Windows.Forms.Button bundleDamageButton;
-        private System.Windows.Forms.ListBox bundleControlListBox;
+        private System.Windows.Forms.GroupBox connectionControlGroupBox;
+        private System.Windows.Forms.Button connectionDamageButton;
+        private System.Windows.Forms.ListBox connectionControlListBox;
         private System.Windows.Forms.Button loadButton;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.ComboBox orderLayer2ComboBox;
@@ -1867,10 +1879,10 @@
         private System.Windows.Forms.Button tickProgressButton;
         private System.Windows.Forms.Button tickOutButton;
         private System.Windows.Forms.Button layerInitializeButton;
-        private System.Windows.Forms.ComboBox orderBundle2ComboBox;
-        private System.Windows.Forms.Label orderBundle2Label;
-        private System.Windows.Forms.Button bundleDuplicateButton;
-        private System.Windows.Forms.Button processModifyButton;
+        private System.Windows.Forms.ComboBox orderConnection2ComboBox;
+        private System.Windows.Forms.Label orderConnection2Label;
+        private System.Windows.Forms.Button connectionDuplicateButton;
+        private System.Windows.Forms.Button processEditButton;
         private System.Windows.Forms.Label srnContextLayerLabel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label srnHiddenLayerLabel;
@@ -1962,12 +1974,13 @@
         private System.Windows.Forms.TextBox layerDamagedSDTextBox;
         private System.Windows.Forms.Button layerOffButton;
         private System.Windows.Forms.Button layerOnButton;
-        private System.Windows.Forms.Label bundleDamagedSDLabel;
-        private System.Windows.Forms.TextBox bundleDamagedSDTextBox;
-        private System.Windows.Forms.Button bundleOffButton;
-        private System.Windows.Forms.Button bundleOnButton;
+        private System.Windows.Forms.Label connectionDamagedSDLabel;
+        private System.Windows.Forms.TextBox connectionDamagedSDTextBox;
+        private System.Windows.Forms.Button connectionOffButton;
+        private System.Windows.Forms.Button connectionOnButton;
         private System.Windows.Forms.RadioButton backwardFirstLayerExceptionRadioButton;
         private System.Windows.Forms.RadioButton forwardLastLayerExceptionRadioButton;
-        private System.Windows.Forms.Button transposedBundleDuplicateButton;
+        private System.Windows.Forms.Button transposedConnectionDuplicateButton;
+        private System.Windows.Forms.Button processCancelButton;
     }
 }

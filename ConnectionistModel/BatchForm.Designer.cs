@@ -51,7 +51,7 @@
             this.repeatLabel = new System.Windows.Forms.Label();
             this.stepLabel = new System.Windows.Forms.Label();
             this.endPointLabel = new System.Windows.Forms.Label();
-            this.layerBundleNameLabel = new System.Windows.Forms.Label();
+            this.layerConnectionNameLabel = new System.Windows.Forms.Label();
             this.startPointLabel = new System.Windows.Forms.Label();
             this.variableLabel = new System.Windows.Forms.Label();
             this.repeatTextBox = new System.Windows.Forms.TextBox();
@@ -60,7 +60,7 @@
             this.startPointTextBox = new System.Windows.Forms.TextBox();
             this.variableDeleteButton = new System.Windows.Forms.Button();
             this.variableAddButton = new System.Windows.Forms.Button();
-            this.layerBundleNameTextBox = new System.Windows.Forms.TextBox();
+            this.layerConnectionNameTextBox = new System.Windows.Forms.TextBox();
             this.variableComboBox = new System.Windows.Forms.ComboBox();
             this.variableListBox = new System.Windows.Forms.ListBox();
             this.stimuliPackDeleteButton = new System.Windows.Forms.Button();
@@ -227,7 +227,7 @@
             this.groupBox1.Controls.Add(this.repeatLabel);
             this.groupBox1.Controls.Add(this.stepLabel);
             this.groupBox1.Controls.Add(this.endPointLabel);
-            this.groupBox1.Controls.Add(this.layerBundleNameLabel);
+            this.groupBox1.Controls.Add(this.layerConnectionNameLabel);
             this.groupBox1.Controls.Add(this.startPointLabel);
             this.groupBox1.Controls.Add(this.variableLabel);
             this.groupBox1.Controls.Add(this.repeatTextBox);
@@ -236,7 +236,7 @@
             this.groupBox1.Controls.Add(this.startPointTextBox);
             this.groupBox1.Controls.Add(this.variableDeleteButton);
             this.groupBox1.Controls.Add(this.variableAddButton);
-            this.groupBox1.Controls.Add(this.layerBundleNameTextBox);
+            this.groupBox1.Controls.Add(this.layerConnectionNameTextBox);
             this.groupBox1.Controls.Add(this.variableComboBox);
             this.groupBox1.Controls.Add(this.variableListBox);
             this.groupBox1.Controls.Add(this.stimuliPackDeleteButton);
@@ -312,14 +312,14 @@
             this.endPointLabel.TabIndex = 19;
             this.endPointLabel.Text = "End Point";
             // 
-            // layerBundleNameLabel
+            // layerConnectionNameLabel
             // 
-            this.layerBundleNameLabel.AutoSize = true;
-            this.layerBundleNameLabel.Location = new System.Drawing.Point(669, 128);
-            this.layerBundleNameLabel.Name = "layerBundleNameLabel";
-            this.layerBundleNameLabel.Size = new System.Drawing.Size(120, 12);
-            this.layerBundleNameLabel.TabIndex = 18;
-            this.layerBundleNameLabel.Text = "Layer/Bundle Name";
+            this.layerConnectionNameLabel.AutoSize = true;
+            this.layerConnectionNameLabel.Location = new System.Drawing.Point(669, 128);
+            this.layerConnectionNameLabel.Name = "layerConnectionNameLabel";
+            this.layerConnectionNameLabel.Size = new System.Drawing.Size(65, 12);
+            this.layerConnectionNameLabel.TabIndex = 18;
+            this.layerConnectionNameLabel.Text = "L/C Name";
             // 
             // startPointLabel
             // 
@@ -392,12 +392,12 @@
             this.variableAddButton.UseVisualStyleBackColor = true;
             this.variableAddButton.Click += new System.EventHandler(this.variableAddButton_Click);
             // 
-            // layerBundleNameTextBox
+            // layerConnectionNameTextBox
             // 
-            this.layerBundleNameTextBox.Location = new System.Drawing.Point(671, 143);
-            this.layerBundleNameTextBox.Name = "layerBundleNameTextBox";
-            this.layerBundleNameTextBox.Size = new System.Drawing.Size(90, 21);
-            this.layerBundleNameTextBox.TabIndex = 14;
+            this.layerConnectionNameTextBox.Location = new System.Drawing.Point(671, 143);
+            this.layerConnectionNameTextBox.Name = "layerConnectionNameTextBox";
+            this.layerConnectionNameTextBox.Size = new System.Drawing.Size(90, 21);
+            this.layerConnectionNameTextBox.TabIndex = 14;
             // 
             // variableComboBox
             // 
@@ -406,7 +406,7 @@
             this.variableComboBox.Items.AddRange(new object[] {
             "Layer-Unit",
             "Layer-DamagedSD",
-            "Bundle-DamagedSD",
+            "Connection-DamagedSD",
             "Learning Rate",
             "Initial Weight"});
             this.variableComboBox.Location = new System.Drawing.Point(553, 143);
@@ -529,7 +529,7 @@
         private System.Windows.Forms.Button learningButton;
         private System.Windows.Forms.Label stepLabel;
         private System.Windows.Forms.Label endPointLabel;
-        private System.Windows.Forms.Label layerBundleNameLabel;
+        private System.Windows.Forms.Label layerConnectionNameLabel;
         private System.Windows.Forms.Label startPointLabel;
         private System.Windows.Forms.Label variableLabel;
         private System.Windows.Forms.TextBox stepTextBox;
@@ -537,7 +537,7 @@
         private System.Windows.Forms.TextBox startPointTextBox;
         private System.Windows.Forms.Button variableDeleteButton;
         private System.Windows.Forms.Button variableAddButton;
-        private System.Windows.Forms.TextBox layerBundleNameTextBox;
+        private System.Windows.Forms.TextBox layerConnectionNameTextBox;
         private System.Windows.Forms.ComboBox variableComboBox;
         private System.Windows.Forms.ListBox variableListBox;
         private System.Windows.Forms.Label totalVariousSizeLabel;

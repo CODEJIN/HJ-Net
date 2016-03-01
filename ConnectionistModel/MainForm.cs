@@ -79,12 +79,12 @@ namespace ConnectionistModel
         private void MainForm_VisibleChanged(object sender, System.EventArgs e)
         {
             layerStatusListBox.Items.Clear();
-            bundleStatusListBox.Items.Clear();
+            connectionStatusListBox.Items.Clear();
             stimuliPackStatusListBox.Items.Clear();
             processStatusListBox.Items.Clear();
 
             foreach (string key in simulator.LayerList.Keys) layerStatusListBox.Items.Add(key + "(" + simulator.LayerList[key].UnitCount + ")");
-            foreach (string key in simulator.BundleList.Keys) bundleStatusListBox.Items.Add(key + "(" + simulator.BundleList[key].SendLayer.Name + " -> " + simulator.BundleList[key].ReceiveLayer.Name + ")");
+            foreach (string key in simulator.ConnectionList.Keys) connectionStatusListBox.Items.Add(key + "(" + simulator.ConnectionList[key].SendLayer.Name + " -> " + simulator.ConnectionList[key].ReceiveLayer.Name + ")");
 
             foreach (string key in simulator.ProcessDictionary.Keys) processStatusListBox.Items.Add(key);
             foreach (string key in simulator.StimuliPackDictionary.Keys) stimuliPackStatusListBox.Items.Add(key);

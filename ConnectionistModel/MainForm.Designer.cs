@@ -34,13 +34,13 @@
             this.processButton = new System.Windows.Forms.Button();
             this.learningButton = new System.Windows.Forms.Button();
             this.statusGroupBox = new System.Windows.Forms.GroupBox();
-            this.bundleStatusLabel = new System.Windows.Forms.Label();
+            this.connectionStatusLabel = new System.Windows.Forms.Label();
             this.processStatusLabel = new System.Windows.Forms.Label();
             this.stimuliPackStatusLabel = new System.Windows.Forms.Label();
             this.layerStatusLabel = new System.Windows.Forms.Label();
             this.processStatusListBox = new System.Windows.Forms.ListBox();
             this.stimuliPackStatusListBox = new System.Windows.Forms.ListBox();
-            this.bundleStatusListBox = new System.Windows.Forms.ListBox();
+            this.connectionStatusListBox = new System.Windows.Forms.ListBox();
             this.layerStatusListBox = new System.Windows.Forms.ListBox();
             this.licenseTextBox = new System.Windows.Forms.TextBox();
             this.architectureGraphViewButton = new System.Windows.Forms.Button();
@@ -103,13 +103,13 @@
             // 
             // statusGroupBox
             // 
-            this.statusGroupBox.Controls.Add(this.bundleStatusLabel);
+            this.statusGroupBox.Controls.Add(this.connectionStatusLabel);
             this.statusGroupBox.Controls.Add(this.processStatusLabel);
             this.statusGroupBox.Controls.Add(this.stimuliPackStatusLabel);
             this.statusGroupBox.Controls.Add(this.layerStatusLabel);
             this.statusGroupBox.Controls.Add(this.processStatusListBox);
             this.statusGroupBox.Controls.Add(this.stimuliPackStatusListBox);
-            this.statusGroupBox.Controls.Add(this.bundleStatusListBox);
+            this.statusGroupBox.Controls.Add(this.connectionStatusListBox);
             this.statusGroupBox.Controls.Add(this.layerStatusListBox);
             this.statusGroupBox.Location = new System.Drawing.Point(315, 12);
             this.statusGroupBox.Name = "statusGroupBox";
@@ -118,14 +118,14 @@
             this.statusGroupBox.TabStop = false;
             this.statusGroupBox.Text = "Status";
             // 
-            // bundleStatusLabel
+            // connectionStatusLabel
             // 
-            this.bundleStatusLabel.AutoSize = true;
-            this.bundleStatusLabel.Location = new System.Drawing.Point(6, 144);
-            this.bundleStatusLabel.Name = "bundleStatusLabel";
-            this.bundleStatusLabel.Size = new System.Drawing.Size(44, 12);
-            this.bundleStatusLabel.TabIndex = 15;
-            this.bundleStatusLabel.Text = "Bundle";
+            this.connectionStatusLabel.AutoSize = true;
+            this.connectionStatusLabel.Location = new System.Drawing.Point(6, 144);
+            this.connectionStatusLabel.Name = "connectionStatusLabel";
+            this.connectionStatusLabel.Size = new System.Drawing.Size(44, 12);
+            this.connectionStatusLabel.TabIndex = 15;
+            this.connectionStatusLabel.Text = "Connection";
             // 
             // processStatusLabel
             // 
@@ -174,15 +174,15 @@
             this.stimuliPackStatusListBox.Size = new System.Drawing.Size(178, 100);
             this.stimuliPackStatusListBox.TabIndex = 12;
             // 
-            // bundleStatusListBox
+            // connectionStatusListBox
             // 
-            this.bundleStatusListBox.FormattingEnabled = true;
-            this.bundleStatusListBox.ItemHeight = 12;
-            this.bundleStatusListBox.Location = new System.Drawing.Point(4, 159);
-            this.bundleStatusListBox.Name = "bundleStatusListBox";
-            this.bundleStatusListBox.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.bundleStatusListBox.Size = new System.Drawing.Size(178, 100);
-            this.bundleStatusListBox.TabIndex = 13;
+            this.connectionStatusListBox.FormattingEnabled = true;
+            this.connectionStatusListBox.ItemHeight = 12;
+            this.connectionStatusListBox.Location = new System.Drawing.Point(4, 159);
+            this.connectionStatusListBox.Name = "connectionStatusListBox";
+            this.connectionStatusListBox.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            this.connectionStatusListBox.Size = new System.Drawing.Size(178, 100);
+            this.connectionStatusListBox.TabIndex = 13;
             // 
             // layerStatusListBox
             // 
@@ -289,13 +289,13 @@
         private System.Windows.Forms.Button processButton;
         private System.Windows.Forms.Button learningButton;
         private System.Windows.Forms.GroupBox statusGroupBox;
-        private System.Windows.Forms.Label bundleStatusLabel;
+        private System.Windows.Forms.Label connectionStatusLabel;
         private System.Windows.Forms.Label processStatusLabel;
         private System.Windows.Forms.Label stimuliPackStatusLabel;
         private System.Windows.Forms.Label layerStatusLabel;
         private System.Windows.Forms.ListBox processStatusListBox;
         private System.Windows.Forms.ListBox stimuliPackStatusListBox;
-        private System.Windows.Forms.ListBox bundleStatusListBox;
+        private System.Windows.Forms.ListBox connectionStatusListBox;
         private System.Windows.Forms.ListBox layerStatusListBox;
         private System.Windows.Forms.PictureBox cclPictureBox;
         private System.Windows.Forms.TextBox licenseTextBox;

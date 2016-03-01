@@ -56,11 +56,11 @@ namespace ConnectionistModel
 
         }
 
-        private void learningSetupMakingButton_Click(object sender, EventArgs e)
+        private void learningSetupCreateButton_Click(object sender, EventArgs e)
         {
             learningStatus = LearningStatus.Making;
 
-            learningSetupMakingButton.Enabled = false;
+            learningSetupCreateButton.Enabled = false;
             learningSetupInsertButton.Enabled = true;
             trainingEpochTextBox.Enabled = true;
             testTimingTextBox.Enabled = true;
@@ -177,7 +177,7 @@ namespace ConnectionistModel
 
                 learningStatus = LearningStatus.Wating;
 
-                learningSetupMakingButton.Enabled = true;
+                learningSetupCreateButton.Enabled = true;
                 learningSetupInsertButton.Enabled = false;
                 trainingEpochTextBox.Enabled = false;
                 testTimingTextBox.Enabled = false;

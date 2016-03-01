@@ -41,19 +41,25 @@ namespace ConnectionistModel
                 OrderRefresh();
             }
         }
-        private void processMakingStartButton_Click(object sender, EventArgs e)
+        private void processCreateButton_Click(object sender, EventArgs e)
         {
             if (processNameTextBox.Text == "" ) MessageBox.Show("Insert process name.");
             else if (simulator.ProcessDictionary.ContainsKey(processNameTextBox.Text)) MessageBox.Show("there is already the process name in list.");
             else 
             {
                 processNameTextBox.Enabled = false;
-                processMakingStartButton.Enabled = false;
-                processModifyButton.Enabled = false;
-                processMakingEndButton.Enabled = true;
+                processCreateButton.Enabled = false;
+                processEditButton.Enabled = false;
+                processCancelButton.Enabled = true;
+                processFinishButton.Enabled = true;
+
+                processListBox.Enabled = false;
+                processDeleteButton.Enabled = false;
+
+                processListBox.Enabled = false;
 
                 layerControlGroupBox.Enabled = true;
-                bundleControlGroupBox.Enabled = true;
+                connectionControlGroupBox.Enabled = true;
                 orderTabControl.Enabled = true;
 
                 newProcess = new Process();
@@ -63,10 +69,10 @@ namespace ConnectionistModel
                     newProcess.LayerStateDictionary[key] = LayerState.On;
                     newProcess.LayerDamagedSDDictionary[key] = 0;
                 }
-                foreach (string key in simulator.BundleList.Keys)
+                foreach (string key in simulator.ConnectionList.Keys)
                 {
-                    newProcess.BundleStateDictionary[key] = BundleState.On;
-                    newProcess.BundleDamagedSDDictionary[key] = 0;
+                    newProcess.ConnectionStateDictionary[key] = ConnectionState.On;
+                    newProcess.ConnectionDamagedSDDictionary[key] = 0;
                 }
 
                 isMaking = true;
@@ -75,29 +81,77 @@ namespace ConnectionistModel
                 OrderRefresh();
             }
         }
-        private void processModifyButton_Click(object sender, EventArgs e)
+        private void processEditButton_Click(object sender, EventArgs e)
         {
             processNameTextBox.Enabled = false;
-            processMakingStartButton.Enabled = false;
-            processModifyButton.Enabled = false;
-            processMakingEndButton.Enabled = true;
+            processCreateButton.Enabled = false;
+            processEditButton.Enabled = false;
+            processCancelButton.Enabled = true;
+            processFinishButton.Enabled = true;
+
+            processListBox.Enabled = false;
+            processDeleteButton.Enabled = false;
 
             layerControlGroupBox.Enabled = true;
-            bundleControlGroupBox.Enabled = true;
+            connectionControlGroupBox.Enabled = true;
             orderTabControl.Enabled = true;
-            //bpGroupBox.Enabled = true;
-            //bpttGroupBox.Enabled = true;
-            //srnGroupBox.Enabled = true;
-            //customOrderGroupBox.Enabled = true;
 
-            newProcess = simulator.ProcessDictionary[(string)processListBox.SelectedItem];
+            newProcess.Name = simulator.ProcessDictionary[(string)processListBox.SelectedItem].Name;
+            foreach (Order order in simulator.ProcessDictionary[(string)processListBox.SelectedItem])
+            {
+                Order newOrder = new Order();
+                newOrder.Code = order.Code;
+                newOrder.Layer1Name = order.Layer1Name;
+                newOrder.Layer2Name = order.Layer2Name;
+                newOrder.Connection1Name = order.Connection1Name;
+                newOrder.Connection2Name = order.Connection2Name;
+
+                newProcess.Add(newOrder);
+            }
+            foreach (string key in simulator.ProcessDictionary[(string)processListBox.SelectedItem].LayerStateDictionary.Keys)
+            {
+                newProcess.LayerStateDictionary[key] = simulator.ProcessDictionary[(string)processListBox.SelectedItem].LayerStateDictionary[key];
+                newProcess.LayerDamagedSDDictionary[key] = simulator.ProcessDictionary[(string)processListBox.SelectedItem].LayerDamagedSDDictionary[key];
+            }
+            foreach (string key in simulator.ProcessDictionary[(string)processListBox.SelectedItem].ConnectionStateDictionary.Keys)
+            {
+                newProcess.ConnectionStateDictionary[key] = simulator.ProcessDictionary[(string)processListBox.SelectedItem].ConnectionStateDictionary[key];
+                newProcess.ConnectionDamagedSDDictionary[key] = simulator.ProcessDictionary[(string)processListBox.SelectedItem].ConnectionDamagedSDDictionary[key];
+            }
 
             isMaking = true;
 
             ControlRefresh();
             OrderRefresh();
         }
-        private void processMakingEndButton_Click(object sender, EventArgs e)
+        private void processCancelButton_Click(object sender, EventArgs e)
+        {
+            newProcess = new Process();
+
+            ProcessRefresh();
+            ControlRefresh();
+            OrderRefresh();
+
+            processNameTextBox.Enabled = true;
+            processCreateButton.Enabled = true;
+            processEditButton.Enabled = false;
+            processCancelButton.Enabled = false;
+            processFinishButton.Enabled = false;
+            
+            processListBox.Enabled = true;
+            processDeleteButton.Enabled = true;
+            
+            layerControlGroupBox.Enabled = false;
+            connectionControlGroupBox.Enabled = false;
+            orderTabControl.Enabled = false;
+            //bpGroupBox.Enabled = false;
+            //bpttGroupBox.Enabled = false;
+            //srnGroupBox.Enabled = false;
+            //customOrderGroupBox.Enabled = false;
+
+            isMaking = false;
+        }
+        private void processFinishButton_Click(object sender, EventArgs e)
         {
             if (newProcess.Count == 0) MessageBox.Show("There is no order.");
             else if (newProcess[newProcess.Count - 1].Code != OrderCode.EndInitialize) MessageBox.Show("Last order must be 'End & Initialize'");
@@ -111,11 +165,16 @@ namespace ConnectionistModel
                 OrderRefresh();
 
                 processNameTextBox.Enabled = true;
-                processMakingStartButton.Enabled = true;
-                processMakingEndButton.Enabled = false;
+                processCreateButton.Enabled = true;
+                processEditButton.Enabled = false;
+                processCancelButton.Enabled = false;
+                processFinishButton.Enabled = false;
+
+                processListBox.Enabled = true;
+                processDeleteButton.Enabled = true;
 
                 layerControlGroupBox.Enabled = false;
-                bundleControlGroupBox.Enabled = false;
+                connectionControlGroupBox.Enabled = false;
                 orderTabControl.Enabled = false;
                 //bpGroupBox.Enabled = false;
                 //bpttGroupBox.Enabled = false;
@@ -125,15 +184,16 @@ namespace ConnectionistModel
                 isMaking = false;
             }
         }
+        
         private void processListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(processListBox.SelectedIndex > -1)
             {
-                processModifyButton.Enabled = true;
+                processEditButton.Enabled = true;
                 ControlRefresh();
                 OrderRefresh();
             }
-            else processModifyButton.Enabled = false;
+            else processEditButton.Enabled = false;
         }
         
         private void layerOnButton_Click(object sender, EventArgs e)
@@ -180,44 +240,44 @@ namespace ConnectionistModel
             }
         }
 
-        private void bundleOnButton_Click(object sender, EventArgs e)
+        private void connectionOnButton_Click(object sender, EventArgs e)
         {
-            if (bundleControlListBox.SelectedIndex >= 0)
+            if (connectionControlListBox.SelectedIndex >= 0)
             {
-                string selectedBundleName = (string)bundleControlListBox.SelectedItem;
-                selectedBundleName = selectedBundleName.Remove(selectedBundleName.LastIndexOf(" ->"));
-                newProcess.BundleStateDictionary[selectedBundleName] = BundleState.On;
-                newProcess.BundleDamagedSDDictionary[selectedBundleName] = 0;
+                string selectedConnectionName = (string)connectionControlListBox.SelectedItem;
+                selectedConnectionName = selectedConnectionName.Remove(selectedConnectionName.LastIndexOf(" ->"));
+                newProcess.ConnectionStateDictionary[selectedConnectionName] = ConnectionState.On;
+                newProcess.ConnectionDamagedSDDictionary[selectedConnectionName] = 0;
 
                 ControlRefresh();
             }
         }
-        private void bundleOffButton_Click(object sender, EventArgs e)
+        private void connectionOffButton_Click(object sender, EventArgs e)
         {
-            if (bundleControlListBox.SelectedIndex >= 0)
+            if (connectionControlListBox.SelectedIndex >= 0)
             {
-                string selectedBundleName = (string)bundleControlListBox.SelectedItem;
-                selectedBundleName = selectedBundleName.Remove(selectedBundleName.LastIndexOf(" ->"));
-                newProcess.BundleStateDictionary[selectedBundleName] = BundleState.Off;
-                newProcess.BundleDamagedSDDictionary[selectedBundleName] = 0;
+                string selectedConnectionName = (string)connectionControlListBox.SelectedItem;
+                selectedConnectionName = selectedConnectionName.Remove(selectedConnectionName.LastIndexOf(" ->"));
+                newProcess.ConnectionStateDictionary[selectedConnectionName] = ConnectionState.Off;
+                newProcess.ConnectionDamagedSDDictionary[selectedConnectionName] = 0;
 
                 ControlRefresh();
             }
         }
-        private void bundleDamageButton_Click(object sender, EventArgs e)
+        private void connectionDamageButton_Click(object sender, EventArgs e)
         {
-            if (bundleControlListBox.SelectedIndex >= 0)
+            if (connectionControlListBox.SelectedIndex >= 0)
             {
-                if (!RegularExpression.DoubleCheck(bundleDamagedSDTextBox.Text))
+                if (!RegularExpression.DoubleCheck(connectionDamagedSDTextBox.Text))
                 {
                     MessageBox.Show("SD has to be a real number.");
                 }
                 else
                 {
-                    string selectedBundleName = (string)bundleControlListBox.SelectedItem;
-                    selectedBundleName = selectedBundleName.Remove(selectedBundleName.LastIndexOf(" ->"));
-                    newProcess.BundleStateDictionary[selectedBundleName] = BundleState.Damaged;
-                    newProcess.BundleDamagedSDDictionary[selectedBundleName] = double.Parse(bundleDamagedSDTextBox.Text);
+                    string selectedConnectionName = (string)connectionControlListBox.SelectedItem;
+                    selectedConnectionName = selectedConnectionName.Remove(selectedConnectionName.LastIndexOf(" ->"));
+                    newProcess.ConnectionStateDictionary[selectedConnectionName] = ConnectionState.Damaged;
+                    newProcess.ConnectionDamagedSDDictionary[selectedConnectionName] = double.Parse(connectionDamagedSDTextBox.Text);
 
                     ControlRefresh();
                 }
@@ -358,27 +418,27 @@ namespace ConnectionistModel
                 OrderRefresh();
             }
         }
-        private void bundleDuplicateButton_Click(object sender, EventArgs e)
+        private void connectionDuplicateButton_Click(object sender, EventArgs e)
         {
-            if (orderBundle1ComboBox.SelectedIndex >= 0 && orderBundle2ComboBox.SelectedIndex >= 0)
+            if (orderConnection1ComboBox.SelectedIndex >= 0 && orderConnection2ComboBox.SelectedIndex >= 0)
             {
                 Order newOrder = new Order();
-                newOrder.Code = OrderCode.BundleDuplicate;
-                newOrder.Bundle1Name = (string)orderBundle1ComboBox.SelectedItem;
-                newOrder.Bundle2Name = (string)orderBundle2ComboBox.SelectedItem;
+                newOrder.Code = OrderCode.ConnectionDuplicate;
+                newOrder.Connection1Name = (string)orderConnection1ComboBox.SelectedItem;
+                newOrder.Connection2Name = (string)orderConnection2ComboBox.SelectedItem;
 
                 newProcess.Add(newOrder);
                 OrderRefresh();
             }
         }
-        private void transposedBundleDuplicateButton_Click(object sender, EventArgs e)
+        private void transposedConnectionDuplicateButton_Click(object sender, EventArgs e)
         {
-            if (orderBundle1ComboBox.SelectedIndex >= 0 && orderBundle2ComboBox.SelectedIndex >= 0)
+            if (orderConnection1ComboBox.SelectedIndex >= 0 && orderConnection2ComboBox.SelectedIndex >= 0)
             {
                 Order newOrder = new Order();
-                newOrder.Code = OrderCode.TransposedBundleDuplicate;
-                newOrder.Bundle1Name = (string)orderBundle1ComboBox.SelectedItem;
-                newOrder.Bundle2Name = (string)orderBundle2ComboBox.SelectedItem;
+                newOrder.Code = OrderCode.TransposedConnectionDuplicate;
+                newOrder.Connection1Name = (string)orderConnection1ComboBox.SelectedItem;
+                newOrder.Connection2Name = (string)orderConnection2ComboBox.SelectedItem;
 
                 newProcess.Add(newOrder);
                 OrderRefresh();
@@ -396,7 +456,7 @@ namespace ConnectionistModel
         {
             Order newOrder = new Order();
             newOrder.Code = OrderCode.WeightRenewal;
-            newOrder.Bundle1Name = (string)orderBundle1ComboBox.SelectedItem;
+            newOrder.Connection1Name = (string)orderConnection1ComboBox.SelectedItem;
             newProcess.Add(newOrder);
             OrderRefresh();
         }
@@ -418,11 +478,11 @@ namespace ConnectionistModel
             newProcess.Add(newOrder);
             OrderRefresh();
         }
-        private void bundleInitializeButton_Click(object sender, EventArgs e)
+        private void connectionInitializeButton_Click(object sender, EventArgs e)
         {
             Order newOrder = new Order();
-            newOrder.Code = OrderCode.BundleInitialize;
-            newOrder.Bundle1Name = (string)orderBundle1ComboBox.SelectedItem;
+            newOrder.Code = OrderCode.ConnectionInitialize;
+            newOrder.Connection1Name = (string)orderConnection1ComboBox.SelectedItem;
 
             newProcess.Add(newOrder);
             OrderRefresh();
@@ -545,6 +605,11 @@ namespace ConnectionistModel
         
         private void ProcessRefresh()
         {
+            processCreateButton.Enabled = true;
+            processEditButton.Enabled = false;
+            processCancelButton.Enabled = false;
+            processFinishButton.Enabled = false;
+
             processListBox.Items.Clear();
             processNameTextBox.Text = "";
 
@@ -553,7 +618,7 @@ namespace ConnectionistModel
         private void ControlRefresh()
         {
             layerControlListBox.Items.Clear();
-            bundleControlListBox.Items.Clear();
+            connectionControlListBox.Items.Clear();
 
             Process selectedProcess = new Process();
             if (isMaking) selectedProcess = newProcess;
@@ -574,18 +639,18 @@ namespace ConnectionistModel
                         break;
                 }
             }
-            foreach (string key in selectedProcess.BundleStateDictionary.Keys)
+            foreach (string key in selectedProcess.ConnectionStateDictionary.Keys)
             {
-                switch (selectedProcess.BundleStateDictionary[key])
+                switch (selectedProcess.ConnectionStateDictionary[key])
                 {
-                    case BundleState.On:
-                        bundleControlListBox.Items.Add(key + " -> On");
+                    case ConnectionState.On:
+                        connectionControlListBox.Items.Add(key + " -> On");
                         break;
-                    case BundleState.Off:
-                        bundleControlListBox.Items.Add(key + " -> Off");
+                    case ConnectionState.Off:
+                        connectionControlListBox.Items.Add(key + " -> Off");
                         break;
-                    case BundleState.Damaged:
-                        bundleControlListBox.Items.Add(key + " -> Damage(" + selectedProcess.BundleDamagedSDDictionary[key] + ")");
+                    case ConnectionState.Damaged:
+                        connectionControlListBox.Items.Add(key + " -> Damage(" + selectedProcess.ConnectionDamagedSDDictionary[key] + ")");
                         break;
                 }
             }
@@ -599,13 +664,13 @@ namespace ConnectionistModel
             orderListBox.Items.Clear();
             orderLayer1ComboBox.Items.Clear();
             orderLayer2ComboBox.Items.Clear();
-            orderBundle1ComboBox.Items.Clear();
-            orderBundle2ComboBox.Items.Clear();
+            orderConnection1ComboBox.Items.Clear();
+            orderConnection2ComboBox.Items.Clear();
 
             foreach (string key in simulator.LayerList.Keys) orderLayer1ComboBox.Items.Add(key);
             foreach (string key in simulator.LayerList.Keys) orderLayer2ComboBox.Items.Add(key);
-            foreach (string key in simulator.BundleList.Keys) orderBundle1ComboBox.Items.Add(key);
-            foreach (string key in simulator.BundleList.Keys) orderBundle2ComboBox.Items.Add(key);
+            foreach (string key in simulator.ConnectionList.Keys) orderConnection1ComboBox.Items.Add(key);
+            foreach (string key in simulator.ConnectionList.Keys) orderConnection2ComboBox.Items.Add(key);
 
             bpInputLayerComboBox.Items.Clear();
             bpHiddenLayerComboBox.Items.Clear();
@@ -701,17 +766,17 @@ namespace ConnectionistModel
                     case OrderCode.LayerDuplicate: //Layer Duplicate
                         orderListBox.Items.Add("Layer Duplicate From (" + order.Layer1Name + ") To (" + order.Layer2Name + ")");
                         break;
-                    case OrderCode.BundleDuplicate: //Bundle Duplicate
-                        orderListBox.Items.Add("Bundle Duplicate From (" + order.Bundle1Name + ") To (" + order.Bundle2Name + ")");
+                    case OrderCode.ConnectionDuplicate: //Connection Duplicate
+                        orderListBox.Items.Add("Connection Duplicate From (" + order.Connection1Name + ") To (" + order.Connection2Name + ")");
                         break;
-                    case OrderCode.TransposedBundleDuplicate: //Bundle Duplicate
-                        orderListBox.Items.Add("Transposed Bundle Duplicate From (" + order.Bundle1Name + ") To (" + order.Bundle2Name + ")");
+                    case OrderCode.TransposedConnectionDuplicate: //Connection Duplicate
+                        orderListBox.Items.Add("Transposed Connection Duplicate From (" + order.Connection1Name + ") To (" + order.Connection2Name + ")");
                         break;
                     case OrderCode.BiasRenewal: //Weight Renewal
                         orderListBox.Items.Add("Bias Renewal (" + order.Layer1Name + ")");
                         break;
                     case OrderCode.WeightRenewal: //Weight Renewal
-                        orderListBox.Items.Add("Weight Renewal (" + order.Bundle1Name + ")");
+                        orderListBox.Items.Add("Weight Renewal (" + order.Connection1Name + ")");
                         break;
                     case OrderCode.TestValueStore: //Test Value Store
                         orderListBox.Items.Add("Test as Ouput Layer (" + order.Layer1Name + ")");
@@ -720,8 +785,8 @@ namespace ConnectionistModel
                         if (displayedTick.ContainsKey(order.Layer1Name)) displayedTick[order.Layer1Name] = 0;
                         orderListBox.Items.Add("Layer Initialize (" + order.Layer1Name + ")");
                         break;
-                    case OrderCode.BundleInitialize:
-                        orderListBox.Items.Add("Bundle Initialize (" + order.Bundle1Name + ")");
+                    case OrderCode.ConnectionInitialize:
+                        orderListBox.Items.Add("Connection Initialize (" + order.Connection1Name + ")");
                         break;
                     case OrderCode.EndInitialize: //End Initialize                        
                         displayedTick.Clear();
@@ -764,7 +829,7 @@ namespace ConnectionistModel
             }
 
             orderLayer2ComboBox.Enabled = false;
-            orderBundle2ComboBox.Enabled = false;
+            orderConnection2ComboBox.Enabled = false;
 
             activationInsertButton.Enabled = false;
             activationCalculateSigmoidButton.Enabled = false;
@@ -777,8 +842,8 @@ namespace ConnectionistModel
             interactButton.Enabled = false;
             interconnectionRenewalButton.Enabled = false;
             layerDuplicateButton.Enabled = false;
-            bundleDuplicateButton.Enabled = false;
-            transposedBundleDuplicateButton.Enabled = false;
+            connectionDuplicateButton.Enabled = false;
+            transposedConnectionDuplicateButton.Enabled = false;
             testValueStoreButton.Enabled = false;
             weightRenewalButton.Enabled = false;
             biasRenewalButton.Enabled = false;
@@ -822,9 +887,9 @@ namespace ConnectionistModel
                 activationInsertButton.Enabled = true;
                 layerInitializeButton.Enabled = true;
 
-                orderBundle1ComboBox.SelectedIndex = -1;
-                orderBundle2ComboBox.SelectedIndex = -1;
-                orderBundle2ComboBox.Enabled = false;
+                orderConnection1ComboBox.SelectedIndex = -1;
+                orderConnection2ComboBox.SelectedIndex = -1;
+                orderConnection2ComboBox.Enabled = false;
 
                 orderLayer2ComboBox.Enabled = true;
                 
@@ -942,41 +1007,41 @@ namespace ConnectionistModel
 
             if (orderLayer1ComboBox.SelectedIndex > -1) layerDuplicateButton.Enabled = true;
         }
-        private void orderBundle1ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void orderConnection1ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             weightRenewalButton.Enabled = false;
 
-            if (orderBundle1ComboBox.SelectedIndex > -1)
+            if (orderConnection1ComboBox.SelectedIndex > -1)
             {
                 orderLayer1ComboBox.SelectedIndex = -1;
                 orderLayer2ComboBox.SelectedIndex = -1;
                 orderLayer2ComboBox.Enabled = false;
 
-                orderBundle2ComboBox.Enabled = true;
+                orderConnection2ComboBox.Enabled = true;
 
-                Bundle selectedBundle = simulator.BundleList[(string)orderBundle1ComboBox.SelectedItem];
+                Connection selectedConnection = simulator.ConnectionList[(string)orderConnection1ComboBox.SelectedItem];
                 foreach(Order order in newProcess)
                 {
-                    if ((order.Code == OrderCode.OutputErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.HiddenErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.OutputErrorRateCalculate_for_Softmax || order.Code == OrderCode.HiddenErrorRateCalculate_for_Softmax) && order.Layer1Name == selectedBundle.ReceiveLayer.Name)
+                    if ((order.Code == OrderCode.OutputErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.HiddenErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.OutputErrorRateCalculate_for_Softmax || order.Code == OrderCode.HiddenErrorRateCalculate_for_Softmax) && order.Layer1Name == selectedConnection.ReceiveLayer.Name)
                     {
                         weightRenewalButton.Enabled = true;
                     }
-                    if (order.Code == OrderCode.BundleInitialize && order.Layer1Name == selectedBundle.ReceiveLayer.Name)
+                    if (order.Code == OrderCode.ConnectionInitialize && order.Layer1Name == selectedConnection.ReceiveLayer.Name)
                     {
                         weightRenewalButton.Enabled = false;
                     }
                 }
             }
         }
-        private void orderBundle2ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void orderConnection2ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bundleDuplicateButton.Enabled = false;
-            transposedBundleDuplicateButton.Enabled = false;
+            connectionDuplicateButton.Enabled = false;
+            transposedConnectionDuplicateButton.Enabled = false;
 
-            if (orderBundle1ComboBox.SelectedIndex > -1)
+            if (orderConnection1ComboBox.SelectedIndex > -1)
             {
-                bundleDuplicateButton.Enabled = true;
-                transposedBundleDuplicateButton.Enabled = true;
+                connectionDuplicateButton.Enabled = true;
+                transposedConnectionDuplicateButton.Enabled = true;
             }
         }
 
@@ -1004,6 +1069,8 @@ namespace ConnectionistModel
             {
                 if (MessageBox.Show("Current Process information will be deleted.", "Caution", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
+                    processCancelButton_Click(sender, e);
+
                     simulator.Process_Load(openFileDialog.FileName);
 
                     ProcessRefresh();
@@ -1030,8 +1097,8 @@ namespace ConnectionistModel
             string hiddenLayerName="";
             string outputLayerName="";
 
-            string ihBundleName="";
-            string hoBundleName="";
+            string ihConnectionName="";
+            string hoConnectionName="";
 
             if (bpInputLayerComboBox.SelectedIndex < 0 || bpHiddenLayerComboBox.SelectedIndex < 0 || bpOutputLayerComboBox.SelectedIndex < 0)
             {
@@ -1044,20 +1111,20 @@ namespace ConnectionistModel
                 outputLayerName = (string)bpOutputLayerComboBox.SelectedItem;
 
                 bool ihCheck = false;
-                foreach(string key in simulator.BundleList.Keys)
+                foreach(string key in simulator.ConnectionList.Keys)
                 {
-                    if (simulator.BundleList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.BundleList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
+                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
                     {
-                        ihBundleName = key;
+                        ihConnectionName = key;
                         ihCheck = true;
                     }
                 }
                 bool hoCheck = false;
-                foreach (string key in simulator.BundleList.Keys)
+                foreach (string key in simulator.ConnectionList.Keys)
                 {
-                    if (simulator.BundleList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.BundleList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
+                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
                     {
-                        hoBundleName = key;
+                        hoConnectionName = key;
                         hoCheck = true;
                     }
                 }
@@ -1126,12 +1193,12 @@ namespace ConnectionistModel
                         newProcess.Add(newOrder);
 
                         newOrder = new Order();
-                        newOrder.Bundle1Name = hoBundleName;
+                        newOrder.Connection1Name = hoConnectionName;
                         newOrder.Code = OrderCode.WeightRenewal;
                         newProcess.Add(newOrder);
 
                         newOrder = new Order();
-                        newOrder.Bundle1Name = ihBundleName;
+                        newOrder.Connection1Name = ihConnectionName;
                         newOrder.Code = OrderCode.WeightRenewal;
                         newProcess.Add(newOrder);
 
@@ -1170,9 +1237,9 @@ namespace ConnectionistModel
             string hiddenLayerName = "";
             string outputLayerName = "";
 
-            string ihBundleName = "";
-            string chBundleName = "";
-            string hoBundleName = "";
+            string ihConnectionName = "";
+            string chConnectionName = "";
+            string hoConnectionName = "";
 
             if (srnInputLayerComboBox.SelectedIndex < 0 || srnContextLayerComboBox.SelectedIndex < 0 || srnHiddenLayerComboBox.SelectedIndex < 0 || srnOutputLayerComboBox.SelectedIndex < 0)
             {
@@ -1190,31 +1257,31 @@ namespace ConnectionistModel
                 outputLayerName = (string)srnOutputLayerComboBox.SelectedItem;
 
                 bool ihCheck = false;
-                foreach (string key in simulator.BundleList.Keys)
+                foreach (string key in simulator.ConnectionList.Keys)
                 {
-                    if (simulator.BundleList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.BundleList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
+                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
                     {
-                        ihBundleName = key;
+                        ihConnectionName = key;
                         ihCheck = true;
                     }
                 }
 
                 bool chCheck = false;
-                foreach (string key in simulator.BundleList.Keys)
+                foreach (string key in simulator.ConnectionList.Keys)
                 {
-                    if (simulator.BundleList[key].SendLayer == simulator.LayerList[contextLayerName] && simulator.BundleList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
+                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[contextLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
                     {
-                        chBundleName = key;
+                        chConnectionName = key;
                         chCheck = true;
                     }
                 }
 
                 bool hoCheck = false;
-                foreach (string key in simulator.BundleList.Keys)
+                foreach (string key in simulator.ConnectionList.Keys)
                 {
-                    if (simulator.BundleList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.BundleList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
+                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
                     {
-                        hoBundleName = key;
+                        hoConnectionName = key;
                         hoCheck = true;
                     }
                 }
@@ -1233,9 +1300,9 @@ namespace ConnectionistModel
                     newOrder.SRNContextLayerName = contextLayerName;
                     newOrder.SRNHiddenLayerName = hiddenLayerName;
                     newOrder.SRNOutputLayerName = outputLayerName;
-                    newOrder.SRNIHBundleName = ihBundleName;
-                    newOrder.SRNCHBundleName = chBundleName;
-                    newOrder.SRNHOBundleName = hoBundleName;
+                    newOrder.SRNIHConnectionName = ihConnectionName;
+                    newOrder.SRNCHConnectionName = chConnectionName;
+                    newOrder.SRNHOConnectionName = hoConnectionName;
                     newOrder.SRNInputPatternName = srnInputStimuliNameTextBox.Text;
                     newOrder.SRNOutputPatternName = srnOutputStimuliNameTextBox.Text;
                     if(srnErrorSigmoidRadioButton.Checked) newOrder.SRNErrorCalculation = "Sigmoid";
@@ -1263,8 +1330,8 @@ namespace ConnectionistModel
             string hiddenLayerName = "";
             string outputLayerName = "";
 
-            string ihBundleName = "";
-            string hoBundleName = "";
+            string ihConnectionName = "";
+            string hoConnectionName = "";
 
             if (bpttInputLayerComboBox.SelectedIndex < 0 || bpttHiddenLayerComboBox.SelectedIndex < 0 || bpttOutputLayerComboBox.SelectedIndex < 0)
             {
@@ -1277,20 +1344,20 @@ namespace ConnectionistModel
                 outputLayerName = (string)bpttOutputLayerComboBox.SelectedItem;
 
                 bool ihCheck = false;
-                foreach (string key in simulator.BundleList.Keys)
+                foreach (string key in simulator.ConnectionList.Keys)
                 {
-                    if (simulator.BundleList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.BundleList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
+                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
                     {
-                        ihBundleName = key;
+                        ihConnectionName = key;
                         ihCheck = true;
                     }
                 }
                 bool hoCheck = false;
-                foreach (string key in simulator.BundleList.Keys)
+                foreach (string key in simulator.ConnectionList.Keys)
                 {
-                    if (simulator.BundleList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.BundleList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
+                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
                     {
-                        hoBundleName = key;
+                        hoConnectionName = key;
                         hoCheck = true;
                     }
                 }
@@ -1384,12 +1451,12 @@ namespace ConnectionistModel
                         newProcess.Add(newOrder);
 
                         newOrder = new Order();
-                        newOrder.Bundle1Name = hoBundleName;
+                        newOrder.Connection1Name = hoConnectionName;
                         newOrder.Code = OrderCode.WeightRenewal;
                         newProcess.Add(newOrder);
 
                         newOrder = new Order();
-                        newOrder.Bundle1Name = ihBundleName;
+                        newOrder.Connection1Name = ihConnectionName;
                         newOrder.Code = OrderCode.WeightRenewal;
                         newProcess.Add(newOrder);
 
@@ -1528,9 +1595,9 @@ namespace ConnectionistModel
             else
             {
                 string lastLayerName = (string)forwardLayerListBox.Items[forwardLayerListBox.Items.Count - 1];
-                foreach(string key in simulator.LayerList[lastLayerName].SendBundleList.Keys)
+                foreach(string key in simulator.LayerList[lastLayerName].SendConnectionList.Keys)
                 {
-                    forwardLayerComboBox.Items.Add(simulator.BundleList[key].ReceiveLayer.Name);
+                    forwardLayerComboBox.Items.Add(simulator.ConnectionList[key].ReceiveLayer.Name);
                 }
             }
         }
@@ -1613,9 +1680,9 @@ namespace ConnectionistModel
             else
             {
                 string lastLayerName = (string)backwardLayerListBox.Items[backwardLayerListBox.Items.Count - 1];
-                foreach (string key in simulator.LayerList[lastLayerName].ReceiveBundleList.Keys)
+                foreach (string key in simulator.LayerList[lastLayerName].ReceiveConnectionList.Keys)
                 {
-                    backwardLayerComboBox.Items.Add(simulator.BundleList[key].SendLayer.Name);
+                    backwardLayerComboBox.Items.Add(simulator.ConnectionList[key].SendLayer.Name);
                 }
             }
         }
@@ -1633,18 +1700,18 @@ namespace ConnectionistModel
 
                 for (int layerIndex = 0; layerIndex < backwardLayerListBox.Items.Count - 1; layerIndex++)
                 {
-                    string bundleName = "";
+                    string connectionName = "";
 
-                    foreach (string key in simulator.BundleList.Keys)
+                    foreach (string key in simulator.ConnectionList.Keys)
                     {
-                        if (simulator.BundleList[key].ReceiveLayer == simulator.LayerList[(string)backwardLayerListBox.Items[layerIndex]] && simulator.BundleList[key].SendLayer == simulator.LayerList[(string)backwardLayerListBox.Items[layerIndex + 1]])
+                        if (simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[(string)backwardLayerListBox.Items[layerIndex]] && simulator.ConnectionList[key].SendLayer == simulator.LayerList[(string)backwardLayerListBox.Items[layerIndex + 1]])
                         {
-                            bundleName = key;
+                            connectionName = key;
                         }
                     }
 
                     newOrder = new Order();
-                    newOrder.Bundle1Name = bundleName;
+                    newOrder.Connection1Name = connectionName;
                     newOrder.Code = OrderCode.WeightRenewal;
                     newProcess.Add(newOrder);
                 }
@@ -1667,6 +1734,6 @@ namespace ConnectionistModel
 
                 OrderRefresh();
             }
-        }
+        }       
     }
 }

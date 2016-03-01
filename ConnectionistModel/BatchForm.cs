@@ -238,7 +238,7 @@ namespace ConnectionistModel
                     for (decimal point = (decimal)variableList[variableIndex].StartPoint; point <= (decimal)variableList[variableIndex].EndPoint; point += (decimal)variableList[variableIndex].Step)
                     {
                         Change newChange = new Change();
-                        newChange.LayerBundleName = variableList[variableIndex].LayerBundleName;
+                        newChange.LayerConnectionName = variableList[variableIndex].LayerConnectionName;
                         newChange.ProcessName = variableList[variableIndex].ProcessName;
                         newChange.VariableType = variableList[variableIndex].VariableType;
                         newChange.Point = (double)point;
@@ -282,26 +282,26 @@ namespace ConnectionistModel
                     switch (change.VariableType)
                     {
                         case VariableType.Layer_Unit:
-                            List<string> renewalBundleKeyList = new List<string>();
-                            foreach (string key in batchData.Simulator.BundleList.Keys)
+                            List<string> renewalConnectionKeyList = new List<string>();
+                            foreach (string key in batchData.Simulator.ConnectionList.Keys)
                             {
-                                if (batchData.Simulator.BundleList[key].SendLayer.Name == change.LayerBundleName || batchData.Simulator.BundleList[key].ReceiveLayer.Name == change.LayerBundleName) renewalBundleKeyList.Add(key);
+                                if (batchData.Simulator.ConnectionList[key].SendLayer.Name == change.LayerConnectionName || batchData.Simulator.ConnectionList[key].ReceiveLayer.Name == change.LayerConnectionName) renewalConnectionKeyList.Add(key);
                             }
-                            batchData.Simulator.LayerMaking(change.LayerBundleName, (int)change.Point, batchData.Simulator.LayerList[change.LayerBundleName].CleanupUnitCount);                            
-                            foreach (string key in renewalBundleKeyList)
+                            batchData.Simulator.LayerMaking(change.LayerConnectionName, (int)change.Point, batchData.Simulator.LayerList[change.LayerConnectionName].CleanupUnitCount);                            
+                            foreach (string key in renewalConnectionKeyList)
                             {
-                                batchData.Simulator.BundleMaking(key, batchData.Simulator.BundleList[key].SendLayer.Name, batchData.Simulator.BundleList[key].ReceiveLayer.Name);
+                                batchData.Simulator.ConnectionMaking(key, batchData.Simulator.ConnectionList[key].SendLayer.Name, batchData.Simulator.ConnectionList[key].ReceiveLayer.Name);
                             }
                             break;
                         case VariableType.Layer_DamagedSD:
-                            if (change.Point != 0) batchData.Simulator.ProcessDictionary[change.ProcessName].LayerStateDictionary[change.LayerBundleName] = LayerState.Damaged;
-                            else batchData.Simulator.ProcessDictionary[change.ProcessName].LayerStateDictionary[change.LayerBundleName] = LayerState.On;
-                            batchData.Simulator.ProcessDictionary[change.ProcessName].LayerDamagedSDDictionary[change.LayerBundleName] = change.Point;
+                            if (change.Point != 0) batchData.Simulator.ProcessDictionary[change.ProcessName].LayerStateDictionary[change.LayerConnectionName] = LayerState.Damaged;
+                            else batchData.Simulator.ProcessDictionary[change.ProcessName].LayerStateDictionary[change.LayerConnectionName] = LayerState.On;
+                            batchData.Simulator.ProcessDictionary[change.ProcessName].LayerDamagedSDDictionary[change.LayerConnectionName] = change.Point;
                             break;
-                        case VariableType.Bundle_DamagedSD:
-                            if (change.Point != 0) batchData.Simulator.ProcessDictionary[change.ProcessName].BundleStateDictionary[change.LayerBundleName] = BundleState.Damaged;
-                            else batchData.Simulator.ProcessDictionary[change.ProcessName].BundleStateDictionary[change.LayerBundleName] = BundleState.On;
-                            batchData.Simulator.ProcessDictionary[change.ProcessName].BundleDamagedSDDictionary[change.LayerBundleName] = change.Point;
+                        case VariableType.Connection_DamagedSD:
+                            if (change.Point != 0) batchData.Simulator.ProcessDictionary[change.ProcessName].ConnectionStateDictionary[change.LayerConnectionName] = ConnectionState.Damaged;
+                            else batchData.Simulator.ProcessDictionary[change.ProcessName].ConnectionStateDictionary[change.LayerConnectionName] = ConnectionState.On;
+                            batchData.Simulator.ProcessDictionary[change.ProcessName].ConnectionDamagedSDDictionary[change.LayerConnectionName] = change.Point;
                             break;
                         case VariableType.LearningRate:
                             batchData.Simulator.LearningRate = change.Point;
@@ -367,7 +367,7 @@ namespace ConnectionistModel
 
                 newText.AppendLine();
                 newText.AppendLine("Connection List");
-                foreach (string key in selectedBatchData.Simulator.BundleList.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.BundleList[key].SendLayer.Name + " -> " + selectedBatchData.Simulator.BundleList[key].ReceiveLayer.Name + ")");
+                foreach (string key in selectedBatchData.Simulator.ConnectionList.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.ConnectionList[key].SendLayer.Name + " -> " + selectedBatchData.Simulator.ConnectionList[key].ReceiveLayer.Name + ")");
 
                 newText.AppendLine();
                 newText.AppendLine("Process List");
@@ -393,8 +393,8 @@ namespace ConnectionistModel
                         case VariableType.Layer_DamagedSD:
                             newText.Append("Layer Damaged SD Variable | ");
                             break;
-                        case VariableType.Bundle_DamagedSD:
-                            newText.Append("Bundle Damaged SD Variable | ");
+                        case VariableType.Connection_DamagedSD:
+                            newText.Append("Connection Damaged SD Variable | ");
                             break;
                         case VariableType.LearningRate:
                             newText.Append("Learning Rate Variable | ");
@@ -407,16 +407,16 @@ namespace ConnectionistModel
                     {
                         case VariableType.Layer_Unit:
                         case VariableType.Layer_DamagedSD:
-                            newText.Append("Layer: " + change.LayerBundleName + " | ");
+                            newText.Append("Layer: " + change.LayerConnectionName + " | ");
                             break;
-                        case VariableType.Bundle_DamagedSD:
-                            newText.Append("Bundle: " + change.LayerBundleName + " | ");
+                        case VariableType.Connection_DamagedSD:
+                            newText.Append("Connection: " + change.LayerConnectionName + " | ");
                             break;
                     }
                     switch (change.VariableType)
                     {
                         case VariableType.Layer_DamagedSD:
-                        case VariableType.Bundle_DamagedSD:
+                        case VariableType.Connection_DamagedSD:
                             newText.Append("Process: " + change.ProcessName + " | ");
                             break;
                     }
@@ -484,7 +484,7 @@ namespace ConnectionistModel
                 {
                     Variable newVariable = new Variable();
 
-                    newVariable.LayerBundleName = layerBundleNameTextBox.Text;
+                    newVariable.LayerConnectionName = layerConnectionNameTextBox.Text;
                     newVariable.ProcessName = processNameTextBox.Text;
                     newVariable.StartPoint = double.Parse(startPointTextBox.Text);
                     newVariable.EndPoint = double.Parse(endPointTextBox.Text);
@@ -499,17 +499,17 @@ namespace ConnectionistModel
                         case "Layer-DamagedSD":
                             newVariable.VariableType = VariableType.Layer_DamagedSD;
                             break;
-                        case "Bundle-DamagedSD":
-                            newVariable.VariableType = VariableType.Bundle_DamagedSD;
+                        case "Connection-DamagedSD":
+                            newVariable.VariableType = VariableType.Connection_DamagedSD;
                             break;
                         case "Learning Rate":
                             newVariable.VariableType = VariableType.LearningRate;
-                            newVariable.LayerBundleName = "";
+                            newVariable.LayerConnectionName = "";
                             newVariable.ProcessName = "";
                             break;
                         case "Initial Weight":
                             newVariable.VariableType = VariableType.InitialWeight;
-                            newVariable.LayerBundleName = "";
+                            newVariable.LayerConnectionName = "";
                             newVariable.ProcessName = "";
                             break;
                     }                    
@@ -517,7 +517,7 @@ namespace ConnectionistModel
                     bool isExist = false;
                     foreach (Variable variable in variableList)
                     {
-                        if (newVariable.VariableType == variable.VariableType && newVariable.LayerBundleName == variable.LayerBundleName)
+                        if (newVariable.VariableType == variable.VariableType && newVariable.LayerConnectionName == variable.LayerConnectionName)
                         {
                             isExist = true;
                             break;
@@ -534,7 +534,7 @@ namespace ConnectionistModel
                         VariableList_Refresh();
 
                         variableComboBox.SelectedIndex = -1;
-                        layerBundleNameTextBox.Text = "";
+                        layerConnectionNameTextBox.Text = "";
                         processNameTextBox.Text = "";
                         startPointTextBox.Text = "";
                         endPointTextBox.Text = "";
@@ -559,8 +559,8 @@ namespace ConnectionistModel
                     case VariableType.Layer_DamagedSD:
                         newItem.Append("Layer Damaged SD Variable | ");
                         break;
-                    case VariableType.Bundle_DamagedSD:
-                        newItem.Append("Bundle Damaged SD Variable | ");
+                    case VariableType.Connection_DamagedSD:
+                        newItem.Append("Connection Damaged SD Variable | ");
                         break;
                     case VariableType.LearningRate:
                         newItem.Append("Learning Rate Variable | ");
@@ -573,16 +573,16 @@ namespace ConnectionistModel
                 {
                     case VariableType.Layer_Unit:
                     case VariableType.Layer_DamagedSD:
-                        newItem.Append("Layer: " + variable.LayerBundleName + " | ");
+                        newItem.Append("Layer: " + variable.LayerConnectionName + " | ");
                         break;
-                    case VariableType.Bundle_DamagedSD:
-                        newItem.Append("Bundle: " + variable.LayerBundleName + " | ");
+                    case VariableType.Connection_DamagedSD:
+                        newItem.Append("Connection: " + variable.LayerConnectionName + " | ");
                         break;
                 }
                 switch (variable.VariableType)
                 {
                     case VariableType.Layer_DamagedSD:
-                    case VariableType.Bundle_DamagedSD:
+                    case VariableType.Connection_DamagedSD:
                         newItem.Append("Process: " + variable.ProcessName + " | ");
                         break;
                 }
@@ -611,21 +611,21 @@ namespace ConnectionistModel
             switch ((string)variableComboBox.SelectedItem)
             {
                 case "Layer-Unit":
-                    layerBundleNameTextBox.Enabled = true;
+                    layerConnectionNameTextBox.Enabled = true;
                     processNameTextBox.Enabled = false;
                     break;
                 case "Layer-DamagedSD":
-                case "Bundle-DamagedSD":
-                    layerBundleNameTextBox.Enabled = true;
+                case "Connection-DamagedSD":
+                    layerConnectionNameTextBox.Enabled = true;
                     processNameTextBox.Enabled = true;
                     break;
                 case "Learning Rate":
                 case "Initial Weight":                    
-                    layerBundleNameTextBox.Enabled = false;
+                    layerConnectionNameTextBox.Enabled = false;
                     processNameTextBox.Enabled = false;
                     break;
                 default:
-                    layerBundleNameTextBox.Enabled = true;
+                    layerConnectionNameTextBox.Enabled = true;
                     processNameTextBox.Enabled = true;
                     break;
             }
@@ -689,7 +689,7 @@ namespace ConnectionistModel
             get;
             set;
         }
-        public string LayerBundleName
+        public string LayerConnectionName
         {
             get;
             set;
@@ -731,7 +731,7 @@ namespace ConnectionistModel
             get;
             set;
         }
-        public string LayerBundleName
+        public string LayerConnectionName
         {
             get;
             set;
@@ -751,7 +751,7 @@ namespace ConnectionistModel
     {
         Layer_Unit,
         Layer_DamagedSD,
-        Bundle_DamagedSD,
+        Connection_DamagedSD,
         LearningRate,
         InitialWeight,
     }

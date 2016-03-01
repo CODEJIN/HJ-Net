@@ -28,7 +28,7 @@ namespace ConnectionistModel
             if (simulator.IsSet)
             {
                 layerSetupGroupBox.Enabled = true;
-                bundleSetupGroupBox.Enabled = true;
+                connectionSetupGroupBox.Enabled = true;
             }
 
             this.architectureGraph = ArchitectureGraphAccessor.architectureGraph;
@@ -73,7 +73,7 @@ namespace ConnectionistModel
             {
                 string selectedLayerName = ((string)layerListBox.SelectedItem).Substring(0, ((string)layerListBox.SelectedItem).IndexOf('('));
 
-                if(simulator.LayerList[selectedLayerName].SendBundleList.Count + simulator.LayerList[selectedLayerName].ReceiveBundleList.Count > 0)
+                if(simulator.LayerList[selectedLayerName].SendConnectionList.Count + simulator.LayerList[selectedLayerName].ReceiveConnectionList.Count > 0)
                 {
                     MessageBox.Show("Already selected Layer connected to other layer.\nAt first, delete the connection.");                    
                 }
@@ -85,47 +85,47 @@ namespace ConnectionistModel
             }
         }
 
-        private void bundleAddButton_Click(object sender, EventArgs e)
+        private void connectionAddButton_Click(object sender, EventArgs e)
         {
-            if (bundleFromComboBox.SelectedIndex >= 0 && bundleToComboBox.SelectedIndex >= 0)
+            if (connectionFromComboBox.SelectedIndex >= 0 && connectionToComboBox.SelectedIndex >= 0)
             {
                 bool sameConnectionExist = false;
-                foreach (string key in simulator.BundleList.Keys) if (simulator.BundleList[key].SendLayer.Name == (string)bundleFromComboBox.SelectedItem && simulator.BundleList[key].ReceiveLayer.Name == (string)bundleToComboBox.SelectedItem) sameConnectionExist = true;
+                foreach (string key in simulator.ConnectionList.Keys) if (simulator.ConnectionList[key].SendLayer.Name == (string)connectionFromComboBox.SelectedItem && simulator.ConnectionList[key].ReceiveLayer.Name == (string)connectionToComboBox.SelectedItem) sameConnectionExist = true;
 
                 if (sameConnectionExist)
                 {
                     MessageBox.Show("Already the same connection exist.");
                 }
-                else if (simulator.BundleList.ContainsKey(bundleNameTextBox.Text))
+                else if (simulator.ConnectionList.ContainsKey(connectionNameTextBox.Text))
                 {
                     MessageBox.Show("Already the same name exist.");
                 }
-                else if (bundleNameTextBox.Text.Trim() == "")
+                else if (connectionNameTextBox.Text.Trim() == "")
                 {
-                    MessageBox.Show("Bundle has to be assigned the name.");
+                    MessageBox.Show("Connection has to be assigned the name.");
                 }
                 else 
                 {
-                    simulator.BundleMaking(bundleNameTextBox.Text, (string)bundleFromComboBox.SelectedItem, (string)bundleToComboBox.SelectedItem);
+                    simulator.ConnectionMaking(connectionNameTextBox.Text, (string)connectionFromComboBox.SelectedItem, (string)connectionToComboBox.SelectedItem);
                     Refresh();
                 }
             }
             
-            bundleNameTextBox.Focus();
-            bundleNameTextBox.SelectAll();
+            connectionNameTextBox.Focus();
+            connectionNameTextBox.SelectAll();
         }
-        private void bundleDeleteButton_Click(object sender, EventArgs e)
+        private void connectionDeleteButton_Click(object sender, EventArgs e)
         {
-            if (bundleListBox.SelectedIndex >= 0)
+            if (connectionListBox.SelectedIndex >= 0)
             {
-                string selectedBundleName = ((string)bundleListBox.SelectedItem).Substring(0, ((string)bundleListBox.SelectedItem).IndexOf('('));
+                string selectedConnectionName = ((string)connectionListBox.SelectedItem).Substring(0, ((string)connectionListBox.SelectedItem).IndexOf('('));
 
                 foreach (string key in simulator.LayerList.Keys)
                 {
-                    simulator.LayerList[key].SendBundleList.Remove(selectedBundleName);
-                    simulator.LayerList[key].ReceiveBundleList.Remove(selectedBundleName);
+                    simulator.LayerList[key].SendConnectionList.Remove(selectedConnectionName);
+                    simulator.LayerList[key].ReceiveConnectionList.Remove(selectedConnectionName);
                 }
-                simulator.BundleList.Remove(selectedBundleName);
+                simulator.ConnectionList.Remove(selectedConnectionName);
                 Refresh();
             }
         }
@@ -182,7 +182,7 @@ namespace ConnectionistModel
                 simulator.IsSet = true;
                 
                 layerSetupGroupBox.Enabled = true;
-                bundleSetupGroupBox.Enabled = true;                
+                connectionSetupGroupBox.Enabled = true;                
             }
         }
 
@@ -209,12 +209,12 @@ namespace ConnectionistModel
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                if (MessageBox.Show("Current layer and bundle information will be deleted.", "Caution", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if (MessageBox.Show("Current layer and connection information will be deleted.", "Caution", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
                     simulator.Architecture_Load(openFileDialog.FileName);
 
                     layerSetupGroupBox.Enabled = true;
-                    bundleSetupGroupBox.Enabled = true;
+                    connectionSetupGroupBox.Enabled = true;
 
                     Refresh();
                 }
@@ -234,27 +234,27 @@ namespace ConnectionistModel
         private new void Refresh()
         {
             layerListBox.Items.Clear();
-            bundleListBox.Items.Clear();
-            bundleFromComboBox.Items.Clear();
-            bundleToComboBox.Items.Clear();
+            connectionListBox.Items.Clear();
+            connectionFromComboBox.Items.Clear();
+            connectionToComboBox.Items.Clear();
             layerNameTextBox.Text = "";
             layerUnitAmountTextBox.Text = "";
             cleanUpUnitAmountTextBox.Text = "";
             tickTextBox.Text = "";
             bpttUseCheckBox.Checked = false;
-            bundleNameTextBox.Text = "";
+            connectionNameTextBox.Text = "";
 
             foreach (string key in simulator.LayerList.Keys)
             {
                 if(simulator.LayerList[key].LayerType == LayerType.NormalLayer) layerListBox.Items.Add(key + "(" + simulator.LayerList[key].UnitCount + ", " + simulator.LayerList[key].CleanupUnitCount + ")");
                 else if (simulator.LayerList[key].LayerType == LayerType.BPTTLayer) layerListBox.Items.Add(key + "(BPTT, " + simulator.LayerList[key].UnitCount + ", " + simulator.LayerList[key].CleanupUnitCount + ", " + ((BPTTLayer)simulator.LayerList[key]).Tick + ")");
 
-                bundleFromComboBox.Items.Add(key);
-                bundleToComboBox.Items.Add(key);
+                connectionFromComboBox.Items.Add(key);
+                connectionToComboBox.Items.Add(key);
             }
-            foreach (string key in simulator.BundleList.Keys)
+            foreach (string key in simulator.ConnectionList.Keys)
             {
-                bundleListBox.Items.Add(key + "(" + simulator.BundleList[key].SendLayer.Name + " -> " + simulator.BundleList[key].ReceiveLayer.Name + ")");
+                connectionListBox.Items.Add(key + "(" + simulator.ConnectionList[key].SendLayer.Name + " -> " + simulator.ConnectionList[key].ReceiveLayer.Name + ")");
             }
             momentumTextBox.Text = simulator.Momentum.ToString();
             activationCriterionTextBox.Text = simulator.ActivationCriterion.ToString();
@@ -275,16 +275,16 @@ namespace ConnectionistModel
                 
             //    biasNode.LabelText = "";
             //}
-            foreach (string key in simulator.BundleList.Keys)
+            foreach (string key in simulator.ConnectionList.Keys)
             {
-                architectureGraph.AddEdge(simulator.BundleList[key].SendLayer.Name, simulator.BundleList[key].ReceiveLayer.Name);
-                ArchitectureGraphAccessor.nodeList.Add(simulator.BundleList[key].SendLayer.Name);
-                ArchitectureGraphAccessor.nodeList.Add(simulator.BundleList[key].ReceiveLayer.Name);
+                architectureGraph.AddEdge(simulator.ConnectionList[key].SendLayer.Name, simulator.ConnectionList[key].ReceiveLayer.Name);
+                ArchitectureGraphAccessor.nodeList.Add(simulator.ConnectionList[key].SendLayer.Name);
+                ArchitectureGraphAccessor.nodeList.Add(simulator.ConnectionList[key].ReceiveLayer.Name);
 
-                Microsoft.Msagl.Drawing.Node sendLayerNode = architectureGraph.FindNode(simulator.BundleList[key].SendLayer.Name);
+                Microsoft.Msagl.Drawing.Node sendLayerNode = architectureGraph.FindNode(simulator.ConnectionList[key].SendLayer.Name);
                 sendLayerNode.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Box;
                 sendLayerNode.Attr.LabelMargin = 10;
-                Microsoft.Msagl.Drawing.Node receiveLayerNode = architectureGraph.FindNode(simulator.BundleList[key].ReceiveLayer.Name);
+                Microsoft.Msagl.Drawing.Node receiveLayerNode = architectureGraph.FindNode(simulator.ConnectionList[key].ReceiveLayer.Name);
                 receiveLayerNode.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Box;
                 receiveLayerNode.Attr.LabelMargin = 10;
             }
