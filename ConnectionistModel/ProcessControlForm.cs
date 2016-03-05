@@ -64,12 +64,12 @@ namespace ConnectionistModel
 
                 newProcess = new Process();
                 newProcess.Name = processNameTextBox.Text;
-                foreach (string key in simulator.LayerList.Keys)
+                foreach (string key in simulator.LayerDictionary.Keys)
                 {
                     newProcess.LayerStateDictionary[key] = LayerState.On;
                     newProcess.LayerDamagedSDDictionary[key] = 0;
                 }
-                foreach (string key in simulator.ConnectionList.Keys)
+                foreach (string key in simulator.ConnectionDictionary.Keys)
                 {
                     newProcess.ConnectionStateDictionary[key] = ConnectionState.On;
                     newProcess.ConnectionDamagedSDDictionary[key] = 0;
@@ -667,36 +667,36 @@ namespace ConnectionistModel
             orderConnection1ComboBox.Items.Clear();
             orderConnection2ComboBox.Items.Clear();
 
-            foreach (string key in simulator.LayerList.Keys) orderLayer1ComboBox.Items.Add(key);
-            foreach (string key in simulator.LayerList.Keys) orderLayer2ComboBox.Items.Add(key);
-            foreach (string key in simulator.ConnectionList.Keys) orderConnection1ComboBox.Items.Add(key);
-            foreach (string key in simulator.ConnectionList.Keys) orderConnection2ComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) orderLayer1ComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) orderLayer2ComboBox.Items.Add(key);
+            foreach (string key in simulator.ConnectionDictionary.Keys) orderConnection1ComboBox.Items.Add(key);
+            foreach (string key in simulator.ConnectionDictionary.Keys) orderConnection2ComboBox.Items.Add(key);
 
             bpInputLayerComboBox.Items.Clear();
             bpHiddenLayerComboBox.Items.Clear();
             bpOutputLayerComboBox.Items.Clear();
 
-            foreach (string key in simulator.LayerList.Keys) bpInputLayerComboBox.Items.Add(key);
-            foreach (string key in simulator.LayerList.Keys) bpHiddenLayerComboBox.Items.Add(key);
-            foreach (string key in simulator.LayerList.Keys) bpOutputLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) bpInputLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) bpHiddenLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) bpOutputLayerComboBox.Items.Add(key);
 
             bpttInputLayerComboBox.Items.Clear();
             bpttHiddenLayerComboBox.Items.Clear();
             bpttOutputLayerComboBox.Items.Clear();
 
-            foreach (string key in simulator.LayerList.Keys) bpttInputLayerComboBox.Items.Add(key);
-            foreach (string key in simulator.LayerList.Keys) bpttHiddenLayerComboBox.Items.Add(key);
-            foreach (string key in simulator.LayerList.Keys) bpttOutputLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) bpttInputLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) bpttHiddenLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) bpttOutputLayerComboBox.Items.Add(key);
 
             srnInputLayerComboBox.Items.Clear();
             srnHiddenLayerComboBox.Items.Clear();
             srnContextLayerComboBox.Items.Clear();
             srnOutputLayerComboBox.Items.Clear();
 
-            foreach (string key in simulator.LayerList.Keys) srnInputLayerComboBox.Items.Add(key);
-            foreach (string key in simulator.LayerList.Keys) srnHiddenLayerComboBox.Items.Add(key);
-            foreach (string key in simulator.LayerList.Keys) srnContextLayerComboBox.Items.Add(key);
-            foreach (string key in simulator.LayerList.Keys) srnOutputLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) srnInputLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) srnHiddenLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) srnContextLayerComboBox.Items.Add(key);
+            foreach (string key in simulator.LayerDictionary.Keys) srnOutputLayerComboBox.Items.Add(key);
 
             forwardLayerListBox.Items.Clear();
             backwardLayerListBox.Items.Clear();
@@ -802,13 +802,13 @@ namespace ConnectionistModel
                         orderListBox.Items.Add("Clean Up Renewal (" + order.Layer1Name + ")");                        
                         break;
                     case OrderCode.TickIn:
-                        selectedLayer = simulator.LayerList[order.Layer1Name];
+                        selectedLayer = simulator.LayerDictionary[order.Layer1Name];
 
                         displayedTick[order.Layer1Name] = 0;
                         orderListBox.Items.Add("Tick In (" + order.Layer1Name + "(Tick " + displayedTick[order.Layer1Name].ToString() + "/" + ((BPTTLayer)selectedLayer).Tick.ToString() + "))");
                         break;
                     case OrderCode.TickProgress:
-                        selectedLayer = simulator.LayerList[order.Layer1Name];
+                        selectedLayer = simulator.LayerDictionary[order.Layer1Name];
 
                         displayedTick[order.Layer1Name]++;
                         orderListBox.Items.Add("Tick Progress (" + order.Layer1Name + "(Tick " + displayedTick[order.Layer1Name].ToString() + "/" + ((BPTTLayer)selectedLayer).Tick.ToString() + "))");
@@ -970,7 +970,7 @@ namespace ConnectionistModel
                 }
 
 
-                if (simulator.LayerList[(string)orderLayer1ComboBox.SelectedItem].LayerType == LayerType.BPTTLayer)
+                if (simulator.LayerDictionary[(string)orderLayer1ComboBox.SelectedItem].LayerType == LayerType.BPTTLayer)
                 {
                     activationCalculateSigmoidButton.Enabled = false;
                     activationCalculateSoftmaxButton.Enabled = false;
@@ -992,7 +992,7 @@ namespace ConnectionistModel
                         }
 
                     }
-                    if (currentTick == ((BPTTLayer)simulator.LayerList[(string)orderLayer1ComboBox.SelectedItem]).Tick)
+                    if (currentTick == ((BPTTLayer)simulator.LayerDictionary[(string)orderLayer1ComboBox.SelectedItem]).Tick)
                     {
                         tickProgressButton.Enabled = false;
                         tickOutButton.Enabled = true;
@@ -1019,7 +1019,7 @@ namespace ConnectionistModel
 
                 orderConnection2ComboBox.Enabled = true;
 
-                Connection selectedConnection = simulator.ConnectionList[(string)orderConnection1ComboBox.SelectedItem];
+                Connection selectedConnection = simulator.ConnectionDictionary[(string)orderConnection1ComboBox.SelectedItem];
                 foreach(Order order in newProcess)
                 {
                     if ((order.Code == OrderCode.OutputErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.HiddenErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.OutputErrorRateCalculate_for_Softmax || order.Code == OrderCode.HiddenErrorRateCalculate_for_Softmax) && order.Layer1Name == selectedConnection.ReceiveLayer.Name)
@@ -1111,18 +1111,18 @@ namespace ConnectionistModel
                 outputLayerName = (string)bpOutputLayerComboBox.SelectedItem;
 
                 bool ihCheck = false;
-                foreach(string key in simulator.ConnectionList.Keys)
+                foreach(string key in simulator.ConnectionDictionary.Keys)
                 {
-                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
+                    if (simulator.ConnectionDictionary[key].SendLayer == simulator.LayerDictionary[inputLayerName] && simulator.ConnectionDictionary[key].ReceiveLayer == simulator.LayerDictionary[hiddenLayerName])
                     {
                         ihConnectionName = key;
                         ihCheck = true;
                     }
                 }
                 bool hoCheck = false;
-                foreach (string key in simulator.ConnectionList.Keys)
+                foreach (string key in simulator.ConnectionDictionary.Keys)
                 {
-                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
+                    if (simulator.ConnectionDictionary[key].SendLayer == simulator.LayerDictionary[hiddenLayerName] && simulator.ConnectionDictionary[key].ReceiveLayer == simulator.LayerDictionary[outputLayerName])
                     {
                         hoConnectionName = key;
                         hoCheck = true;
@@ -1257,9 +1257,9 @@ namespace ConnectionistModel
                 outputLayerName = (string)srnOutputLayerComboBox.SelectedItem;
 
                 bool ihCheck = false;
-                foreach (string key in simulator.ConnectionList.Keys)
+                foreach (string key in simulator.ConnectionDictionary.Keys)
                 {
-                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
+                    if (simulator.ConnectionDictionary[key].SendLayer == simulator.LayerDictionary[inputLayerName] && simulator.ConnectionDictionary[key].ReceiveLayer == simulator.LayerDictionary[hiddenLayerName])
                     {
                         ihConnectionName = key;
                         ihCheck = true;
@@ -1267,9 +1267,9 @@ namespace ConnectionistModel
                 }
 
                 bool chCheck = false;
-                foreach (string key in simulator.ConnectionList.Keys)
+                foreach (string key in simulator.ConnectionDictionary.Keys)
                 {
-                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[contextLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
+                    if (simulator.ConnectionDictionary[key].SendLayer == simulator.LayerDictionary[contextLayerName] && simulator.ConnectionDictionary[key].ReceiveLayer == simulator.LayerDictionary[hiddenLayerName])
                     {
                         chConnectionName = key;
                         chCheck = true;
@@ -1277,9 +1277,9 @@ namespace ConnectionistModel
                 }
 
                 bool hoCheck = false;
-                foreach (string key in simulator.ConnectionList.Keys)
+                foreach (string key in simulator.ConnectionDictionary.Keys)
                 {
-                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
+                    if (simulator.ConnectionDictionary[key].SendLayer == simulator.LayerDictionary[hiddenLayerName] && simulator.ConnectionDictionary[key].ReceiveLayer == simulator.LayerDictionary[outputLayerName])
                     {
                         hoConnectionName = key;
                         hoCheck = true;
@@ -1287,7 +1287,7 @@ namespace ConnectionistModel
                 }
 
                 bool chLayerCheck = false;
-                if (simulator.LayerList[contextLayerName].UnitCount == simulator.LayerList[hiddenLayerName].UnitCount) chLayerCheck = true;
+                if (simulator.LayerDictionary[contextLayerName].UnitCount == simulator.LayerDictionary[hiddenLayerName].UnitCount) chLayerCheck = true;
 
                 if (!ihCheck || !chCheck || !hoCheck || !chLayerCheck)
                 {
@@ -1344,25 +1344,25 @@ namespace ConnectionistModel
                 outputLayerName = (string)bpttOutputLayerComboBox.SelectedItem;
 
                 bool ihCheck = false;
-                foreach (string key in simulator.ConnectionList.Keys)
+                foreach (string key in simulator.ConnectionDictionary.Keys)
                 {
-                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[inputLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[hiddenLayerName])
+                    if (simulator.ConnectionDictionary[key].SendLayer == simulator.LayerDictionary[inputLayerName] && simulator.ConnectionDictionary[key].ReceiveLayer == simulator.LayerDictionary[hiddenLayerName])
                     {
                         ihConnectionName = key;
                         ihCheck = true;
                     }
                 }
                 bool hoCheck = false;
-                foreach (string key in simulator.ConnectionList.Keys)
+                foreach (string key in simulator.ConnectionDictionary.Keys)
                 {
-                    if (simulator.ConnectionList[key].SendLayer == simulator.LayerList[hiddenLayerName] && simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[outputLayerName])
+                    if (simulator.ConnectionDictionary[key].SendLayer == simulator.LayerDictionary[hiddenLayerName] && simulator.ConnectionDictionary[key].ReceiveLayer == simulator.LayerDictionary[outputLayerName])
                     {
                         hoConnectionName = key;
                         hoCheck = true;
                     }
                 }
                 bool bpttLayerCheck = false;
-                if (simulator.LayerList[(string)bpttHiddenLayerComboBox.SelectedItem].LayerType == LayerType.BPTTLayer) bpttLayerCheck = true;
+                if (simulator.LayerDictionary[(string)bpttHiddenLayerComboBox.SelectedItem].LayerType == LayerType.BPTTLayer) bpttLayerCheck = true;
 
                 if (!ihCheck || !hoCheck || !bpttLayerCheck)
                 {
@@ -1385,7 +1385,7 @@ namespace ConnectionistModel
                     newOrder.Code = OrderCode.TickIn;
                     newProcess.Add(newOrder);
 
-                    for(int progressIndex =0; progressIndex < ((BPTTLayer)simulator.LayerList[(string)bpttHiddenLayerComboBox.SelectedItem]).Tick ;progressIndex++)
+                    for(int progressIndex =0; progressIndex < ((BPTTLayer)simulator.LayerDictionary[(string)bpttHiddenLayerComboBox.SelectedItem]).Tick ;progressIndex++)
                     {
                         newOrder = new Order();
                         newOrder.Layer1Name = inputLayerName;
@@ -1590,14 +1590,14 @@ namespace ConnectionistModel
             forwardLayerComboBox.Items.Clear();
             if(forwardLayerListBox.Items.Count <= 0)
             {
-                foreach (string key in simulator.LayerList.Keys) forwardLayerComboBox.Items.Add(key);
+                foreach (string key in simulator.LayerDictionary.Keys) forwardLayerComboBox.Items.Add(key);
             }
             else
             {
                 string lastLayerName = (string)forwardLayerListBox.Items[forwardLayerListBox.Items.Count - 1];
-                foreach(string key in simulator.LayerList[lastLayerName].SendConnectionList.Keys)
+                foreach(string key in simulator.LayerDictionary[lastLayerName].SendConnectionDictionary.Keys)
                 {
-                    forwardLayerComboBox.Items.Add(simulator.ConnectionList[key].ReceiveLayer.Name);
+                    forwardLayerComboBox.Items.Add(simulator.ConnectionDictionary[key].ReceiveLayer.Name);
                 }
             }
         }
@@ -1675,14 +1675,14 @@ namespace ConnectionistModel
             backwardLayerComboBox.Items.Clear();
             if (backwardLayerListBox.Items.Count <= 0)
             {
-                foreach (string key in simulator.LayerList.Keys) backwardLayerComboBox.Items.Add(key);
+                foreach (string key in simulator.LayerDictionary.Keys) backwardLayerComboBox.Items.Add(key);
             }
             else
             {
                 string lastLayerName = (string)backwardLayerListBox.Items[backwardLayerListBox.Items.Count - 1];
-                foreach (string key in simulator.LayerList[lastLayerName].ReceiveConnectionList.Keys)
+                foreach (string key in simulator.LayerDictionary[lastLayerName].ReceiveConnectionDictionary.Keys)
                 {
-                    backwardLayerComboBox.Items.Add(simulator.ConnectionList[key].SendLayer.Name);
+                    backwardLayerComboBox.Items.Add(simulator.ConnectionDictionary[key].SendLayer.Name);
                 }
             }
         }
@@ -1702,9 +1702,9 @@ namespace ConnectionistModel
                 {
                     string connectionName = "";
 
-                    foreach (string key in simulator.ConnectionList.Keys)
+                    foreach (string key in simulator.ConnectionDictionary.Keys)
                     {
-                        if (simulator.ConnectionList[key].ReceiveLayer == simulator.LayerList[(string)backwardLayerListBox.Items[layerIndex]] && simulator.ConnectionList[key].SendLayer == simulator.LayerList[(string)backwardLayerListBox.Items[layerIndex + 1]])
+                        if (simulator.ConnectionDictionary[key].ReceiveLayer == simulator.LayerDictionary[(string)backwardLayerListBox.Items[layerIndex]] && simulator.ConnectionDictionary[key].SendLayer == simulator.LayerDictionary[(string)backwardLayerListBox.Items[layerIndex + 1]])
                         {
                             connectionName = key;
                         }

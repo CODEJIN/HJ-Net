@@ -50,7 +50,7 @@ namespace ConnectionistModel
 
                 stimuliPackInformationRichTextBox.Text += "Name : " + stimuliPack.Name + "\n";
                 stimuliPackInformationRichTextBox.Text += "Stimuli Amount : " + stimuliPack.Count + "\n";
-                for (int i = 0; i < stimuliPack.PatternSize(); i++) stimuliPackInformationRichTextBox.Text += "Pattern " + i.ToString() + ": " + stimuliPack.PatternNameList[i] + "\t\t" + stimuliPack.RepresentationSize(stimuliPack.PatternNameList[i]) + "\n";                
+                for (int i = 0; i < stimuliPack.PatternCount(); i++) stimuliPackInformationRichTextBox.Text += "Pattern " + i.ToString() + ": " + stimuliPack.PatternNameList[i] + "\t\t" + stimuliPack.RepresentationSize(stimuliPack.PatternNameList[i]) + "\n";                
             }
         }
 

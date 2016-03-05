@@ -21,8 +21,8 @@ namespace ConnectionistModel
             this.Name = name;
             this.LayerType = LayerType.NormalLayer;
 
-            this.SendConnectionList = new Dictionary<string, Connection>();
-            this.ReceiveConnectionList = new Dictionary<string, Connection>();
+            this.SendConnectionDictionary = new Dictionary<string, Connection>();
+            this.ReceiveConnectionDictionary = new Dictionary<string, Connection>();
 
             BiasMatrix = DenseMatrix.Create(1,UnitCount, 0);
             InterConnectionMatrix = DenseMatrix.Create(UnitCount, UnitCount, 0);
@@ -75,9 +75,9 @@ namespace ConnectionistModel
         }
         public void SendActivation()
         {
-            foreach(string key in SendConnectionList.Keys)
+            foreach(string key in SendConnectionDictionary.Keys)
             {                
-                SendConnectionList[key].ReceiveLayer.LayerStroageMatrix += LayerActivationMatrix * SendConnectionList[key].WeightMatrix;
+                SendConnectionDictionary[key].ReceiveLayer.LayerStroageMatrix += LayerActivationMatrix * SendConnectionDictionary[key].WeightMatrix;
             }
         }
         public virtual void ErrorRateCalculate_Sigmoid(Matrix<double> targetPattern, double momentum)
@@ -90,16 +90,16 @@ namespace ConnectionistModel
         }
         public virtual void ErrorRateCalculate_Sigmoid(double momentum)
         {
-            foreach (string key in SendConnectionList.Keys)
+            foreach (string key in SendConnectionDictionary.Keys)
             {
-                LayerErrorMatrix += (SendConnectionList[key].ReceiveLayer.LayerErrorMatrix * SendConnectionList[key].WeightMatrix.Transpose()).PointwiseMultiply(momentum * layerActivationMatrix.PointwiseMultiply(1 - layerActivationMatrix));
+                LayerErrorMatrix += (SendConnectionDictionary[key].ReceiveLayer.LayerErrorMatrix * SendConnectionDictionary[key].WeightMatrix.Transpose()).PointwiseMultiply(momentum * layerActivationMatrix.PointwiseMultiply(1 - layerActivationMatrix));
             }
         }
         public virtual void ErrorRateCalculate_Softmax()
         {
-            foreach (string key in SendConnectionList.Keys)
+            foreach (string key in SendConnectionDictionary.Keys)
             {
-                LayerErrorMatrix += SendConnectionList[key].ReceiveLayer.LayerErrorMatrix * SendConnectionList[key].WeightMatrix.Transpose() ;
+                LayerErrorMatrix += SendConnectionDictionary[key].ReceiveLayer.LayerErrorMatrix * SendConnectionDictionary[key].WeightMatrix.Transpose() ;
             }
         }
         public void Interact()
@@ -404,12 +404,12 @@ namespace ConnectionistModel
             }
         }
 
-        public Dictionary<string, Connection> SendConnectionList
+        public Dictionary<string, Connection> SendConnectionDictionary
         {
             get;
             set;
         }
-        public Dictionary<string, Connection> ReceiveConnectionList
+        public Dictionary<string, Connection> ReceiveConnectionDictionary
         {
             get;
             set;
@@ -527,17 +527,18 @@ namespace ConnectionistModel
             HideLayerList[CurrentTick].LayerErrorMatrix = (Matrix<double>)LayerErrorMatrix.Clone();
             for (int i = CurrentTick - 1; i >= 0; i--) HideLayerList[i].ErrorRateCalculate_Sigmoid(momentum); //Boden (2001)
 
-            Matrix<double> hideWeightThetaMatrix = DenseMatrix.Create(UnitCount, UnitCount, 0);
-            Matrix<double> hideBiasThetaMatrix = DenseMatrix.Create(1, UnitCount, 0);
+            Matrix<double> hideWeightDeltaMatrix = DenseMatrix.Create(UnitCount, UnitCount, 0);
+            Matrix<double> hideBiasDeltaMatrix = DenseMatrix.Create(1, UnitCount, 0);
                         
-            foreach (Layer layer in HideLayerList) hideBiasThetaMatrix += layer.LayerErrorMatrix.ColumnSums().ToRowMatrix() * learningRate;
-            for (int layerIndex = 0; layerIndex < CurrentTick - 1; layerIndex++)
-            {
-                hideWeightThetaMatrix += HideLayerList[layerIndex].LayerActivationMatrix.Transpose() * HideLayerList[layerIndex + 1].LayerErrorMatrix * learningRate;
-            }
+            foreach (Layer layer in HideLayerList) hideBiasDeltaMatrix += layer.LayerErrorMatrix.ColumnSums().ToRowMatrix() * learningRate;
+            foreach (Connection conneciton in HideConnectionList) hideWeightDeltaMatrix += conneciton.SendLayer.LayerActivationMatrix.Transpose() * conneciton.ReceiveLayer.LayerErrorMatrix * learningRate;
+            //for (int layerIndex = 0; layerIndex < CurrentTick - 1; layerIndex++)
+            //{
+            //    hideWeightDeltaMatrix += HideLayerList[layerIndex].LayerActivationMatrix.Transpose() * HideLayerList[layerIndex + 1].LayerErrorMatrix * learningRate;
+            //}
 
-            BaseHideBiasMatrix += hideBiasThetaMatrix / CurrentTick;
-            BaseHideWeightMatrix += hideWeightThetaMatrix / CurrentTick;
+            BaseHideBiasMatrix += hideBiasDeltaMatrix / CurrentTick;
+            BaseHideWeightMatrix += hideWeightDeltaMatrix / CurrentTick;
 
             if (decayRate > 0)
             {
@@ -623,6 +624,14 @@ namespace ConnectionistModel
             get;
         }
     }
+
+    public enum LayerType
+    {
+        NoLayer = 1,
+        NormalLayer = 2,
+        BPTTLayer = 3,
+    }
+
     public class Connection
     {
         protected Random random;
@@ -635,8 +644,8 @@ namespace ConnectionistModel
             this.SendLayer = sendLayer;
             this.ReceiveLayer = receiveLayer;
             
-            sendLayer.SendConnectionList[name] = this;
-            receiveLayer.ReceiveConnectionList[name] = this;
+            sendLayer.SendConnectionDictionary[name] = this;
+            receiveLayer.ReceiveConnectionDictionary[name] = this;
 
             weightMatrix = DenseMatrix.Create(sendLayer.UnitCount, receiveLayer.UnitCount,0);
 

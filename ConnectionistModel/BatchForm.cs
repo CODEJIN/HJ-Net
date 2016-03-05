@@ -283,14 +283,14 @@ namespace ConnectionistModel
                     {
                         case VariableType.Layer_Unit:
                             List<string> renewalConnectionKeyList = new List<string>();
-                            foreach (string key in batchData.Simulator.ConnectionList.Keys)
+                            foreach (string key in batchData.Simulator.ConnectionDictionary.Keys)
                             {
-                                if (batchData.Simulator.ConnectionList[key].SendLayer.Name == change.LayerConnectionName || batchData.Simulator.ConnectionList[key].ReceiveLayer.Name == change.LayerConnectionName) renewalConnectionKeyList.Add(key);
+                                if (batchData.Simulator.ConnectionDictionary[key].SendLayer.Name == change.LayerConnectionName || batchData.Simulator.ConnectionDictionary[key].ReceiveLayer.Name == change.LayerConnectionName) renewalConnectionKeyList.Add(key);
                             }
-                            batchData.Simulator.LayerMaking(change.LayerConnectionName, (int)change.Point, batchData.Simulator.LayerList[change.LayerConnectionName].CleanupUnitCount);                            
+                            batchData.Simulator.LayerMaking(change.LayerConnectionName, (int)change.Point, batchData.Simulator.LayerDictionary[change.LayerConnectionName].CleanupUnitCount);                            
                             foreach (string key in renewalConnectionKeyList)
                             {
-                                batchData.Simulator.ConnectionMaking(key, batchData.Simulator.ConnectionList[key].SendLayer.Name, batchData.Simulator.ConnectionList[key].ReceiveLayer.Name);
+                                batchData.Simulator.ConnectionMaking(key, batchData.Simulator.ConnectionDictionary[key].SendLayer.Name, batchData.Simulator.ConnectionDictionary[key].ReceiveLayer.Name);
                             }
                             break;
                         case VariableType.Layer_DamagedSD:
@@ -363,11 +363,11 @@ namespace ConnectionistModel
 
                 newText.AppendLine();
                 newText.AppendLine("Layer List");
-                foreach (string key in selectedBatchData.Simulator.LayerList.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.LayerList[key].UnitCount + ")");
+                foreach (string key in selectedBatchData.Simulator.LayerDictionary.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.LayerDictionary[key].UnitCount + ")");
 
                 newText.AppendLine();
                 newText.AppendLine("Connection List");
-                foreach (string key in selectedBatchData.Simulator.ConnectionList.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.ConnectionList[key].SendLayer.Name + " -> " + selectedBatchData.Simulator.ConnectionList[key].ReceiveLayer.Name + ")");
+                foreach (string key in selectedBatchData.Simulator.ConnectionDictionary.Keys) newText.AppendLine("- " + key + "(" + selectedBatchData.Simulator.ConnectionDictionary[key].SendLayer.Name + " -> " + selectedBatchData.Simulator.ConnectionDictionary[key].ReceiveLayer.Name + ")");
 
                 newText.AppendLine();
                 newText.AppendLine("Process List");

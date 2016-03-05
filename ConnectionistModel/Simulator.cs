@@ -19,8 +19,8 @@ namespace ConnectionistModel
         {
             this.random = random;
 
-            LayerList = new Dictionary<string, Layer>();
-            ConnectionList = new Dictionary<string, Connection>();
+            LayerDictionary = new Dictionary<string, Layer>();
+            ConnectionDictionary = new Dictionary<string, Connection>();
             StimuliPackDictionary = new Dictionary<string, StimuliPack>();
             ProcessDictionary = new Dictionary<string, ConnectionistModel.Process>();
             TestDataList = new List<TestData>();
@@ -35,27 +35,28 @@ namespace ConnectionistModel
             LearningRate = 0.1;
 
         }
-        public void LayerMaking(string layerName, int unitAmount, int cleanUpUnitAmount)
+
+        public void LayerMaking(string layerName, int unitCount, int cleanupUnitCount)
         {
-            Layer newLayer = new Layer(random, layerName, unitAmount, cleanUpUnitAmount, WeightRange);
-            LayerList[layerName] = newLayer;
+            Layer newLayer = new Layer(random, layerName, unitCount, cleanupUnitCount, WeightRange);
+            LayerDictionary[layerName] = newLayer;
         }
         public void LayerMaking(string layerName, int unitAmount, int cleanUpUnitAmount, int tick)
         {
             BPTTLayer newLayer = new BPTTLayer(random, layerName, unitAmount, cleanUpUnitAmount, WeightRange, tick);
-            LayerList[layerName] = newLayer;
+            LayerDictionary[layerName] = newLayer;
         }
 
         public void ConnectionMaking(string connectionName, string sendLayerName, string receiveLayerName)
         {
-            Connection newConnection = new Connection(this.random, connectionName, LayerList[sendLayerName], LayerList[receiveLayerName], WeightRange);
-            ConnectionList[connectionName] = newConnection;
+            Connection newConnection = new Connection(this.random, connectionName, LayerDictionary[sendLayerName], LayerDictionary[receiveLayerName], WeightRange);
+            ConnectionDictionary[connectionName] = newConnection;
         }
 
         public void SimulatorRenewal()
         {
-            foreach (string key in LayerList.Keys) LayerList[key].InitialWeightSetting(WeightRange);
-            foreach (string key in ConnectionList.Keys) ConnectionList[key].InitialWeightSetting(WeightRange);
+            foreach (string key in LayerDictionary.Keys) LayerDictionary[key].InitialWeightSetting(WeightRange);
+            foreach (string key in ConnectionDictionary.Keys) ConnectionDictionary[key].InitialWeightSetting(WeightRange);
         }
 
         public bool StimuliImport(string packName, string fileName)
@@ -109,8 +110,8 @@ namespace ConnectionistModel
             StimuliMatrix matrixStimuliData = matrixTrialInformation.StimuliMatrix;
             Dictionary<int, string> patternSetup = matrixTrialInformation.PatternSetup;
 
-            foreach (string key in LayerList.Keys) LayerList[key].Initialize(process.LayerStateDictionary[key], process.LayerDamagedSDDictionary[key], matrixStimuliData.StimuliCount);
-            foreach (string key in ConnectionList.Keys) ConnectionList[key].Initialize(process.ConnectionStateDictionary[key], process.ConnectionDamagedSDDictionary[key]);
+            foreach (string key in LayerDictionary.Keys) LayerDictionary[key].Initialize(process.LayerStateDictionary[key], process.LayerDamagedSDDictionary[key], matrixStimuliData.StimuliCount);
+            foreach (string key in ConnectionDictionary.Keys) ConnectionDictionary[key].Initialize(process.ConnectionStateDictionary[key], process.ConnectionDamagedSDDictionary[key]);
 
             int timeStamp = 0;
 
@@ -121,49 +122,49 @@ namespace ConnectionistModel
                 switch (process[i].Code)
                 {
                     case OrderCode.ActivationInput:
-                        LayerList[process[i].Layer1Name].ActivationInput(matrixStimuliData[patternSetup[i]]);
+                        LayerDictionary[process[i].Layer1Name].ActivationInput(matrixStimuliData[patternSetup[i]]);
                         break;
                     case OrderCode.ActivationCalculate_Sigmoid:
-                        LayerList[process[i].Layer1Name].CalculateActivation_Sigmoid(this.Momentum);
+                        LayerDictionary[process[i].Layer1Name].CalculateActivation_Sigmoid(this.Momentum);
                         break;
                     case OrderCode.ActivationCalculate_Softmax:
-                        LayerList[process[i].Layer1Name].CalculateActivation_Softmax();
+                        LayerDictionary[process[i].Layer1Name].CalculateActivation_Softmax();
                         break;
                     case OrderCode.ActivationSend:
-                        LayerList[process[i].Layer1Name].SendActivation();
+                        LayerDictionary[process[i].Layer1Name].SendActivation();
                         break;
                     case OrderCode.OutputErrorRateCalculate_for_Sigmoid:
-                        LayerList[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(matrixStimuliData[patternSetup[i]], this.Momentum);
+                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(matrixStimuliData[patternSetup[i]], this.Momentum);
                         break;
                     case OrderCode.OutputErrorRateCalculate_for_Softmax:
-                        LayerList[process[i].Layer1Name].ErrorRateCalculate_Softmax(matrixStimuliData[patternSetup[i]]);
+                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Softmax(matrixStimuliData[patternSetup[i]]);
                         break;
                     case OrderCode.HiddenErrorRateCalculate_for_Sigmoid:
-                        LayerList[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(this.Momentum);
+                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(this.Momentum);
                         break;
                     case OrderCode.HiddenErrorRateCalculate_for_Softmax:
-                        LayerList[process[i].Layer1Name].ErrorRateCalculate_Softmax();
+                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Softmax();
                         break;
                     case OrderCode.Interact: //Inner Unit Interact
-                        LayerList[process[i].Layer1Name].Interact();
+                        LayerDictionary[process[i].Layer1Name].Interact();
                         break;
                     case OrderCode.InterconnectionWeightRenewal: //Inner Unit Weight Change
-                        LayerList[process[i].Layer1Name].InterConnectionWeightRenewal(this.LearningRate, this.DecayRate);
+                        LayerDictionary[process[i].Layer1Name].InterConnectionWeightRenewal(this.LearningRate, this.DecayRate);
                         break;
                     case OrderCode.LayerDuplicate: //Layer Duplicate                        
-                        LayerList[process[i].Layer1Name].Duplicate(LayerList[process[i].Layer2Name]);
+                        LayerDictionary[process[i].Layer1Name].Duplicate(LayerDictionary[process[i].Layer2Name]);
                         break;
                     case OrderCode.ConnectionDuplicate: //Connection Duplicate                        
-                        ConnectionList[process[i].Connection1Name].Duplicate(ConnectionList[process[i].Connection2Name]);
+                        ConnectionDictionary[process[i].Connection1Name].Duplicate(ConnectionDictionary[process[i].Connection2Name]);
                         break;
                     case OrderCode.TransposedConnectionDuplicate:
-                        ConnectionList[process[i].Connection1Name].TransposedDuplicate(ConnectionList[process[i].Connection2Name]);
+                        ConnectionDictionary[process[i].Connection1Name].TransposedDuplicate(ConnectionDictionary[process[i].Connection2Name]);
                         break;
                     case OrderCode.BiasRenewal:
-                        LayerList[process[i].Layer1Name].BiasRenewal(LearningRate, DecayRate);
+                        LayerDictionary[process[i].Layer1Name].BiasRenewal(LearningRate, DecayRate);
                         break;
                     case OrderCode.WeightRenewal: //Weight Renewal                        
-                        ConnectionList[process[i].Connection1Name].WeightRenewal(this.LearningRate, this.DecayRate);
+                        ConnectionDictionary[process[i].Connection1Name].WeightRenewal(this.LearningRate, this.DecayRate);
                         break;
                     case OrderCode.TestValueStore:
                         List<double> meanSEList;
@@ -174,7 +175,7 @@ namespace ConnectionistModel
                         List<double> meanAUActivationList;
                         List<double> meanIUActivationList;
 
-                        Layer testLayer = LayerList[process[i].Layer1Name];
+                        Layer testLayer = LayerDictionary[process[i].Layer1Name];
                         testLayer.Test(matrixStimuliData[patternSetup[i]], ActivationCriterion, InactivationCriterion,
                             out meanSEList, out meanSSList, out meanCEList, out correctnessList,
                             out meanActivationList, out meanAUActivationList, out meanIUActivationList);
@@ -198,7 +199,7 @@ namespace ConnectionistModel
                             newTestData.TargetPattern = matrixStimuliData[patternSetup[i]].Row(index).ToRowMatrix();
                             newTestData.OutputActivation = testLayer.LayerActivationMatrix.Row(index).ToRowMatrix();
 
-                            if (UseActivationInformation) newTestData.LayerActivationInforamtion = MatrixActivationInforamtionReader(index);
+                            if (UseActivationInformation) newTestData.LayerActivationInforamtion = ActivationInforamtionReader(index);
 
                             TestDataList.Add(newTestData);
                         }
@@ -206,61 +207,61 @@ namespace ConnectionistModel
                         timeStamp++;
                         break;
                     case OrderCode.LayerInitialize:
-                        LayerList[process[i].Layer1Name].Initialize(process.LayerStateDictionary[process[i].Layer1Name], process.LayerDamagedSDDictionary[process[i].Layer1Name], matrixStimuliData.StimuliCount);
+                        LayerDictionary[process[i].Layer1Name].Initialize(process.LayerStateDictionary[process[i].Layer1Name], process.LayerDamagedSDDictionary[process[i].Layer1Name], matrixStimuliData.StimuliCount);
                         break;
                     case OrderCode.EndInitialize:
                         //실제론 아무것도 하지 않으나, 반드시 뒤에 어떤 Order도 올 수없도록 할 것
                         break;
                     case OrderCode.LayerToCleanUpForwardProcess:
-                        LayerList[process[i].Layer1Name].LayerToCleanUpForwardProcess(Momentum);
+                        LayerDictionary[process[i].Layer1Name].LayerToCleanUpForwardProcess(Momentum);
                         break;
                     case OrderCode.CleanUpToLayerForwardProcess:
-                        LayerList[process[i].Layer1Name].CleanUpToLayerForwardProcess();
+                        LayerDictionary[process[i].Layer1Name].CleanUpToLayerForwardProcess();
                         break;
                     case OrderCode.CleanUpBackwardProcess:
-                        LayerList[process[i].Layer1Name].CleanUpBackwordProcess(Momentum, LearningRate, DecayRate);
+                        LayerDictionary[process[i].Layer1Name].CleanUpBackwordProcess(Momentum, LearningRate, DecayRate);
                         break;
                     case OrderCode.TickIn:
-                        ((BPTTLayer)LayerList[process[i].Layer1Name]).TickIn(Momentum, matrixStimuliData.StimuliCount);
+                        ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).TickIn(Momentum, matrixStimuliData.StimuliCount);
                         break;
                     case OrderCode.TickProgress:
-                        ((BPTTLayer)LayerList[process[i].Layer1Name]).TickProgress(Momentum, matrixStimuliData.StimuliCount);
+                        ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).TickProgress(Momentum, matrixStimuliData.StimuliCount);
                         break;
                     case OrderCode.TickOut:
-                        ((BPTTLayer)LayerList[process[i].Layer1Name]).TickOut();
+                        ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).TickOut();
                         break;
                     case OrderCode.BaseWeightRenewal:
-                        ((BPTTLayer)LayerList[process[i].Layer1Name]).WeightRenewal(Momentum, LearningRate, DecayRate);
+                        ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).WeightRenewal(Momentum, LearningRate, DecayRate);
                         break;
                     case OrderCode.SRNTraining:
                         for (int cycle = 0; cycle < matrixStimuliData.TimeStamp; cycle++)
                         {
-                            LayerList[process[i].SRNInputLayerName].ActivationInput(matrixStimuliData[process[i].SRNInputPatternName + cycle.ToString()]);
-                            LayerList[process[i].SRNInputLayerName].SendActivation();
-                            LayerList[process[i].SRNContextLayerName].SendActivation();
+                            LayerDictionary[process[i].SRNInputLayerName].ActivationInput(matrixStimuliData[process[i].SRNInputPatternName + cycle.ToString()]);
+                            LayerDictionary[process[i].SRNInputLayerName].SendActivation();
+                            LayerDictionary[process[i].SRNContextLayerName].SendActivation();
 
-                            LayerList[process[i].SRNHiddenLayerName].CalculateActivation_Sigmoid(Momentum);
-                            LayerList[process[i].SRNHiddenLayerName].SendActivation();
+                            LayerDictionary[process[i].SRNHiddenLayerName].CalculateActivation_Sigmoid(Momentum);
+                            LayerDictionary[process[i].SRNHiddenLayerName].SendActivation();
 
-                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerList[process[i].SRNOutputLayerName].CalculateActivation_Sigmoid(Momentum);
-                            else if (process[i].SRNErrorCalculation == "Softmax") LayerList[process[i].SRNOutputLayerName].CalculateActivation_Softmax();
+                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Sigmoid(Momentum);
+                            else if (process[i].SRNErrorCalculation == "Softmax") LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Softmax();
 
-                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerList[process[i].SRNOutputLayerName].ErrorRateCalculate_Sigmoid(matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()], Momentum);
-                            else if (process[i].SRNErrorCalculation == "Softmax") LayerList[process[i].SRNOutputLayerName].ErrorRateCalculate_Softmax(matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()]);
-                            LayerList[process[i].SRNHiddenLayerName].ErrorRateCalculate_Sigmoid(Momentum);
+                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerDictionary[process[i].SRNOutputLayerName].ErrorRateCalculate_Sigmoid(matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()], Momentum);
+                            else if (process[i].SRNErrorCalculation == "Softmax") LayerDictionary[process[i].SRNOutputLayerName].ErrorRateCalculate_Softmax(matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()]);
+                            LayerDictionary[process[i].SRNHiddenLayerName].ErrorRateCalculate_Sigmoid(Momentum);
 
-                            ConnectionList[process[i].SRNIHConnectionName].WeightRenewal(LearningRate, DecayRate);
-                            ConnectionList[process[i].SRNCHConnectionName].WeightRenewal(LearningRate, DecayRate);
-                            ConnectionList[process[i].SRNHOConnectionName].WeightRenewal(LearningRate, DecayRate);
+                            ConnectionDictionary[process[i].SRNIHConnectionName].WeightRenewal(LearningRate, DecayRate);
+                            ConnectionDictionary[process[i].SRNCHConnectionName].WeightRenewal(LearningRate, DecayRate);
+                            ConnectionDictionary[process[i].SRNHOConnectionName].WeightRenewal(LearningRate, DecayRate);
 
-                            LayerList[process[i].SRNOutputLayerName].BiasRenewal(LearningRate, DecayRate);
-                            LayerList[process[i].SRNHiddenLayerName].BiasRenewal(LearningRate, DecayRate);
+                            LayerDictionary[process[i].SRNOutputLayerName].BiasRenewal(LearningRate, DecayRate);
+                            LayerDictionary[process[i].SRNHiddenLayerName].BiasRenewal(LearningRate, DecayRate);
 
-                            LayerList[process[i].SRNHiddenLayerName].Duplicate(LayerList[process[i].SRNContextLayerName]);
+                            LayerDictionary[process[i].SRNHiddenLayerName].Duplicate(LayerDictionary[process[i].SRNContextLayerName]);
 
-                            LayerList[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
-                            LayerList[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
-                            LayerList[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
+                            LayerDictionary[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
+                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
+                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
                         }
                         break;
                     case OrderCode.SRNTest:
@@ -268,15 +269,15 @@ namespace ConnectionistModel
                         {
                             targetPattern = matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()];
 
-                            LayerList[process[i].SRNInputLayerName].ActivationInput(matrixStimuliData[process[i].SRNInputPatternName + cycle.ToString()]);
-                            LayerList[process[i].SRNInputLayerName].SendActivation();
-                            LayerList[process[i].SRNContextLayerName].SendActivation();
+                            LayerDictionary[process[i].SRNInputLayerName].ActivationInput(matrixStimuliData[process[i].SRNInputPatternName + cycle.ToString()]);
+                            LayerDictionary[process[i].SRNInputLayerName].SendActivation();
+                            LayerDictionary[process[i].SRNContextLayerName].SendActivation();
 
-                            LayerList[process[i].SRNHiddenLayerName].CalculateActivation_Sigmoid(Momentum);
-                            LayerList[process[i].SRNHiddenLayerName].SendActivation();
+                            LayerDictionary[process[i].SRNHiddenLayerName].CalculateActivation_Sigmoid(Momentum);
+                            LayerDictionary[process[i].SRNHiddenLayerName].SendActivation();
 
-                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerList[process[i].SRNOutputLayerName].CalculateActivation_Sigmoid(Momentum);
-                            else if (process[i].SRNErrorCalculation == "Softmax") LayerList[process[i].SRNOutputLayerName].CalculateActivation_Softmax();
+                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Sigmoid(Momentum);
+                            else if (process[i].SRNErrorCalculation == "Softmax") LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Softmax();
 
 
                             List<double> srnMeanSEList;
@@ -287,7 +288,7 @@ namespace ConnectionistModel
                             List<double> srnMeanAUActivationList;
                             List<double> srnMeanIUActivationList;
 
-                            Layer srnTestLayer = LayerList[process[i].SRNOutputLayerName];
+                            Layer srnTestLayer = LayerDictionary[process[i].SRNOutputLayerName];
                             srnTestLayer.Test(targetPattern, ActivationCriterion, InactivationCriterion,
                                 out srnMeanSEList, out srnMeanSSList, out srnMeanCEList, out srnCorrectnessList,
                                 out srnMeanActivationList, out srnMeanAUActivationList, out srnMeanIUActivationList);
@@ -311,17 +312,17 @@ namespace ConnectionistModel
                                 newTestData.TargetPattern = targetPattern.Row(index).ToRowMatrix();
                                 newTestData.OutputActivation = srnTestLayer.LayerActivationMatrix.Row(index).ToRowMatrix();
 
-                                if (UseActivationInformation) newTestData.LayerActivationInforamtion = MatrixActivationInforamtionReader(index);
+                                if (UseActivationInformation) newTestData.LayerActivationInforamtion = ActivationInforamtionReader(index);
 
                                 TestDataList.Add(newTestData);
                             }
                             timeStamp++;
 
-                            LayerList[process[i].SRNHiddenLayerName].Duplicate(LayerList[process[i].SRNContextLayerName]);
+                            LayerDictionary[process[i].SRNHiddenLayerName].Duplicate(LayerDictionary[process[i].SRNContextLayerName]);
 
-                            LayerList[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
-                            LayerList[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
-                            LayerList[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
+                            LayerDictionary[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
+                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
+                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
                         }
                         break;
                 }
@@ -464,20 +465,20 @@ namespace ConnectionistModel
             informationData.AppendLine();
 
             informationData.AppendLine("Layer Information");
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                informationData.Append("-" + LayerList[key].Name + "(");
-                informationData.Append(LayerList[key].LayerType + ", " + LayerList[key].UnitCount + ", " + LayerList[key].CleanupUnitCount);
-                if (LayerList[key].LayerType == LayerType.BPTTLayer) informationData.Append(", " + ((BPTTLayer)LayerList[key]).Tick);
+                informationData.Append("-" + LayerDictionary[key].Name + "(");
+                informationData.Append(LayerDictionary[key].LayerType + ", " + LayerDictionary[key].UnitCount + ", " + LayerDictionary[key].CleanupUnitCount);
+                if (LayerDictionary[key].LayerType == LayerType.BPTTLayer) informationData.Append(", " + ((BPTTLayer)LayerDictionary[key]).Tick);
                 informationData.AppendLine(")");
             }
 
             informationData.AppendLine();
             informationData.AppendLine("Connection Information");
-            foreach (string key in ConnectionList.Keys)
+            foreach (string key in ConnectionDictionary.Keys)
             {
-                informationData.Append("-" + ConnectionList[key].Name + "(");
-                informationData.Append(ConnectionList[key].SendLayer.Name + " -> " + ConnectionList[key].ReceiveLayer.Name);
+                informationData.Append("-" + ConnectionDictionary[key].Name + "(");
+                informationData.Append(ConnectionDictionary[key].SendLayer.Name + " -> " + ConnectionDictionary[key].ReceiveLayer.Name);
                 informationData.AppendLine(")");
             }
 
@@ -587,18 +588,18 @@ namespace ConnectionistModel
 
             //Connection-WeightMatrix
 
-            foreach (string key in ConnectionList.Keys)
+            foreach (string key in ConnectionDictionary.Keys)
             {
                 streamWriter.WriteLine("!Connection");
                 streamWriter.WriteLine("@" + key);
-                streamWriter.WriteLine("#" + ConnectionList[key].SendLayer.UnitCount);
-                streamWriter.WriteLine("$" + ConnectionList[key].ReceiveLayer.UnitCount);
-                for (int sendIndex =0; sendIndex< ConnectionList[key].SendLayer.UnitCount;sendIndex++)
+                streamWriter.WriteLine("#" + ConnectionDictionary[key].SendLayer.UnitCount);
+                streamWriter.WriteLine("$" + ConnectionDictionary[key].ReceiveLayer.UnitCount);
+                for (int sendIndex =0; sendIndex< ConnectionDictionary[key].SendLayer.UnitCount;sendIndex++)
                 {
                     StringBuilder newLine = new StringBuilder();
-                    for (int receiveIndex = 0; receiveIndex < ConnectionList[key].ReceiveLayer.UnitCount; receiveIndex++)
+                    for (int receiveIndex = 0; receiveIndex < ConnectionDictionary[key].ReceiveLayer.UnitCount; receiveIndex++)
                     {
-                        newLine.Append(ConnectionList[key].WeightMatrix[sendIndex, receiveIndex]);
+                        newLine.Append(ConnectionDictionary[key].WeightMatrix[sendIndex, receiveIndex]);
                         newLine.Append("\t");
                     }
                     streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString()); //Tap이 들어가는지 체크
@@ -607,16 +608,16 @@ namespace ConnectionistModel
                 streamWriter.WriteLine();
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
                 streamWriter.WriteLine("!Layer_Bias");
                 streamWriter.WriteLine("@" + key);
                 streamWriter.WriteLine("#" + 1);
-                streamWriter.WriteLine("$" + LayerList[key].UnitCount);
+                streamWriter.WriteLine("$" + LayerDictionary[key].UnitCount);
                 StringBuilder newLine = new StringBuilder();
-                for (int unitIndex = 0; unitIndex < LayerList[key].UnitCount; unitIndex++)
+                for (int unitIndex = 0; unitIndex < LayerDictionary[key].UnitCount; unitIndex++)
                 {   
-                    newLine.Append(LayerList[key].BiasMatrix[0, unitIndex]);
+                    newLine.Append(LayerDictionary[key].BiasMatrix[0, unitIndex]);
                     newLine.Append("\t");
                 }
                 streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString());
@@ -624,19 +625,19 @@ namespace ConnectionistModel
                 streamWriter.WriteLine();
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                if (LayerList[key].CleanupUnitCount == 0) continue;
+                if (LayerDictionary[key].CleanupUnitCount == 0) continue;
                 streamWriter.WriteLine("!Layer_LayerToCleanup");
                 streamWriter.WriteLine("@" + key);
-                streamWriter.WriteLine("#" + LayerList[key].UnitCount);
-                streamWriter.WriteLine("$" + LayerList[key].CleanupUnitCount);                
-                for (int sendIndex = 0; sendIndex < LayerList[key].UnitCount; sendIndex++)
+                streamWriter.WriteLine("#" + LayerDictionary[key].UnitCount);
+                streamWriter.WriteLine("$" + LayerDictionary[key].CleanupUnitCount);                
+                for (int sendIndex = 0; sendIndex < LayerDictionary[key].UnitCount; sendIndex++)
                 {
                     StringBuilder newLine = new StringBuilder();
-                    for (int receiveIndex = 0; receiveIndex < LayerList[key].CleanupUnitCount; receiveIndex++)
+                    for (int receiveIndex = 0; receiveIndex < LayerDictionary[key].CleanupUnitCount; receiveIndex++)
                     {
-                        newLine.Append(LayerList[key].LayerToCleanupWeightMatrix[sendIndex, receiveIndex]);
+                        newLine.Append(LayerDictionary[key].LayerToCleanupWeightMatrix[sendIndex, receiveIndex]);
                         newLine.Append("\t");
                     }
                     streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString());
@@ -645,19 +646,19 @@ namespace ConnectionistModel
                 streamWriter.WriteLine();
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                if (LayerList[key].CleanupUnitCount == 0) continue;
+                if (LayerDictionary[key].CleanupUnitCount == 0) continue;
                 streamWriter.WriteLine("!Layer_CleanupToLayer");
                 streamWriter.WriteLine("@" + key);
-                streamWriter.WriteLine("#" + LayerList[key].CleanupUnitCount);
-                streamWriter.WriteLine("$" + LayerList[key].UnitCount);
-                for (int sendIndex = 0; sendIndex < LayerList[key].CleanupUnitCount; sendIndex++)
+                streamWriter.WriteLine("#" + LayerDictionary[key].CleanupUnitCount);
+                streamWriter.WriteLine("$" + LayerDictionary[key].UnitCount);
+                for (int sendIndex = 0; sendIndex < LayerDictionary[key].CleanupUnitCount; sendIndex++)
                 {
                     StringBuilder newLine = new StringBuilder();
-                    for (int receiveIndex = 0; receiveIndex < LayerList[key].UnitCount; receiveIndex++)
+                    for (int receiveIndex = 0; receiveIndex < LayerDictionary[key].UnitCount; receiveIndex++)
                     {
-                        newLine.Append(LayerList[key].CleanupToLayerWeightMatrix[sendIndex, receiveIndex]);
+                        newLine.Append(LayerDictionary[key].CleanupToLayerWeightMatrix[sendIndex, receiveIndex]);
                         newLine.Append("\t");
                     }
                     streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString());
@@ -666,17 +667,17 @@ namespace ConnectionistModel
                 streamWriter.WriteLine();
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                if (LayerList[key].CleanupUnitCount == 0) continue;
+                if (LayerDictionary[key].CleanupUnitCount == 0) continue;
                 streamWriter.WriteLine("!Layer_CleanupBias");
                 streamWriter.WriteLine("@" + key);
                 streamWriter.WriteLine("#" + 1);
-                streamWriter.WriteLine("$" + LayerList[key].CleanupUnitCount);
+                streamWriter.WriteLine("$" + LayerDictionary[key].CleanupUnitCount);
                 StringBuilder newLine = new StringBuilder();
-                for (int unitIndex = 0; unitIndex < LayerList[key].CleanupUnitCount; unitIndex++)
+                for (int unitIndex = 0; unitIndex < LayerDictionary[key].CleanupUnitCount; unitIndex++)
                 {
-                    newLine.Append(LayerList[key].CleanupBiasMatrix[0, unitIndex]);
+                    newLine.Append(LayerDictionary[key].CleanupBiasMatrix[0, unitIndex]);
                     newLine.Append("\t");
                 }
                 streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString());
@@ -684,18 +685,18 @@ namespace ConnectionistModel
                 streamWriter.WriteLine();
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
                 streamWriter.WriteLine("!Layer_Interconnection");
                 streamWriter.WriteLine("@" + key);
-                streamWriter.WriteLine("#" + LayerList[key].UnitCount);
-                streamWriter.WriteLine("$" + LayerList[key].UnitCount);
-                for (int sendIndex = 0; sendIndex < LayerList[key].UnitCount; sendIndex++)
+                streamWriter.WriteLine("#" + LayerDictionary[key].UnitCount);
+                streamWriter.WriteLine("$" + LayerDictionary[key].UnitCount);
+                for (int sendIndex = 0; sendIndex < LayerDictionary[key].UnitCount; sendIndex++)
                 {
                     StringBuilder newLine = new StringBuilder();
-                    for (int receiveIndex = 0; receiveIndex < LayerList[key].UnitCount; receiveIndex++)
+                    for (int receiveIndex = 0; receiveIndex < LayerDictionary[key].UnitCount; receiveIndex++)
                     {
-                        newLine.Append(LayerList[key].InterConnectionMatrix[sendIndex, receiveIndex]);
+                        newLine.Append(LayerDictionary[key].InterConnectionMatrix[sendIndex, receiveIndex]);
                         newLine.Append("\t");
                     }
                     streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString());
@@ -704,19 +705,19 @@ namespace ConnectionistModel
                 streamWriter.WriteLine();
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                if (LayerList[key].LayerType != LayerType.BPTTLayer) continue;
+                if (LayerDictionary[key].LayerType != LayerType.BPTTLayer) continue;
                 streamWriter.WriteLine("!BPTTLayer_BaseHideConnection");
                 streamWriter.WriteLine("@" + key);
-                streamWriter.WriteLine("#" + LayerList[key].UnitCount);
-                streamWriter.WriteLine("$" + LayerList[key].UnitCount);                
-                for (int sendIndex = 0; sendIndex < LayerList[key].UnitCount; sendIndex++)
+                streamWriter.WriteLine("#" + LayerDictionary[key].UnitCount);
+                streamWriter.WriteLine("$" + LayerDictionary[key].UnitCount);                
+                for (int sendIndex = 0; sendIndex < LayerDictionary[key].UnitCount; sendIndex++)
                 {
                     StringBuilder newLine = new StringBuilder();
-                    for (int receiveIndex = 0; receiveIndex < LayerList[key].UnitCount; receiveIndex++)
+                    for (int receiveIndex = 0; receiveIndex < LayerDictionary[key].UnitCount; receiveIndex++)
                     {
-                        newLine.Append(((BPTTLayer)LayerList[key]).BaseHideWeightMatrix[sendIndex, receiveIndex]);
+                        newLine.Append(((BPTTLayer)LayerDictionary[key]).BaseHideWeightMatrix[sendIndex, receiveIndex]);
                         newLine.Append("\t");
                     }
                     streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString());
@@ -725,17 +726,17 @@ namespace ConnectionistModel
                 streamWriter.WriteLine();
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                if (LayerList[key].LayerType != LayerType.BPTTLayer) continue;
+                if (LayerDictionary[key].LayerType != LayerType.BPTTLayer) continue;
                 streamWriter.WriteLine("!BPTTLayer_BaseHideBias");
                 streamWriter.WriteLine("@" + key);
                 streamWriter.WriteLine("#" + 1);
-                streamWriter.WriteLine("$" + LayerList[key].UnitCount);
+                streamWriter.WriteLine("$" + LayerDictionary[key].UnitCount);
                 StringBuilder newLine = new StringBuilder();
-                for (int unitIndex = 0; unitIndex < LayerList[key].UnitCount; unitIndex++)
+                for (int unitIndex = 0; unitIndex < LayerDictionary[key].UnitCount; unitIndex++)
                 {
-                    newLine.Append(((BPTTLayer)LayerList[key]).BaseHideBiasMatrix[0, unitIndex]);
+                    newLine.Append(((BPTTLayer)LayerDictionary[key]).BaseHideBiasMatrix[0, unitIndex]);
                     newLine.Append("\t");
                 }
                 streamWriter.WriteLine(newLine.Remove(newLine.Length - 1, 1).ToString());
@@ -764,90 +765,90 @@ namespace ConnectionistModel
                 switch (type)
                 {
                     case "Connection":                        
-                        ConnectionList[name].WeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
+                        ConnectionDictionary[name].WeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                ConnectionList[name].WeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                ConnectionDictionary[name].WeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
                     case "Layer_Bias":
-                        LayerList[name].BiasMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
+                        LayerDictionary[name].BiasMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                LayerList[name].BiasMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                LayerDictionary[name].BiasMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
                     case "Layer_LayerToCleanup":
-                        LayerList[name].LayerToCleanupWeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
+                        LayerDictionary[name].LayerToCleanupWeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                LayerList[name].LayerToCleanupWeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                LayerDictionary[name].LayerToCleanupWeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
                     case "Layer_CleanupToLayer":
-                        LayerList[name].CleanupToLayerWeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
+                        LayerDictionary[name].CleanupToLayerWeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                LayerList[name].CleanupToLayerWeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                LayerDictionary[name].CleanupToLayerWeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
                     case "Layer_CleanupBias":
-                        LayerList[name].CleanupBiasMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
+                        LayerDictionary[name].CleanupBiasMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                LayerList[name].CleanupBiasMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                LayerDictionary[name].CleanupBiasMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
                     case "Layer_Interconnection":
-                        LayerList[name].InterConnectionMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
+                        LayerDictionary[name].InterConnectionMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                LayerList[name].InterConnectionMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                LayerDictionary[name].InterConnectionMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
                     case "BPTTLayer_BaseHideConnection":
-                        ((BPTTLayer)LayerList[name]).BaseHideWeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
+                        ((BPTTLayer)LayerDictionary[name]).BaseHideWeightMatrix = DenseMatrix.Create(sendUnit, receiveUnit,0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                ((BPTTLayer)LayerList[name]).BaseHideWeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                ((BPTTLayer)LayerDictionary[name]).BaseHideWeightMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
                     case "BPTTLayer_BaseHideBias":
-                        ((BPTTLayer)LayerList[name]).BaseHideBiasMatrix = DenseMatrix.Create(sendUnit, receiveUnit, 0);
+                        ((BPTTLayer)LayerDictionary[name]).BaseHideBiasMatrix = DenseMatrix.Create(sendUnit, receiveUnit, 0);
                         for (int sendIndex = 0; sendIndex < sendUnit; sendIndex++)
                         {
                             string[] readLine = streamReader.ReadLine().Split('\t');
                             for (int receiveIndex = 0; receiveIndex < receiveUnit; receiveIndex++)
                             {
-                                ((BPTTLayer)LayerList[name]).BaseHideBiasMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
+                                ((BPTTLayer)LayerDictionary[name]).BaseHideBiasMatrix[sendIndex, receiveIndex] = double.Parse(readLine[receiveIndex]);
                             }
                         }
                         break;
@@ -856,52 +857,29 @@ namespace ConnectionistModel
 
             streamReader.Close();
         }
-
-        public Dictionary<string, Matrix<double>> ActivationInforamtionReader()
-        {
-            Dictionary<string, Matrix<double>> currentActivationData = new Dictionary<string, Matrix<double>>();
-
-            foreach (string key in LayerList.Keys)
-            {
-                currentActivationData.Add("LayerActvation_" + key, LayerList[key].LayerActivationMatrix);
-                if (LayerList[key].CleanupUnitCount > 0)
-                {
-                    currentActivationData.Add("CleanupActivation_" + key, LayerList[key].CleanupLayerActivationMatrix);
-                }                
-                if (LayerList[key].LayerType == LayerType.BPTTLayer)
-                {
-                    for (int layerIndex = 0; layerIndex < ((BPTTLayer)LayerList[key]).HideLayerList.Count; layerIndex++)
-                    {
-                        currentActivationData.Add("BPTT_HideLayer_" + key +"_" +layerIndex, ((BPTTLayer)LayerList[key]).HideLayerList[layerIndex].LayerActivationMatrix);
-                    }
-                }
-            }
-
-            return currentActivationData;
-        }
-        public Dictionary<string, Matrix<double>> MatrixActivationInforamtionReader(int index)
+                
+        public Dictionary<string, Matrix<double>> ActivationInforamtionReader(int index)
         {   
             Dictionary<string, Matrix<double>> currentActivationData = new Dictionary<string, Matrix<double>>();
             
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                currentActivationData.Add("LayerActvation_" + key, LayerList[key].LayerActivationMatrix.Row(index).ToRowMatrix());
-                if (LayerList[key].CleanupUnitCount > 0)
+                currentActivationData.Add("LayerActvation_" + key, LayerDictionary[key].LayerActivationMatrix.Row(index).ToRowMatrix());
+                if (LayerDictionary[key].CleanupUnitCount > 0)
                 {
-                    currentActivationData.Add("CleanupActivation_" + key, LayerList[key].CleanupLayerActivationMatrix.Row(index).ToRowMatrix());
+                    currentActivationData.Add("CleanupActivation_" + key, LayerDictionary[key].CleanupLayerActivationMatrix.Row(index).ToRowMatrix());
                 }
-                if (LayerList[key].LayerType == LayerType.BPTTLayer)
+                if (LayerDictionary[key].LayerType == LayerType.BPTTLayer)
                 {
-                    for (int layerIndex = 0; layerIndex < ((BPTTLayer)LayerList[key]).HideLayerList.Count; layerIndex++)
+                    for (int layerIndex = 0; layerIndex < ((BPTTLayer)LayerDictionary[key]).HideLayerList.Count; layerIndex++)
                     {
-                        currentActivationData.Add("BPTT_HideLayer_" + key + "_" + layerIndex, ((BPTTLayer)LayerList[key]).HideLayerList[layerIndex].LayerActivationMatrix.Row(index).ToRowMatrix());
+                        currentActivationData.Add("BPTT_HideLayer_" + key + "_" + layerIndex, ((BPTTLayer)LayerDictionary[key]).HideLayerList[layerIndex].LayerActivationMatrix.Row(index).ToRowMatrix());
                     }
                 }
             }
 
             return currentActivationData;
         }
-
         public void ActivationInformationWriter(string fileName)
         {
             StreamWriter streamWriter = new StreamWriter(fileName);
@@ -909,28 +887,28 @@ namespace ConnectionistModel
             StringBuilder newLine = new StringBuilder();
             newLine.Append("Name\tEpoch\tTimeStamp\t");
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                for(int index=0;index< LayerList[key].UnitCount; index++)
+                for(int index=0;index< LayerDictionary[key].UnitCount; index++)
                 {
                     newLine.Append("LayerActvation_" + key + "[" + index + "]");
                     newLine.Append("\t");
                 }
 
-                if (LayerList[key].CleanupUnitCount > 0)
+                if (LayerDictionary[key].CleanupUnitCount > 0)
                 {
-                    for (int index = 0; index < LayerList[key].CleanupUnitCount; index++)
+                    for (int index = 0; index < LayerDictionary[key].CleanupUnitCount; index++)
                     {
                         newLine.Append("CleanupActivation_" + key + "[" + index + "]");
                         newLine.Append("\t");
                     }
                 }
 
-                if (LayerList[key].LayerType == LayerType.BPTTLayer)
+                if (LayerDictionary[key].LayerType == LayerType.BPTTLayer)
                 {
-                    for (int layerIndex = 0; layerIndex < ((BPTTLayer)LayerList[key]).HideLayerList.Count; layerIndex++)
+                    for (int layerIndex = 0; layerIndex < ((BPTTLayer)LayerDictionary[key]).HideLayerList.Count; layerIndex++)
                     {
-                        for (int index = 0; index < LayerList[key].UnitCount; index++)
+                        for (int index = 0; index < LayerDictionary[key].UnitCount; index++)
                         {
                             newLine.Append("BPTT_HideLayer_" + key + "_" + layerIndex + "[" + index + "]");
                             newLine.Append("\t");
@@ -948,28 +926,28 @@ namespace ConnectionistModel
                 newLine.Append(testData.Epoch + "\t");
                 newLine.Append(testData.TimeStamp + "\t");
 
-                foreach (string key in LayerList.Keys)
+                foreach (string key in LayerDictionary.Keys)
                 {
-                    for (int index = 0; index < LayerList[key].UnitCount; index++)
+                    for (int index = 0; index < LayerDictionary[key].UnitCount; index++)
                     {
                         newLine.Append(testData.LayerActivationInforamtion["LayerActvation_" + key][0, index]);
                         newLine.Append("\t");
                     }
 
-                    if (LayerList[key].CleanupUnitCount > 0)
+                    if (LayerDictionary[key].CleanupUnitCount > 0)
                     {
-                        for (int index = 0; index < LayerList[key].CleanupUnitCount; index++)
+                        for (int index = 0; index < LayerDictionary[key].CleanupUnitCount; index++)
                         {
                             newLine.Append(testData.LayerActivationInforamtion["CleanupActivation_" + key][0, index]);
                             newLine.Append("\t");
                         }
                     }
 
-                    if (LayerList[key].LayerType == LayerType.BPTTLayer)
+                    if (LayerDictionary[key].LayerType == LayerType.BPTTLayer)
                     {
-                        for (int layerIndex = 0; layerIndex < ((BPTTLayer)LayerList[key]).HideLayerList.Count; layerIndex++)
+                        for (int layerIndex = 0; layerIndex < ((BPTTLayer)LayerDictionary[key]).HideLayerList.Count; layerIndex++)
                         {
-                            for (int index = 0; index < LayerList[key].UnitCount; index++)
+                            for (int index = 0; index < LayerDictionary[key].UnitCount; index++)
                             {
                                 newLine.Append(testData.LayerActivationInforamtion["BPTT_HideLayer_" + key + "_" + layerIndex][0, index]);
                                 newLine.Append("\t");
@@ -986,30 +964,30 @@ namespace ConnectionistModel
         }
         public void WeightInformationReader(int epoch)
         {
-            foreach (string key in LayerList.Keys) LayerList[key].Initialize(LayerState.On, 0, 1);
-            foreach (string key in ConnectionList.Keys) ConnectionList[key].Initialize(ConnectionState.On, 0);
+            foreach (string key in LayerDictionary.Keys) LayerDictionary[key].Initialize(LayerState.On, 0, 1);
+            foreach (string key in ConnectionDictionary.Keys) ConnectionDictionary[key].Initialize(ConnectionState.On, 0);
 
             Dictionary<string, Matrix<double>> currentWeightData = new Dictionary<string, Matrix<double>>();
                 
-            foreach (string key in ConnectionList.Keys)
+            foreach (string key in ConnectionDictionary.Keys)
             {
-                currentWeightData.Add("Connection_" + key, ConnectionList[key].WeightMatrix);
+                currentWeightData.Add("Connection_" + key, ConnectionDictionary[key].WeightMatrix);
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                currentWeightData.Add("Layer_Bias_" + key, LayerList[key].BiasMatrix);
-                if (LayerList[key].CleanupUnitCount > 0)
+                currentWeightData.Add("Layer_Bias_" + key, LayerDictionary[key].BiasMatrix);
+                if (LayerDictionary[key].CleanupUnitCount > 0)
                 {
-                    currentWeightData.Add("Layer_LayerToCleanup_" + key, LayerList[key].LayerToCleanupWeightMatrix);
-                    currentWeightData.Add("Layer_CleanupToLayer_" + key, LayerList[key].CleanupToLayerWeightMatrix);
-                    currentWeightData.Add("Layer_CleanupBias_" + key, LayerList[key].CleanupBiasMatrix);
+                    currentWeightData.Add("Layer_LayerToCleanup_" + key, LayerDictionary[key].LayerToCleanupWeightMatrix);
+                    currentWeightData.Add("Layer_CleanupToLayer_" + key, LayerDictionary[key].CleanupToLayerWeightMatrix);
+                    currentWeightData.Add("Layer_CleanupBias_" + key, LayerDictionary[key].CleanupBiasMatrix);
                 }
-                currentWeightData.Add("Layer_Interconnection_" + key, LayerList[key].InterConnectionMatrix);
-                if (LayerList[key].LayerType == LayerType.BPTTLayer)
+                currentWeightData.Add("Layer_Interconnection_" + key, LayerDictionary[key].InterConnectionMatrix);
+                if (LayerDictionary[key].LayerType == LayerType.BPTTLayer)
                 {
-                    currentWeightData.Add("BPTTLayer_BaseHideConnection_" + key, ((BPTTLayer)LayerList[key]).BaseHideWeightMatrix);
-                    currentWeightData.Add("BPTTLayer_BaseHideBias_" + key, ((BPTTLayer)LayerList[key]).BaseHideBiasMatrix);
+                    currentWeightData.Add("BPTTLayer_BaseHideConnection_" + key, ((BPTTLayer)LayerDictionary[key]).BaseHideWeightMatrix);
+                    currentWeightData.Add("BPTTLayer_BaseHideBias_" + key, ((BPTTLayer)LayerDictionary[key]).BaseHideBiasMatrix);
                 }
             }
 
@@ -1022,11 +1000,11 @@ namespace ConnectionistModel
             StringBuilder newLine = new StringBuilder();
             newLine.Append("Epoch\t");
 
-            foreach (string key in ConnectionList.Keys)
+            foreach (string key in ConnectionDictionary.Keys)
             {
-                for (int fromIndex = 0; fromIndex < ConnectionList[key].SendLayer.UnitCount; fromIndex++)
+                for (int fromIndex = 0; fromIndex < ConnectionDictionary[key].SendLayer.UnitCount; fromIndex++)
                 {
-                    for (int toIndex = 0; toIndex < ConnectionList[key].ReceiveLayer.UnitCount; toIndex++)
+                    for (int toIndex = 0; toIndex < ConnectionDictionary[key].ReceiveLayer.UnitCount; toIndex++)
                     {
                         newLine.Append("Connection_" + key + "[" + fromIndex + ", " + toIndex + "]");
                         newLine.Append("\t");
@@ -1034,62 +1012,62 @@ namespace ConnectionistModel
                 }
             }
 
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
-                for (int index = 0; index < LayerList[key].UnitCount; index++)
+                for (int index = 0; index < LayerDictionary[key].UnitCount; index++)
                 {
                     newLine.Append("Layer_Bias_" + key + "[" + index + "]");
                     newLine.Append("\t");
                 }
 
-                if (LayerList[key].CleanupUnitCount > 0)
+                if (LayerDictionary[key].CleanupUnitCount > 0)
                 {
-                    for (int fromIndex = 0; fromIndex < LayerList[key].UnitCount; fromIndex++)
+                    for (int fromIndex = 0; fromIndex < LayerDictionary[key].UnitCount; fromIndex++)
                     {
-                        for (int toIndex = 0; toIndex < LayerList[key].CleanupUnitCount; toIndex++)
+                        for (int toIndex = 0; toIndex < LayerDictionary[key].CleanupUnitCount; toIndex++)
                         {
                             newLine.Append("Layer_LayerToCleanup_" + key + "[" + fromIndex + ", " + toIndex + "]");
                             newLine.Append("\t");
                         }
                     }
 
-                    for (int fromIndex = 0; fromIndex < LayerList[key].CleanupUnitCount; fromIndex++)
+                    for (int fromIndex = 0; fromIndex < LayerDictionary[key].CleanupUnitCount; fromIndex++)
                     {
-                        for (int toIndex = 0; toIndex < LayerList[key].UnitCount; toIndex++)
+                        for (int toIndex = 0; toIndex < LayerDictionary[key].UnitCount; toIndex++)
                         {
                             newLine.Append("Layer_CleanupToLayer_" + key + "[" + fromIndex + ", " + toIndex + "]");
                             newLine.Append("\t");
                         }
                     }
 
-                    for (int index = 0; index < LayerList[key].CleanupUnitCount; index++)
+                    for (int index = 0; index < LayerDictionary[key].CleanupUnitCount; index++)
                     {
                         newLine.Append("Layer_CleanupBias_" + key + "[" + index + "]");
                         newLine.Append("\t");
                     }
                 }
 
-                for (int fromIndex = 0; fromIndex < LayerList[key].UnitCount; fromIndex++)
+                for (int fromIndex = 0; fromIndex < LayerDictionary[key].UnitCount; fromIndex++)
                 {
-                    for (int toIndex = 0; toIndex < LayerList[key].UnitCount; toIndex++)
+                    for (int toIndex = 0; toIndex < LayerDictionary[key].UnitCount; toIndex++)
                     {
                         newLine.Append("Layer_Interconnection_" + key + "[" + fromIndex + ", " + toIndex + "]");
                         newLine.Append("\t");
                     }
                 }
 
-                if (LayerList[key].LayerType == LayerType.BPTTLayer)
+                if (LayerDictionary[key].LayerType == LayerType.BPTTLayer)
                 {
-                    for (int fromIndex = 0; fromIndex < LayerList[key].UnitCount; fromIndex++)
+                    for (int fromIndex = 0; fromIndex < LayerDictionary[key].UnitCount; fromIndex++)
                     {
-                        for (int toIndex = 0; toIndex < LayerList[key].UnitCount; toIndex++)
+                        for (int toIndex = 0; toIndex < LayerDictionary[key].UnitCount; toIndex++)
                         {
                             newLine.Append("BPTTLayer_BaseHideConnection_" + key + "[" + fromIndex + ", " + toIndex + "]");
                             newLine.Append("\t");
                         }
                     }
 
-                    for (int Index = 0; Index < LayerList[key].UnitCount; Index++)
+                    for (int Index = 0; Index < LayerDictionary[key].UnitCount; Index++)
                     {
                         newLine.Append("BPTTLayer_BaseHideBias_" + key + "[" + Index + "]");
                         newLine.Append("\t");
@@ -1104,11 +1082,11 @@ namespace ConnectionistModel
                 newLine.Clear();
                 newLine.Append(epochKey + "\t");
 
-                foreach (string key in ConnectionList.Keys)
+                foreach (string key in ConnectionDictionary.Keys)
                 {
-                    for (int fromIndex = 0; fromIndex < ConnectionList[key].SendLayer.UnitCount; fromIndex++)
+                    for (int fromIndex = 0; fromIndex < ConnectionDictionary[key].SendLayer.UnitCount; fromIndex++)
                     {
-                        for (int toIndex = 0; toIndex < ConnectionList[key].ReceiveLayer.UnitCount; toIndex++)
+                        for (int toIndex = 0; toIndex < ConnectionDictionary[key].ReceiveLayer.UnitCount; toIndex++)
                         {
                             newLine.Append(WeightDataDictionary[epochKey]["Connection_" + key][fromIndex, toIndex]);
                             newLine.Append("\t");
@@ -1116,62 +1094,62 @@ namespace ConnectionistModel
                     }
                 }
 
-                foreach (string key in LayerList.Keys)
+                foreach (string key in LayerDictionary.Keys)
                 {
-                    for (int index = 0; index < LayerList[key].UnitCount; index++)
+                    for (int index = 0; index < LayerDictionary[key].UnitCount; index++)
                     {
                         newLine.Append(WeightDataDictionary[epochKey]["Layer_Bias_" + key][0, index]);
                         newLine.Append("\t");
                     }
 
-                    if (LayerList[key].CleanupUnitCount > 0)
+                    if (LayerDictionary[key].CleanupUnitCount > 0)
                     {
-                        for (int fromIndex = 0; fromIndex < LayerList[key].UnitCount; fromIndex++)
+                        for (int fromIndex = 0; fromIndex < LayerDictionary[key].UnitCount; fromIndex++)
                         {
-                            for (int toIndex = 0; toIndex < LayerList[key].CleanupUnitCount; toIndex++)
+                            for (int toIndex = 0; toIndex < LayerDictionary[key].CleanupUnitCount; toIndex++)
                             {
                                 newLine.Append(WeightDataDictionary[epochKey]["Layer_LayerToCleanup_" + key][fromIndex, toIndex]);
                                 newLine.Append("\t");
                             }
                         }
 
-                        for (int fromIndex = 0; fromIndex < LayerList[key].CleanupUnitCount; fromIndex++)
+                        for (int fromIndex = 0; fromIndex < LayerDictionary[key].CleanupUnitCount; fromIndex++)
                         {
-                            for (int toIndex = 0; toIndex < LayerList[key].UnitCount; toIndex++)
+                            for (int toIndex = 0; toIndex < LayerDictionary[key].UnitCount; toIndex++)
                             {
                                 newLine.Append(WeightDataDictionary[epochKey]["Layer_CleanupToLayer_" + key][fromIndex, toIndex]);
                                 newLine.Append("\t");
                             }
                         }
 
-                        for (int index = 0; index < LayerList[key].CleanupUnitCount; index++)
+                        for (int index = 0; index < LayerDictionary[key].CleanupUnitCount; index++)
                         {
                             newLine.Append(WeightDataDictionary[epochKey]["Layer_CleanupBias_" + key][0, index]);
                             newLine.Append("\t");
                         }
                     }
 
-                    for (int fromIndex = 0; fromIndex < LayerList[key].UnitCount; fromIndex++)
+                    for (int fromIndex = 0; fromIndex < LayerDictionary[key].UnitCount; fromIndex++)
                     {
-                        for (int toIndex = 0; toIndex < LayerList[key].UnitCount; toIndex++)
+                        for (int toIndex = 0; toIndex < LayerDictionary[key].UnitCount; toIndex++)
                         {
                             newLine.Append(WeightDataDictionary[epochKey]["Layer_Interconnection_" + key][fromIndex, toIndex]);
                             newLine.Append("\t");
                         }
                     }
 
-                    if (LayerList[key].LayerType == LayerType.BPTTLayer)
+                    if (LayerDictionary[key].LayerType == LayerType.BPTTLayer)
                     {
-                        for (int fromIndex = 0; fromIndex < LayerList[key].UnitCount; fromIndex++)
+                        for (int fromIndex = 0; fromIndex < LayerDictionary[key].UnitCount; fromIndex++)
                         {
-                            for (int toIndex = 0; toIndex < LayerList[key].UnitCount; toIndex++)
+                            for (int toIndex = 0; toIndex < LayerDictionary[key].UnitCount; toIndex++)
                             {
                                 newLine.Append(WeightDataDictionary[epochKey]["BPTTLayer_BaseHideConnection_" + key][fromIndex, toIndex]);
                                 newLine.Append("\t");
                             }
                         }
 
-                        for (int index = 0; index < LayerList[key].UnitCount; index++)
+                        for (int index = 0; index < LayerDictionary[key].UnitCount; index++)
                         {
                             newLine.Append(WeightDataDictionary[epochKey]["BPTTLayer_BaseHideBias_" + key][0, index]);
                             newLine.Append("\t");
@@ -1217,8 +1195,8 @@ namespace ConnectionistModel
             set
             {
                 this.weightRange = value;
-                foreach (string key in ConnectionList.Keys) ConnectionList[key].InitialWeightSetting(value);
-                foreach (string key in LayerList.Keys) LayerList[key].InitialWeightSetting(value);
+                foreach (string key in ConnectionDictionary.Keys) ConnectionDictionary[key].InitialWeightSetting(value);
+                foreach (string key in LayerDictionary.Keys) LayerDictionary[key].InitialWeightSetting(value);
             }
         }
 
@@ -1234,12 +1212,12 @@ namespace ConnectionistModel
             set;
         }
 
-        public Dictionary<string, Layer> LayerList
+        public Dictionary<string, Layer> LayerDictionary
         {
             get;
             private set;
         }        
-        public Dictionary<string, Connection> ConnectionList
+        public Dictionary<string, Connection> ConnectionDictionary
         {
             get;
             private set;
@@ -1296,16 +1274,16 @@ namespace ConnectionistModel
             rootNode.AppendChild(configElement);
 
             XmlNode layerListNode = xmlDocument.CreateElement("LayerList");
-            foreach (string key in LayerList.Keys)
+            foreach (string key in LayerDictionary.Keys)
             {
                 XmlElement layerElement = xmlDocument.CreateElement("Layer");
-                layerElement.SetAttribute("Name", LayerList[key].Name);
-                layerElement.SetAttribute("UnitCount", LayerList[key].UnitCount.ToString());
-                layerElement.SetAttribute("CleanUpUnitCount", LayerList[key].CleanupUnitCount.ToString());
-                if (LayerList[key].LayerType == LayerType.NormalLayer) layerElement.SetAttribute("BPTTUse", "0");
-                if (LayerList[key].LayerType == LayerType.BPTTLayer)
+                layerElement.SetAttribute("Name", LayerDictionary[key].Name);
+                layerElement.SetAttribute("UnitCount", LayerDictionary[key].UnitCount.ToString());
+                layerElement.SetAttribute("CleanUpUnitCount", LayerDictionary[key].CleanupUnitCount.ToString());
+                if (LayerDictionary[key].LayerType == LayerType.NormalLayer) layerElement.SetAttribute("BPTTUse", "0");
+                if (LayerDictionary[key].LayerType == LayerType.BPTTLayer)
                 {
-                    layerElement.SetAttribute("Tick", ((BPTTLayer)LayerList[key]).Tick.ToString());
+                    layerElement.SetAttribute("Tick", ((BPTTLayer)LayerDictionary[key]).Tick.ToString());
                     layerElement.SetAttribute("BPTTUse", "1");
                 }
                 layerListNode.AppendChild(layerElement);
@@ -1313,12 +1291,12 @@ namespace ConnectionistModel
             rootNode.AppendChild(layerListNode);
 
             XmlNode connectionListNode = xmlDocument.CreateElement("ConnectionList");
-            foreach (string key in ConnectionList.Keys)
+            foreach (string key in ConnectionDictionary.Keys)
             {
                 XmlElement connectionElement = xmlDocument.CreateElement("Connection");
-                connectionElement.SetAttribute("Name", ConnectionList[key].Name);
-                connectionElement.SetAttribute("SendLayerName", ConnectionList[key].SendLayer.Name);
-                connectionElement.SetAttribute("ReceiveLayerName", ConnectionList[key].ReceiveLayer.Name);
+                connectionElement.SetAttribute("Name", ConnectionDictionary[key].Name);
+                connectionElement.SetAttribute("SendLayerName", ConnectionDictionary[key].SendLayer.Name);
+                connectionElement.SetAttribute("ReceiveLayerName", ConnectionDictionary[key].ReceiveLayer.Name);
                 connectionListNode.AppendChild(connectionElement);
             }
             rootNode.AppendChild(connectionListNode);
@@ -1327,8 +1305,8 @@ namespace ConnectionistModel
         }
         public void Architecture_Load(string fileName)
         {
-            LayerList.Clear();
-            ConnectionList.Clear();
+            LayerDictionary.Clear();
+            ConnectionDictionary.Clear();
 
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.Load(fileName);
@@ -1353,8 +1331,8 @@ namespace ConnectionistModel
             {
                 Layer sendLayer, receiveLayer;
 
-                sendLayer = LayerList[connectionNode.Attributes["SendLayerName"].Value];
-                receiveLayer = LayerList[connectionNode.Attributes["ReceiveLayerName"].Value];
+                sendLayer = LayerDictionary[connectionNode.Attributes["SendLayerName"].Value];
+                receiveLayer = LayerDictionary[connectionNode.Attributes["ReceiveLayerName"].Value];
 
                 ConnectionMaking(connectionNode.Attributes["Name"].Value, connectionNode.Attributes["SendLayerName"].Value, connectionNode.Attributes["ReceiveLayerName"].Value);
             }
@@ -1644,7 +1622,7 @@ namespace ConnectionistModel
             get;
             set;
         }
-        public int PatternSize()
+        public int PatternCount()
         {
             return PatternNameList.Count;
         }
@@ -1854,12 +1832,6 @@ namespace ConnectionistModel
         TransposedConnectionDuplicate,
         SRNTraining,
         SRNTest,
-    }
-    public enum LayerType
-    {
-        NoLayer = 1,
-        NormalLayer = 2,
-        BPTTLayer = 3,
     }
     
     class Process : List<Order>

@@ -83,8 +83,8 @@ namespace ConnectionistModel
             stimuliPackStatusListBox.Items.Clear();
             processStatusListBox.Items.Clear();
 
-            foreach (string key in simulator.LayerList.Keys) layerStatusListBox.Items.Add(key + "(" + simulator.LayerList[key].UnitCount + ")");
-            foreach (string key in simulator.ConnectionList.Keys) connectionStatusListBox.Items.Add(key + "(" + simulator.ConnectionList[key].SendLayer.Name + " -> " + simulator.ConnectionList[key].ReceiveLayer.Name + ")");
+            foreach (string key in simulator.LayerDictionary.Keys) layerStatusListBox.Items.Add(key + "(" + simulator.LayerDictionary[key].UnitCount + ")");
+            foreach (string key in simulator.ConnectionDictionary.Keys) connectionStatusListBox.Items.Add(key + "(" + simulator.ConnectionDictionary[key].SendLayer.Name + " -> " + simulator.ConnectionDictionary[key].ReceiveLayer.Name + ")");
 
             foreach (string key in simulator.ProcessDictionary.Keys) processStatusListBox.Items.Add(key);
             foreach (string key in simulator.StimuliPackDictionary.Keys) stimuliPackStatusListBox.Items.Add(key);

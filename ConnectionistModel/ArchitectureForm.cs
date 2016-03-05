@@ -52,7 +52,7 @@ namespace ConnectionistModel
             }
             else if (layerUnitAmountTextBox.Text != "")
             {                
-                if(simulator.LayerList.ContainsKey(layerNameTextBox.Text))
+                if(simulator.LayerDictionary.ContainsKey(layerNameTextBox.Text))
                 {
                     MessageBox.Show("Already the same layer exist");
                 }
@@ -73,13 +73,13 @@ namespace ConnectionistModel
             {
                 string selectedLayerName = ((string)layerListBox.SelectedItem).Substring(0, ((string)layerListBox.SelectedItem).IndexOf('('));
 
-                if(simulator.LayerList[selectedLayerName].SendConnectionList.Count + simulator.LayerList[selectedLayerName].ReceiveConnectionList.Count > 0)
+                if(simulator.LayerDictionary[selectedLayerName].SendConnectionDictionary.Count + simulator.LayerDictionary[selectedLayerName].ReceiveConnectionDictionary.Count > 0)
                 {
                     MessageBox.Show("Already selected Layer connected to other layer.\nAt first, delete the connection.");                    
                 }
                 else
                 {
-                    if(simulator.LayerList.ContainsKey(selectedLayerName)) simulator.LayerList.Remove(selectedLayerName);
+                    if(simulator.LayerDictionary.ContainsKey(selectedLayerName)) simulator.LayerDictionary.Remove(selectedLayerName);
                     Refresh();
                 }
             }
@@ -90,13 +90,13 @@ namespace ConnectionistModel
             if (connectionFromComboBox.SelectedIndex >= 0 && connectionToComboBox.SelectedIndex >= 0)
             {
                 bool sameConnectionExist = false;
-                foreach (string key in simulator.ConnectionList.Keys) if (simulator.ConnectionList[key].SendLayer.Name == (string)connectionFromComboBox.SelectedItem && simulator.ConnectionList[key].ReceiveLayer.Name == (string)connectionToComboBox.SelectedItem) sameConnectionExist = true;
+                foreach (string key in simulator.ConnectionDictionary.Keys) if (simulator.ConnectionDictionary[key].SendLayer.Name == (string)connectionFromComboBox.SelectedItem && simulator.ConnectionDictionary[key].ReceiveLayer.Name == (string)connectionToComboBox.SelectedItem) sameConnectionExist = true;
 
                 if (sameConnectionExist)
                 {
                     MessageBox.Show("Already the same connection exist.");
                 }
-                else if (simulator.ConnectionList.ContainsKey(connectionNameTextBox.Text))
+                else if (simulator.ConnectionDictionary.ContainsKey(connectionNameTextBox.Text))
                 {
                     MessageBox.Show("Already the same name exist.");
                 }
@@ -120,12 +120,12 @@ namespace ConnectionistModel
             {
                 string selectedConnectionName = ((string)connectionListBox.SelectedItem).Substring(0, ((string)connectionListBox.SelectedItem).IndexOf('('));
 
-                foreach (string key in simulator.LayerList.Keys)
+                foreach (string key in simulator.LayerDictionary.Keys)
                 {
-                    simulator.LayerList[key].SendConnectionList.Remove(selectedConnectionName);
-                    simulator.LayerList[key].ReceiveConnectionList.Remove(selectedConnectionName);
+                    simulator.LayerDictionary[key].SendConnectionDictionary.Remove(selectedConnectionName);
+                    simulator.LayerDictionary[key].ReceiveConnectionDictionary.Remove(selectedConnectionName);
                 }
-                simulator.ConnectionList.Remove(selectedConnectionName);
+                simulator.ConnectionDictionary.Remove(selectedConnectionName);
                 Refresh();
             }
         }
@@ -244,17 +244,17 @@ namespace ConnectionistModel
             bpttUseCheckBox.Checked = false;
             connectionNameTextBox.Text = "";
 
-            foreach (string key in simulator.LayerList.Keys)
+            foreach (string key in simulator.LayerDictionary.Keys)
             {
-                if(simulator.LayerList[key].LayerType == LayerType.NormalLayer) layerListBox.Items.Add(key + "(" + simulator.LayerList[key].UnitCount + ", " + simulator.LayerList[key].CleanupUnitCount + ")");
-                else if (simulator.LayerList[key].LayerType == LayerType.BPTTLayer) layerListBox.Items.Add(key + "(BPTT, " + simulator.LayerList[key].UnitCount + ", " + simulator.LayerList[key].CleanupUnitCount + ", " + ((BPTTLayer)simulator.LayerList[key]).Tick + ")");
+                if(simulator.LayerDictionary[key].LayerType == LayerType.NormalLayer) layerListBox.Items.Add(key + "(" + simulator.LayerDictionary[key].UnitCount + ", " + simulator.LayerDictionary[key].CleanupUnitCount + ")");
+                else if (simulator.LayerDictionary[key].LayerType == LayerType.BPTTLayer) layerListBox.Items.Add(key + "(BPTT, " + simulator.LayerDictionary[key].UnitCount + ", " + simulator.LayerDictionary[key].CleanupUnitCount + ", " + ((BPTTLayer)simulator.LayerDictionary[key]).Tick + ")");
 
                 connectionFromComboBox.Items.Add(key);
                 connectionToComboBox.Items.Add(key);
             }
-            foreach (string key in simulator.ConnectionList.Keys)
+            foreach (string key in simulator.ConnectionDictionary.Keys)
             {
-                connectionListBox.Items.Add(key + "(" + simulator.ConnectionList[key].SendLayer.Name + " -> " + simulator.ConnectionList[key].ReceiveLayer.Name + ")");
+                connectionListBox.Items.Add(key + "(" + simulator.ConnectionDictionary[key].SendLayer.Name + " -> " + simulator.ConnectionDictionary[key].ReceiveLayer.Name + ")");
             }
             momentumTextBox.Text = simulator.Momentum.ToString();
             activationCriterionTextBox.Text = simulator.ActivationCriterion.ToString();
@@ -275,24 +275,24 @@ namespace ConnectionistModel
                 
             //    biasNode.LabelText = "";
             //}
-            foreach (string key in simulator.ConnectionList.Keys)
+            foreach (string key in simulator.ConnectionDictionary.Keys)
             {
-                architectureGraph.AddEdge(simulator.ConnectionList[key].SendLayer.Name, simulator.ConnectionList[key].ReceiveLayer.Name);
-                ArchitectureGraphAccessor.nodeList.Add(simulator.ConnectionList[key].SendLayer.Name);
-                ArchitectureGraphAccessor.nodeList.Add(simulator.ConnectionList[key].ReceiveLayer.Name);
+                architectureGraph.AddEdge(simulator.ConnectionDictionary[key].SendLayer.Name, simulator.ConnectionDictionary[key].ReceiveLayer.Name);
+                ArchitectureGraphAccessor.nodeList.Add(simulator.ConnectionDictionary[key].SendLayer.Name);
+                ArchitectureGraphAccessor.nodeList.Add(simulator.ConnectionDictionary[key].ReceiveLayer.Name);
 
-                Microsoft.Msagl.Drawing.Node sendLayerNode = architectureGraph.FindNode(simulator.ConnectionList[key].SendLayer.Name);
+                Microsoft.Msagl.Drawing.Node sendLayerNode = architectureGraph.FindNode(simulator.ConnectionDictionary[key].SendLayer.Name);
                 sendLayerNode.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Box;
                 sendLayerNode.Attr.LabelMargin = 10;
-                Microsoft.Msagl.Drawing.Node receiveLayerNode = architectureGraph.FindNode(simulator.ConnectionList[key].ReceiveLayer.Name);
+                Microsoft.Msagl.Drawing.Node receiveLayerNode = architectureGraph.FindNode(simulator.ConnectionDictionary[key].ReceiveLayer.Name);
                 receiveLayerNode.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Box;
                 receiveLayerNode.Attr.LabelMargin = 10;
             }
-            foreach(string key in simulator.LayerList.Keys)
+            foreach(string key in simulator.LayerDictionary.Keys)
             {
-                if(simulator.LayerList[key].LayerType == LayerType.BPTTLayer)
+                if(simulator.LayerDictionary[key].LayerType == LayerType.BPTTLayer)
                 {
-                    BPTTLayer selectedBPTTLayer = (BPTTLayer)simulator.LayerList[key];
+                    BPTTLayer selectedBPTTLayer = (BPTTLayer)simulator.LayerDictionary[key];
 
                     //Microsoft.Msagl.Drawing.Edge TickInEdge = architectureGraph.AddEdge(selectedBPTTLayer.Name, selectedBPTTLayer.Name + " 0 Tick");
                     for(int i=0;i< selectedBPTTLayer.Tick;i++)

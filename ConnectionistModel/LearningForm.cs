@@ -1077,7 +1077,7 @@ namespace ConnectionistModel
                 int orderIndex = int.Parse(((string)trainingOrderSetupComboBox.SelectedItem).Substring(0, ((string)trainingOrderSetupComboBox.SelectedItem).IndexOf(':')));
                 Order selectedOrder = simulator.ProcessDictionary[(string)trainingProcessComboBox.SelectedItem][orderIndex];
 
-                if (simulator.LayerList[selectedOrder.Layer1Name].UnitCount == simulator.StimuliPackDictionary[(string)trainingStimuliPackComboBox.SelectedItem].RepresentationSize((string)trainingPatternSetupComboBox.SelectedItem)) newTrainingPatternSetup[orderIndex] = (string)trainingPatternSetupComboBox.SelectedItem;
+                if (simulator.LayerDictionary[selectedOrder.Layer1Name].UnitCount == simulator.StimuliPackDictionary[(string)trainingStimuliPackComboBox.SelectedItem].RepresentationSize((string)trainingPatternSetupComboBox.SelectedItem)) newTrainingPatternSetup[orderIndex] = (string)trainingPatternSetupComboBox.SelectedItem;
                 else MessageBox.Show("Pattern and Order's Layer aren't matching.");
 
                 TrainingPatternSetupRefresh();
@@ -1090,7 +1090,7 @@ namespace ConnectionistModel
                 int orderIndex = int.Parse(((string)testOrderSetupComboBox.SelectedItem).Substring(0, ((string)testOrderSetupComboBox.SelectedItem).IndexOf(':')));
                 Order selectedOrder = simulator.ProcessDictionary[(string)testProcessComboBox.SelectedItem][orderIndex];
 
-                if (simulator.LayerList[selectedOrder.Layer1Name].UnitCount == simulator.StimuliPackDictionary[(string)testStimuliPackComboBox.SelectedItem].RepresentationSize((string)testPatternSetupComboBox.SelectedItem)) newTestPatternSetup[orderIndex] = (string)testPatternSetupComboBox.SelectedItem;
+                if (simulator.LayerDictionary[selectedOrder.Layer1Name].UnitCount == simulator.StimuliPackDictionary[(string)testStimuliPackComboBox.SelectedItem].RepresentationSize((string)testPatternSetupComboBox.SelectedItem)) newTestPatternSetup[orderIndex] = (string)testPatternSetupComboBox.SelectedItem;
                 else MessageBox.Show("Pattern and Order's Layer aren't matching.");
 
                 TestPatternSetupRefresh();
