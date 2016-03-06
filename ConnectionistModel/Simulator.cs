@@ -104,13 +104,13 @@ namespace ConnectionistModel
             }
         }
         
-        public void Process(TrialInformation matrixTrialInformation, int epoch)
+        public void Process(TrialInformation trialInformation, int epoch)
         {
-            Process process = matrixTrialInformation.Process;
-            StimuliMatrix matrixStimuliData = matrixTrialInformation.StimuliMatrix;
-            Dictionary<int, string> patternSetup = matrixTrialInformation.PatternSetup;
+            Process process = trialInformation.Process;
+            StimuliMatrix stimuliMatrixData = trialInformation.StimuliMatrix;
+            Dictionary<int, string> patternSetup = trialInformation.PatternSetup;
 
-            foreach (string key in LayerDictionary.Keys) LayerDictionary[key].Initialize(process.LayerStateDictionary[key], process.LayerDamagedSDDictionary[key], matrixStimuliData.StimuliCount);
+            foreach (string key in LayerDictionary.Keys) LayerDictionary[key].Initialize(process.LayerStateDictionary[key], process.LayerDamagedSDDictionary[key], stimuliMatrixData.StimuliCount);
             foreach (string key in ConnectionDictionary.Keys) ConnectionDictionary[key].Initialize(process.ConnectionStateDictionary[key], process.ConnectionDamagedSDDictionary[key]);
 
             int timeStamp = 0;
@@ -122,7 +122,7 @@ namespace ConnectionistModel
                 switch (process[i].Code)
                 {
                     case OrderCode.ActivationInput:
-                        LayerDictionary[process[i].Layer1Name].ActivationInput(matrixStimuliData[patternSetup[i]]);
+                        LayerDictionary[process[i].Layer1Name].ActivationInput(stimuliMatrixData[patternSetup[i]]);
                         break;
                     case OrderCode.ActivationCalculate_Sigmoid:
                         LayerDictionary[process[i].Layer1Name].CalculateActivation_Sigmoid(this.Momentum);
@@ -134,10 +134,10 @@ namespace ConnectionistModel
                         LayerDictionary[process[i].Layer1Name].SendActivation();
                         break;
                     case OrderCode.OutputErrorRateCalculate_for_Sigmoid:
-                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(matrixStimuliData[patternSetup[i]], this.Momentum);
+                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(stimuliMatrixData[patternSetup[i]], this.Momentum);
                         break;
                     case OrderCode.OutputErrorRateCalculate_for_Softmax:
-                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Softmax(matrixStimuliData[patternSetup[i]]);
+                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Softmax(stimuliMatrixData[patternSetup[i]]);
                         break;
                     case OrderCode.HiddenErrorRateCalculate_for_Sigmoid:
                         LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(this.Momentum);
@@ -176,16 +176,16 @@ namespace ConnectionistModel
                         List<double> meanIUActivationList;
 
                         Layer testLayer = LayerDictionary[process[i].Layer1Name];
-                        testLayer.Test(matrixStimuliData[patternSetup[i]], ActivationCriterion, InactivationCriterion,
+                        testLayer.Test(stimuliMatrixData[patternSetup[i]], ActivationCriterion, InactivationCriterion,
                             out meanSEList, out meanSSList, out meanCEList, out correctnessList,
                             out meanActivationList, out meanAUActivationList, out meanIUActivationList);
 
-                        for(int index=0;index<matrixStimuliData.StimuliCount;index++)
+                        for(int index=0;index<stimuliMatrixData.StimuliCount;index++)
                         {
                             newTestData = new TestData();
                             newTestData.ProcessName = process.Name;
-                            newTestData.StimuliPackName = matrixTrialInformation.StimuliMatrix.PackName;
-                            newTestData.Name = matrixStimuliData.NameList[index];
+                            newTestData.StimuliPackName = trialInformation.StimuliMatrix.PackName;
+                            newTestData.Name = stimuliMatrixData.NameList[index];
                             newTestData.Epoch = epoch;
                             newTestData.TimeStamp = timeStamp;
 
@@ -196,7 +196,7 @@ namespace ConnectionistModel
                             newTestData.MeanActivation = meanActivationList[index];
                             newTestData.MeanActiveUnitActivation = meanAUActivationList[index];
                             newTestData.MeanInactiveUnitActivation = meanIUActivationList[index];
-                            newTestData.TargetPattern = matrixStimuliData[patternSetup[i]].Row(index).ToRowMatrix();
+                            newTestData.TargetPattern = stimuliMatrixData[patternSetup[i]].Row(index).ToRowMatrix();
                             newTestData.OutputActivation = testLayer.LayerActivationMatrix.Row(index).ToRowMatrix();
 
                             if (UseActivationInformation) newTestData.LayerActivationInforamtion = ActivationInforamtionReader(index);
@@ -207,7 +207,7 @@ namespace ConnectionistModel
                         timeStamp++;
                         break;
                     case OrderCode.LayerInitialize:
-                        LayerDictionary[process[i].Layer1Name].Initialize(process.LayerStateDictionary[process[i].Layer1Name], process.LayerDamagedSDDictionary[process[i].Layer1Name], matrixStimuliData.StimuliCount);
+                        LayerDictionary[process[i].Layer1Name].Initialize(process.LayerStateDictionary[process[i].Layer1Name], process.LayerDamagedSDDictionary[process[i].Layer1Name], stimuliMatrixData.StimuliCount);
                         break;
                     case OrderCode.EndInitialize:
                         //실제론 아무것도 하지 않으나, 반드시 뒤에 어떤 Order도 올 수없도록 할 것
@@ -222,10 +222,10 @@ namespace ConnectionistModel
                         LayerDictionary[process[i].Layer1Name].CleanUpBackwordProcess(Momentum, LearningRate, DecayRate);
                         break;
                     case OrderCode.TickIn:
-                        ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).TickIn(Momentum, matrixStimuliData.StimuliCount);
+                        ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).TickIn(Momentum, stimuliMatrixData.StimuliCount);
                         break;
                     case OrderCode.TickProgress:
-                        ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).TickProgress(Momentum, matrixStimuliData.StimuliCount);
+                        ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).TickProgress(Momentum, stimuliMatrixData.StimuliCount);
                         break;
                     case OrderCode.TickOut:
                         ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).TickOut();
@@ -234,9 +234,9 @@ namespace ConnectionistModel
                         ((BPTTLayer)LayerDictionary[process[i].Layer1Name]).WeightRenewal(Momentum, LearningRate, DecayRate);
                         break;
                     case OrderCode.SRNTraining:
-                        for (int cycle = 0; cycle < matrixStimuliData.TimeStamp; cycle++)
+                        for (int cycle = 0; cycle < stimuliMatrixData.TimeStamp; cycle++)
                         {
-                            LayerDictionary[process[i].SRNInputLayerName].ActivationInput(matrixStimuliData[process[i].SRNInputPatternName + cycle.ToString()]);
+                            LayerDictionary[process[i].SRNInputLayerName].ActivationInput(stimuliMatrixData[process[i].SRNInputPatternName + cycle.ToString()]);
                             LayerDictionary[process[i].SRNInputLayerName].SendActivation();
                             LayerDictionary[process[i].SRNContextLayerName].SendActivation();
 
@@ -246,8 +246,8 @@ namespace ConnectionistModel
                             if (process[i].SRNErrorCalculation == "Sigmoid") LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Sigmoid(Momentum);
                             else if (process[i].SRNErrorCalculation == "Softmax") LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Softmax();
 
-                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerDictionary[process[i].SRNOutputLayerName].ErrorRateCalculate_Sigmoid(matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()], Momentum);
-                            else if (process[i].SRNErrorCalculation == "Softmax") LayerDictionary[process[i].SRNOutputLayerName].ErrorRateCalculate_Softmax(matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()]);
+                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerDictionary[process[i].SRNOutputLayerName].ErrorRateCalculate_Sigmoid(stimuliMatrixData[process[i].SRNOutputPatternName + cycle.ToString()], Momentum);
+                            else if (process[i].SRNErrorCalculation == "Softmax") LayerDictionary[process[i].SRNOutputLayerName].ErrorRateCalculate_Softmax(stimuliMatrixData[process[i].SRNOutputPatternName + cycle.ToString()]);
                             LayerDictionary[process[i].SRNHiddenLayerName].ErrorRateCalculate_Sigmoid(Momentum);
 
                             ConnectionDictionary[process[i].SRNIHConnectionName].WeightRenewal(LearningRate, DecayRate);
@@ -259,17 +259,17 @@ namespace ConnectionistModel
 
                             LayerDictionary[process[i].SRNHiddenLayerName].Duplicate(LayerDictionary[process[i].SRNContextLayerName]);
 
-                            LayerDictionary[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
-                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
-                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
+                            LayerDictionary[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
+                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
+                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
                         }
                         break;
                     case OrderCode.SRNTest:
-                        for (int cycle = 0; cycle < matrixStimuliData.TimeStamp; cycle++)
+                        for (int cycle = 0; cycle < stimuliMatrixData.TimeStamp; cycle++)
                         {
-                            targetPattern = matrixStimuliData[process[i].SRNOutputPatternName + cycle.ToString()];
+                            targetPattern = stimuliMatrixData[process[i].SRNOutputPatternName + cycle.ToString()];
 
-                            LayerDictionary[process[i].SRNInputLayerName].ActivationInput(matrixStimuliData[process[i].SRNInputPatternName + cycle.ToString()]);
+                            LayerDictionary[process[i].SRNInputLayerName].ActivationInput(stimuliMatrixData[process[i].SRNInputPatternName + cycle.ToString()]);
                             LayerDictionary[process[i].SRNInputLayerName].SendActivation();
                             LayerDictionary[process[i].SRNContextLayerName].SendActivation();
 
@@ -293,12 +293,12 @@ namespace ConnectionistModel
                                 out srnMeanSEList, out srnMeanSSList, out srnMeanCEList, out srnCorrectnessList,
                                 out srnMeanActivationList, out srnMeanAUActivationList, out srnMeanIUActivationList);
 
-                            for (int index = 0; index < matrixStimuliData.StimuliCount; index++)
+                            for (int index = 0; index < stimuliMatrixData.StimuliCount; index++)
                             {
                                 newTestData = new TestData();
                                 newTestData.ProcessName = process.Name;
-                                newTestData.StimuliPackName = matrixTrialInformation.StimuliMatrix.PackName;
-                                newTestData.Name = matrixStimuliData.NameList[index];
+                                newTestData.StimuliPackName = trialInformation.StimuliMatrix.PackName;
+                                newTestData.Name = stimuliMatrixData.NameList[index];
                                 newTestData.Epoch = epoch;
                                 newTestData.TimeStamp = timeStamp;
 
@@ -320,9 +320,9 @@ namespace ConnectionistModel
 
                             LayerDictionary[process[i].SRNHiddenLayerName].Duplicate(LayerDictionary[process[i].SRNContextLayerName]);
 
-                            LayerDictionary[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
-                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
-                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], matrixStimuliData.StimuliCount);
+                            LayerDictionary[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
+                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
+                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
                         }
                         break;
                 }
