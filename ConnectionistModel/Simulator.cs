@@ -1329,11 +1329,6 @@ namespace ConnectionistModel
             XmlNodeList connectionNodeList = xmlDocument.SelectNodes("/Root/ConnectionList/Connection");
             foreach (XmlNode connectionNode in connectionNodeList)
             {
-                Layer sendLayer, receiveLayer;
-
-                sendLayer = LayerDictionary[connectionNode.Attributes["SendLayerName"].Value];
-                receiveLayer = LayerDictionary[connectionNode.Attributes["ReceiveLayerName"].Value];
-
                 ConnectionMaking(connectionNode.Attributes["Name"].Value, connectionNode.Attributes["SendLayerName"].Value, connectionNode.Attributes["ReceiveLayerName"].Value);
             }
 
@@ -1630,12 +1625,7 @@ namespace ConnectionistModel
         {
             return this[0][name].ColumnCount;
         }
-        
-        public int ActivationPatternSearch(string name)
-        {
-            for (int i = 0; i < PatternNameList.Count; i++) if (PatternNameList[i] == name) return i;
-            return -1;
-        }
+
         public bool RegularityCheck()
         {
             foreach(string patternName in PatternNameList)
@@ -1695,7 +1685,7 @@ namespace ConnectionistModel
     class StimuliMatrix : Dictionary<string, Matrix<double>>
     {
         public StimuliMatrix()
-        {
+        {   
             NameList = new List<string>();
         }
 
