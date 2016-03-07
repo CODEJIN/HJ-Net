@@ -467,7 +467,7 @@ namespace ConnectionistModel
                             currentStimuliPackTextBox.Text = currentStimuliPackName;
                             currentStimulusTextBox.Text = currentTrainingIndex.ToString() + "/" + currentTrialInformationCount;
 
-                            timeLabel.Text = ((double)(DateTime.Now.Ticks - currentTick) / 1000000).ToString();
+                            timeLabel.Text = ((double)(DateTime.Now.Ticks - currentTick) / 10000000).ToString();
                         }));
                         break;
                     case LearningStatus.Test:

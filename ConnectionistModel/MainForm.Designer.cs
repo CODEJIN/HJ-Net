@@ -123,7 +123,7 @@
             this.connectionStatusLabel.AutoSize = true;
             this.connectionStatusLabel.Location = new System.Drawing.Point(6, 144);
             this.connectionStatusLabel.Name = "connectionStatusLabel";
-            this.connectionStatusLabel.Size = new System.Drawing.Size(44, 12);
+            this.connectionStatusLabel.Size = new System.Drawing.Size(69, 12);
             this.connectionStatusLabel.TabIndex = 15;
             this.connectionStatusLabel.Text = "Connection";
             // 
@@ -270,7 +270,7 @@
             this.Controls.Add(this.architectureButtion);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "MainForm";
-            this.Text = "HJ-Net for Connectionist Modeling Ver. 1.0.3.0";
+            this.Text = "H-Net for Connectionist Modeling";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.VisibleChanged += new System.EventHandler(this.MainForm_VisibleChanged);
             this.statusGroupBox.ResumeLayout(false);
