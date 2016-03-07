@@ -1147,7 +1147,7 @@ namespace ConnectionistModel
                         case OrderCode.ActivationInput: //Activation Input 
                             trainingOrderSetupComboBox.Items.Add(i.ToString() + ": " + selectedProcess[i].Layer1Name + "(Act. In)");
                             break;
-                        case OrderCode.OutputErrorRateCalculate_for_Sigmoid: //Output ErrorRate Calculate
+                        case OrderCode.OutputErrorCalculate_for_Sigmoid: //Output ErrorRate Calculate
                             trainingOrderSetupComboBox.Items.Add(i.ToString() + ": " + selectedProcess[i].Layer1Name + "(ER. Cal.)");
                             break;
                         case OrderCode.TestValueStore: //Test Value Store
@@ -1165,7 +1165,7 @@ namespace ConnectionistModel
                     case OrderCode.ActivationInput: //Activation Input 
                         trainingPatternSetupListBox.Items.Add(newTrainingPatternSetup[key] + "->" + key + ": " + selectedProcess[key].Layer1Name + "(Act. In)");
                         break;
-                    case OrderCode.OutputErrorRateCalculate_for_Sigmoid: //Output ErrorRate Calculate
+                    case OrderCode.OutputErrorCalculate_for_Sigmoid: //Output ErrorRate Calculate
                         trainingPatternSetupListBox.Items.Add(newTrainingPatternSetup[key] + "->" + key + ": " + selectedProcess[key].Layer1Name + "(ER. Cal.)");
                         break;
                     case OrderCode.TestValueStore: //Test Value Store
@@ -1202,7 +1202,7 @@ namespace ConnectionistModel
                         case OrderCode.ActivationInput: //Activation Input 
                             testOrderSetupComboBox.Items.Add(i.ToString() + ": " + selectedProcess[i].Layer1Name + "(Act. In)");
                             break;
-                        case OrderCode.OutputErrorRateCalculate_for_Sigmoid: //Output ErrorRate Calculate
+                        case OrderCode.OutputErrorCalculate_for_Sigmoid: //Output ErrorRate Calculate
                             testOrderSetupComboBox.Items.Add(i.ToString() + ": " + selectedProcess[i].Layer1Name + "(ER. Cal.)");
                             break;
                         case OrderCode.TestValueStore: //Test Value Store
@@ -1220,7 +1220,7 @@ namespace ConnectionistModel
                     case OrderCode.ActivationInput: //Activation Input 
                         testPatternSetupListBox.Items.Add(newTestPatternSetup[key] + "->" + key + ": " + selectedProcess[key].Layer1Name + "(Act. In)");
                         break;
-                    case OrderCode.OutputErrorRateCalculate_for_Sigmoid: //Output ErrorRate Calculate
+                    case OrderCode.OutputErrorCalculate_for_Sigmoid: //Output ErrorRate Calculate
                         testPatternSetupListBox.Items.Add(newTestPatternSetup[key] + "->" + key + ": " + selectedProcess[key].Layer1Name + "(ER. Cal.)");
                         break;
                     case OrderCode.TestValueStore: //Test Value Store
@@ -1500,7 +1500,7 @@ namespace ConnectionistModel
                         case OrderCode.ActivationInput: //Activation Input 
                             trainingMatchingInformationRichTextBox.Text += selectedMatchingInformation.PatternSetup[key] + "->" + key + ": " + matchedProcess[key].Layer1Name + "(Act. In)\n";
                             break;
-                        case OrderCode.OutputErrorRateCalculate_for_Sigmoid: //Output ErrorRate Calculate
+                        case OrderCode.OutputErrorCalculate_for_Sigmoid: //Output ErrorRate Calculate
                             trainingMatchingInformationRichTextBox.Text += selectedMatchingInformation.PatternSetup[key] + "->" + key + ": " + matchedProcess[key].Layer1Name + "(ER. Cal.)\n";
                             break;
                         case OrderCode.TestValueStore: //Test Value Store
@@ -1534,7 +1534,7 @@ namespace ConnectionistModel
                         case OrderCode.ActivationInput: //Activation Input 
                             testMatchingInformationRichTextBox.Text += selectedMatchingInformation.PatternSetup[key] + "->" + key + ": " + matchedProcess[key].Layer1Name + "(Act. In)\n";
                             break;
-                        case OrderCode.OutputErrorRateCalculate_for_Sigmoid: //Output ErrorRate Calculate
+                        case OrderCode.OutputErrorCalculate_for_Sigmoid: //Output ErrorRate Calculate
                             testMatchingInformationRichTextBox.Text += selectedMatchingInformation.PatternSetup[key] + "->" + key + ": " + matchedProcess[key].Layer1Name + "(ER. Cal.)\n";
                             break;
                         case OrderCode.TestValueStore: //Test Value Store

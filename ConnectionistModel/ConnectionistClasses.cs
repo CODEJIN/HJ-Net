@@ -80,22 +80,22 @@ namespace ConnectionistModel
                 SendConnectionDictionary[key].ReceiveLayer.LayerStroageMatrix += LayerActivationMatrix * SendConnectionDictionary[key].WeightMatrix;
             }
         }
-        public virtual void ErrorRateCalculate_Sigmoid(Matrix<double> targetPattern, double momentum)
+        public virtual void ErrorCalculate_Sigmoid(Matrix<double> targetPattern, double momentum)
         {
             LayerErrorMatrix = (targetPattern - layerActivationMatrix).PointwiseMultiply(momentum * layerActivationMatrix.PointwiseMultiply(1 - layerActivationMatrix));
         }
-        public virtual void ErrorRateCalculate_Softmax(Matrix<double> targetPattern)
+        public virtual void ErrorCalculate_Softmax(Matrix<double> targetPattern)
         {
             LayerErrorMatrix = targetPattern - layerActivationMatrix;
         }
-        public virtual void ErrorRateCalculate_Sigmoid(double momentum)
+        public virtual void ErrorCalculate_Sigmoid(double momentum)
         {
             foreach (string key in SendConnectionDictionary.Keys)
             {
                 LayerErrorMatrix += (SendConnectionDictionary[key].ReceiveLayer.LayerErrorMatrix * SendConnectionDictionary[key].WeightMatrix.Transpose()).PointwiseMultiply(momentum * layerActivationMatrix.PointwiseMultiply(1 - layerActivationMatrix));
             }
         }
-        public virtual void ErrorRateCalculate_Softmax()
+        public virtual void ErrorCalculate_Softmax()
         {
             foreach (string key in SendConnectionDictionary.Keys)
             {
@@ -523,9 +523,9 @@ namespace ConnectionistModel
 
         public void WeightRenewal(double momentum, double learningRate, double decayRate)
         {
-            base.ErrorRateCalculate_Sigmoid(momentum);
+            base.ErrorCalculate_Sigmoid(momentum);
             HideLayerList[CurrentTick].LayerErrorMatrix = (Matrix<double>)LayerErrorMatrix.Clone();
-            for (int i = CurrentTick - 1; i >= 0; i--) HideLayerList[i].ErrorRateCalculate_Sigmoid(momentum); //Boden (2001)
+            for (int i = CurrentTick - 1; i >= 0; i--) HideLayerList[i].ErrorCalculate_Sigmoid(momentum); //Boden (2001)
 
             Matrix<double> hideWeightDeltaMatrix = DenseMatrix.Create(UnitCount, UnitCount, 0);
             Matrix<double> hideBiasDeltaMatrix = DenseMatrix.Create(1, UnitCount, 0);

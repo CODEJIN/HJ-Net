@@ -133,17 +133,17 @@ namespace ConnectionistModel
                     case OrderCode.ActivationSend:
                         LayerDictionary[process[i].Layer1Name].SendActivation();
                         break;
-                    case OrderCode.OutputErrorRateCalculate_for_Sigmoid:
-                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(stimuliMatrixData[patternSetup[i]], this.Momentum);
+                    case OrderCode.OutputErrorCalculate_for_Sigmoid:
+                        LayerDictionary[process[i].Layer1Name].ErrorCalculate_Sigmoid(stimuliMatrixData[patternSetup[i]], this.Momentum);
                         break;
-                    case OrderCode.OutputErrorRateCalculate_for_Softmax:
-                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Softmax(stimuliMatrixData[patternSetup[i]]);
+                    case OrderCode.OutputErrorCalculate_for_Softmax:
+                        LayerDictionary[process[i].Layer1Name].ErrorCalculate_Softmax(stimuliMatrixData[patternSetup[i]]);
                         break;
-                    case OrderCode.HiddenErrorRateCalculate_for_Sigmoid:
-                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Sigmoid(this.Momentum);
+                    case OrderCode.HiddenErrorCalculate_for_Sigmoid:
+                        LayerDictionary[process[i].Layer1Name].ErrorCalculate_Sigmoid(this.Momentum);
                         break;
-                    case OrderCode.HiddenErrorRateCalculate_for_Softmax:
-                        LayerDictionary[process[i].Layer1Name].ErrorRateCalculate_Softmax();
+                    case OrderCode.HiddenErrorCalculate_for_Softmax:
+                        LayerDictionary[process[i].Layer1Name].ErrorCalculate_Softmax();
                         break;
                     case OrderCode.Interact: //Inner Unit Interact
                         LayerDictionary[process[i].Layer1Name].Interact();
@@ -243,12 +243,18 @@ namespace ConnectionistModel
                             LayerDictionary[process[i].SRNHiddenLayerName].CalculateActivation_Sigmoid(Momentum);
                             LayerDictionary[process[i].SRNHiddenLayerName].SendActivation();
 
-                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Sigmoid(Momentum);
-                            else if (process[i].SRNErrorCalculation == "Softmax") LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Softmax();
-
-                            if (process[i].SRNErrorCalculation == "Sigmoid") LayerDictionary[process[i].SRNOutputLayerName].ErrorRateCalculate_Sigmoid(stimuliMatrixData[process[i].SRNOutputPatternName + cycle.ToString()], Momentum);
-                            else if (process[i].SRNErrorCalculation == "Softmax") LayerDictionary[process[i].SRNOutputLayerName].ErrorRateCalculate_Softmax(stimuliMatrixData[process[i].SRNOutputPatternName + cycle.ToString()]);
-                            LayerDictionary[process[i].SRNHiddenLayerName].ErrorRateCalculate_Sigmoid(Momentum);
+                            if (process[i].SRNErrorCalculation == "Sigmoid")
+                            {
+                                LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Sigmoid(Momentum);
+                                LayerDictionary[process[i].SRNOutputLayerName].ErrorCalculate_Sigmoid(stimuliMatrixData[process[i].SRNOutputPatternName + cycle.ToString()], Momentum);
+                            }
+                            else if (process[i].SRNErrorCalculation == "Softmax")
+                            {
+                                LayerDictionary[process[i].SRNOutputLayerName].CalculateActivation_Softmax();
+                                LayerDictionary[process[i].SRNOutputLayerName].ErrorCalculate_Softmax(stimuliMatrixData[process[i].SRNOutputPatternName + cycle.ToString()]);
+                            }
+                                                        
+                            LayerDictionary[process[i].SRNHiddenLayerName].ErrorCalculate_Sigmoid(Momentum);
 
                             ConnectionDictionary[process[i].SRNIHConnectionName].WeightRenewal(LearningRate, DecayRate);
                             ConnectionDictionary[process[i].SRNCHConnectionName].WeightRenewal(LearningRate, DecayRate);
@@ -260,8 +266,8 @@ namespace ConnectionistModel
                             LayerDictionary[process[i].SRNHiddenLayerName].Duplicate(LayerDictionary[process[i].SRNContextLayerName]);
 
                             LayerDictionary[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
-                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
-                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
+                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNHiddenLayerName], stimuliMatrixData.StimuliCount);
+                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNOutputLayerName], stimuliMatrixData.StimuliCount);
                         }
                         break;
                     case OrderCode.SRNTest:
@@ -321,8 +327,8 @@ namespace ConnectionistModel
                             LayerDictionary[process[i].SRNHiddenLayerName].Duplicate(LayerDictionary[process[i].SRNContextLayerName]);
 
                             LayerDictionary[process[i].SRNInputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNInputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
-                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
-                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNInputLayerName], stimuliMatrixData.StimuliCount);
+                            LayerDictionary[process[i].SRNHiddenLayerName].Initialize(process.LayerStateDictionary[process[i].SRNHiddenLayerName], process.LayerDamagedSDDictionary[process[i].SRNHiddenLayerName], stimuliMatrixData.StimuliCount);
+                            LayerDictionary[process[i].SRNOutputLayerName].Initialize(process.LayerStateDictionary[process[i].SRNOutputLayerName], process.LayerDamagedSDDictionary[process[i].SRNOutputLayerName], stimuliMatrixData.StimuliCount);
                         }
                         break;
                 }
@@ -336,117 +342,7 @@ namespace ConnectionistModel
 
             InformationDataSave(resultPath + "Inforamtion.txt");
             RawDataSave(resultPath + "RawData.txt");
-
-            StreamWriter seStreamWriter = new StreamWriter(resultPath + "SimulationResult-SquaredError.txt");
-            StreamWriter ssStreamWriter = new StreamWriter(resultPath + "SimulationResult-SemanticStress.txt");
-            StreamWriter ceStreamWriter = new StreamWriter(resultPath + "SimulationResult-CrossEntropy.txt");
-            StreamWriter accStreamWriter = new StreamWriter(resultPath + "SimulationResult-Accuracy.txt");
-            StreamWriter actUnitStreamWriter = new StreamWriter(resultPath + "SimulationResult-ActivateUnit.txt");
-            StreamWriter inactUnitStreamWriter = new StreamWriter(resultPath + "SimulationResult-InactivateUnit.txt");
-            
-
-            seStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
-            ssStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
-            ceStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
-            accStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
-            actUnitStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
-            inactUnitStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
-
-            List<TestDataList> testDataListList = new List<TestDataList>();
-            foreach(TestData testData in TestDataList)
-            {
-                bool isExist = false;
-                foreach(TestDataList testDataList in testDataListList)
-                {
-                    if(testData.ProcessName == testDataList.ProcessName && testData.StimuliPackName == testDataList.StimuliPackName && testData.Name == testDataList.Name && testData.TimeStamp == testDataList.TimeStamp)
-                    {
-                        testDataList.Add(testData);
-                        isExist = true;
-                        break;
-                    }
-                }
-                if(!isExist)
-                {
-                    TestDataList newTestDataList = new TestDataList();
-                    newTestDataList.ProcessName = testData.ProcessName;
-                    newTestDataList.StimuliPackName = testData.StimuliPackName;
-                    newTestDataList.Name = testData.Name;
-                    newTestDataList.TimeStamp = testData.TimeStamp;
-                    newTestDataList.Add(testData);
-                    testDataListList.Add(newTestDataList);
-                }
-            }
-
-            foreach(TestDataList testDataList in testDataListList) testDataList.Sort((x, y) => x.Epoch.CompareTo(y.Epoch));
-
-
-            foreach (TestDataList testDataList in testDataListList)
-            {
-                seStreamWriter.Write(testDataList.ProcessName + "\t");
-                ssStreamWriter.Write(testDataList.ProcessName + "\t");
-                ceStreamWriter.Write(testDataList.ProcessName + "\t");
-                accStreamWriter.Write(testDataList.ProcessName + "\t");
-                actUnitStreamWriter.Write(testDataList.ProcessName + "\t");
-                inactUnitStreamWriter.Write(testDataList.ProcessName + "\t");
-
-                seStreamWriter.Write(testDataList.StimuliPackName + "\t");
-                ssStreamWriter.Write(testDataList.StimuliPackName + "\t");
-                ceStreamWriter.Write(testDataList.StimuliPackName + "\t");
-                accStreamWriter.Write(testDataList.StimuliPackName + "\t");
-                actUnitStreamWriter.Write(testDataList.StimuliPackName + "\t");
-                inactUnitStreamWriter.Write(testDataList.StimuliPackName + "\t");
-
-                seStreamWriter.Write(testDataList.Name + "\t");
-                ssStreamWriter.Write(testDataList.Name + "\t");
-                ceStreamWriter.Write(testDataList.Name + "\t");
-                accStreamWriter.Write(testDataList.Name + "\t");                
-                actUnitStreamWriter.Write(testDataList.Name + "\t");
-                inactUnitStreamWriter.Write(testDataList.Name + "\t");
-
-                seStreamWriter.Write(testDataList.TimeStamp + "\t");
-                ssStreamWriter.Write(testDataList.TimeStamp + "\t");
-                ceStreamWriter.Write(testDataList.TimeStamp + "\t");
-                accStreamWriter.Write(testDataList.TimeStamp + "\t");
-                actUnitStreamWriter.Write(testDataList.TimeStamp + "\t");
-                inactUnitStreamWriter.Write(testDataList.TimeStamp + "\t");
-
-                foreach (TestData testData in testDataList)
-                {
-                    seStreamWriter.Write(testData.MeanSquredError + "\t");
-                    ssStreamWriter.Write(testData.MeanSemanticStress + "\t");
-                    ceStreamWriter.Write(testData.MeanCrossEntropy + "\t");
-                    if(testData.Correctness) accStreamWriter.Write("1" + "\t");
-                    else accStreamWriter.Write("0" + "\t");
-                    actUnitStreamWriter.Write(testData.MeanActiveUnitActivation + "\t");
-                    inactUnitStreamWriter.Write(testData.MeanInactiveUnitActivation + "\t");
-                }
-
-                seStreamWriter.WriteLine();
-                ssStreamWriter.WriteLine();
-                ceStreamWriter.WriteLine();
-                accStreamWriter.WriteLine();
-                actUnitStreamWriter.WriteLine();
-                inactUnitStreamWriter.WriteLine();                
-            }
-            
-            seStreamWriter.Flush();
-            seStreamWriter.Close();
-
-            ssStreamWriter.Flush();
-            ssStreamWriter.Close();
-
-            ceStreamWriter.Flush();
-            ceStreamWriter.Close();
-
-            accStreamWriter.Flush();
-            accStreamWriter.Close();
-
-            actUnitStreamWriter.Flush();
-            actUnitStreamWriter.Close();
-
-            inactUnitStreamWriter.Flush();
-            inactUnitStreamWriter.Close();
-
+            SummarySave(resultPath);
             if (UseActivationInformation) ActivationInformationWriter(resultPath + "ActivationData.txt");
             if (UseWeightInformation) WeightInformationWriter(resultPath + "WeightData.txt");
 
@@ -581,6 +477,118 @@ namespace ConnectionistModel
 
             rawStreamWriter.Flush();
             rawStreamWriter.Close();
+        }
+        private void SummarySave(string resultPath)
+        {
+            StreamWriter seStreamWriter = new StreamWriter(resultPath + "SimulationResult-SquaredError.txt");
+            StreamWriter ssStreamWriter = new StreamWriter(resultPath + "SimulationResult-SemanticStress.txt");
+            StreamWriter ceStreamWriter = new StreamWriter(resultPath + "SimulationResult-CrossEntropy.txt");
+            StreamWriter accStreamWriter = new StreamWriter(resultPath + "SimulationResult-Accuracy.txt");
+            StreamWriter actUnitStreamWriter = new StreamWriter(resultPath + "SimulationResult-ActivateUnit.txt");
+            StreamWriter inactUnitStreamWriter = new StreamWriter(resultPath + "SimulationResult-InactivateUnit.txt");
+
+
+            seStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
+            ssStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
+            ceStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
+            accStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
+            actUnitStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
+            inactUnitStreamWriter.WriteLine("ProcessName\tStimuliPackName\tName\tTimeStamp\tTransition");
+
+            List<TestDataList> testDataListList = new List<TestDataList>();
+            foreach (TestData testData in TestDataList)
+            {
+                bool isExist = false;
+                foreach (TestDataList testDataList in testDataListList)
+                {
+                    if (testData.ProcessName == testDataList.ProcessName && testData.StimuliPackName == testDataList.StimuliPackName && testData.Name == testDataList.Name && testData.TimeStamp == testDataList.TimeStamp)
+                    {
+                        testDataList.Add(testData);
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist)
+                {
+                    TestDataList newTestDataList = new TestDataList();
+                    newTestDataList.ProcessName = testData.ProcessName;
+                    newTestDataList.StimuliPackName = testData.StimuliPackName;
+                    newTestDataList.Name = testData.Name;
+                    newTestDataList.TimeStamp = testData.TimeStamp;
+                    newTestDataList.Add(testData);
+                    testDataListList.Add(newTestDataList);
+                }
+            }
+
+            foreach (TestDataList testDataList in testDataListList) testDataList.Sort((x, y) => x.Epoch.CompareTo(y.Epoch));
+
+
+            foreach (TestDataList testDataList in testDataListList)
+            {
+                seStreamWriter.Write(testDataList.ProcessName + "\t");
+                ssStreamWriter.Write(testDataList.ProcessName + "\t");
+                ceStreamWriter.Write(testDataList.ProcessName + "\t");
+                accStreamWriter.Write(testDataList.ProcessName + "\t");
+                actUnitStreamWriter.Write(testDataList.ProcessName + "\t");
+                inactUnitStreamWriter.Write(testDataList.ProcessName + "\t");
+
+                seStreamWriter.Write(testDataList.StimuliPackName + "\t");
+                ssStreamWriter.Write(testDataList.StimuliPackName + "\t");
+                ceStreamWriter.Write(testDataList.StimuliPackName + "\t");
+                accStreamWriter.Write(testDataList.StimuliPackName + "\t");
+                actUnitStreamWriter.Write(testDataList.StimuliPackName + "\t");
+                inactUnitStreamWriter.Write(testDataList.StimuliPackName + "\t");
+
+                seStreamWriter.Write(testDataList.Name + "\t");
+                ssStreamWriter.Write(testDataList.Name + "\t");
+                ceStreamWriter.Write(testDataList.Name + "\t");
+                accStreamWriter.Write(testDataList.Name + "\t");
+                actUnitStreamWriter.Write(testDataList.Name + "\t");
+                inactUnitStreamWriter.Write(testDataList.Name + "\t");
+
+                seStreamWriter.Write(testDataList.TimeStamp + "\t");
+                ssStreamWriter.Write(testDataList.TimeStamp + "\t");
+                ceStreamWriter.Write(testDataList.TimeStamp + "\t");
+                accStreamWriter.Write(testDataList.TimeStamp + "\t");
+                actUnitStreamWriter.Write(testDataList.TimeStamp + "\t");
+                inactUnitStreamWriter.Write(testDataList.TimeStamp + "\t");
+
+                foreach (TestData testData in testDataList)
+                {
+                    seStreamWriter.Write(testData.MeanSquredError + "\t");
+                    ssStreamWriter.Write(testData.MeanSemanticStress + "\t");
+                    ceStreamWriter.Write(testData.MeanCrossEntropy + "\t");
+                    if (testData.Correctness) accStreamWriter.Write("1" + "\t");
+                    else accStreamWriter.Write("0" + "\t");
+                    actUnitStreamWriter.Write(testData.MeanActiveUnitActivation + "\t");
+                    inactUnitStreamWriter.Write(testData.MeanInactiveUnitActivation + "\t");
+                }
+
+                seStreamWriter.WriteLine();
+                ssStreamWriter.WriteLine();
+                ceStreamWriter.WriteLine();
+                accStreamWriter.WriteLine();
+                actUnitStreamWriter.WriteLine();
+                inactUnitStreamWriter.WriteLine();
+            }
+
+            seStreamWriter.Flush();
+            seStreamWriter.Close();
+
+            ssStreamWriter.Flush();
+            ssStreamWriter.Close();
+
+            ceStreamWriter.Flush();
+            ceStreamWriter.Close();
+
+            accStreamWriter.Flush();
+            accStreamWriter.Close();
+
+            actUnitStreamWriter.Flush();
+            actUnitStreamWriter.Close();
+
+            inactUnitStreamWriter.Flush();
+            inactUnitStreamWriter.Close();
         }
         public void WeightSave(string fileName)
         {
@@ -1474,17 +1482,17 @@ namespace ConnectionistModel
                         case "ActivationSend":
                             loadOrder.Code = OrderCode.ActivationSend;
                             break;
-                        case "OutputErrorRateCalculate_for_Sigmoid":
-                            loadOrder.Code = OrderCode.OutputErrorRateCalculate_for_Sigmoid;
+                        case "OutputErrorCalculate_for_Sigmoid":
+                            loadOrder.Code = OrderCode.OutputErrorCalculate_for_Sigmoid;
                             break;
-                        case "OutputErrorRateCalculate_for_Softmax":
-                            loadOrder.Code = OrderCode.OutputErrorRateCalculate_for_Softmax;
+                        case "OutputErrorCalculate_for_Softmax":
+                            loadOrder.Code = OrderCode.OutputErrorCalculate_for_Softmax;
                             break;
-                        case "HiddenErrorRateCalculate_for_Sigmoid":
-                            loadOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Sigmoid;
+                        case "HiddenErrorCalculate_for_Sigmoid":
+                            loadOrder.Code = OrderCode.HiddenErrorCalculate_for_Sigmoid;
                             break;
-                        case "HiddenErrorRateCalculate_for_Softmax":
-                            loadOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Softmax;
+                        case "HiddenErrorCalculate_for_Softmax":
+                            loadOrder.Code = OrderCode.HiddenErrorCalculate_for_Softmax;
                             break;
                         case "Interact":
                             loadOrder.Code = OrderCode.Interact;
@@ -1798,10 +1806,10 @@ namespace ConnectionistModel
         ActivationCalculate_Sigmoid,
         ActivationCalculate_Softmax,
         ActivationSend,
-        OutputErrorRateCalculate_for_Sigmoid,
-        OutputErrorRateCalculate_for_Softmax,
-        HiddenErrorRateCalculate_for_Sigmoid,
-        HiddenErrorRateCalculate_for_Softmax,
+        OutputErrorCalculate_for_Sigmoid,
+        OutputErrorCalculate_for_Softmax,
+        HiddenErrorCalculate_for_Sigmoid,
+        HiddenErrorCalculate_for_Softmax,
         Interact,
         InterconnectionWeightRenewal,
         LayerDuplicate,

@@ -338,7 +338,7 @@ namespace ConnectionistModel
             if (orderLayer1ComboBox.SelectedIndex >= 0)
             {
                 Order newOrder = new Order();
-                newOrder.Code = OrderCode.OutputErrorRateCalculate_for_Sigmoid;                
+                newOrder.Code = OrderCode.OutputErrorCalculate_for_Sigmoid;                
                 newOrder.Layer1Name = (string)orderLayer1ComboBox.SelectedItem;
 
                 newProcess.Add(newOrder);
@@ -350,7 +350,7 @@ namespace ConnectionistModel
             if (orderLayer1ComboBox.SelectedIndex >= 0)
             {
                 Order newOrder = new Order();
-                newOrder.Code = OrderCode.OutputErrorRateCalculate_for_Softmax;
+                newOrder.Code = OrderCode.OutputErrorCalculate_for_Softmax;
                 newOrder.Layer1Name = (string)orderLayer1ComboBox.SelectedItem;
 
                 newProcess.Add(newOrder);
@@ -362,7 +362,7 @@ namespace ConnectionistModel
             if (orderLayer1ComboBox.SelectedIndex >= 0)
             {
                 Order newOrder = new Order();
-                newOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Sigmoid;
+                newOrder.Code = OrderCode.HiddenErrorCalculate_for_Sigmoid;
                 newOrder.Layer1Name = (string)orderLayer1ComboBox.SelectedItem;
 
                 newProcess.Add(newOrder);
@@ -374,7 +374,7 @@ namespace ConnectionistModel
             if (orderLayer1ComboBox.SelectedIndex >= 0)
             {
                 Order newOrder = new Order();
-                newOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Softmax;
+                newOrder.Code = OrderCode.HiddenErrorCalculate_for_Softmax;
                 newOrder.Layer1Name = (string)orderLayer1ComboBox.SelectedItem;
 
                 newProcess.Add(newOrder);
@@ -745,16 +745,16 @@ namespace ConnectionistModel
                     case OrderCode.ActivationSend: //Activation Send
                         orderListBox.Items.Add("Activation Send (" + order.Layer1Name + ")");
                         break;
-                    case OrderCode.OutputErrorRateCalculate_for_Sigmoid: //Output ErrorRate Calculate
+                    case OrderCode.OutputErrorCalculate_for_Sigmoid: //Output ErrorRate Calculate
                         orderListBox.Items.Add("Error Rate Calculate as Ouput Layer Sigmoid (" + order.Layer1Name + ")");
                         break;
-                    case OrderCode.OutputErrorRateCalculate_for_Softmax: //Output ErrorRate Calculate
+                    case OrderCode.OutputErrorCalculate_for_Softmax: //Output ErrorRate Calculate
                         orderListBox.Items.Add("Error Rate Calculate as Ouput Layer Softmax (" + order.Layer1Name + ")");
                         break;
-                    case OrderCode.HiddenErrorRateCalculate_for_Sigmoid: //Hidden ErrorRate Calculcate
+                    case OrderCode.HiddenErrorCalculate_for_Sigmoid: //Hidden ErrorRate Calculcate
                         orderListBox.Items.Add("Error Rate Calculate as Hidden Layer Sigmoid (" + order.Layer1Name + ")");
                         break;
-                    case OrderCode.HiddenErrorRateCalculate_for_Softmax: //Hidden ErrorRate Calculcate
+                    case OrderCode.HiddenErrorCalculate_for_Softmax: //Hidden ErrorRate Calculcate
                         orderListBox.Items.Add("Error Rate Calculate as Hidden Layer Softmax (" + order.Layer1Name + ")");
                         break;
                     case OrderCode.Interact: //Inner Unit Interact
@@ -945,11 +945,11 @@ namespace ConnectionistModel
                 bool isErrorRateCalculate = false;
                 foreach (Order order in newProcess)
                 {
-                    if ((order.Code == OrderCode.OutputErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.OutputErrorRateCalculate_for_Softmax) && order.Layer1Name == (string)orderLayer1ComboBox.SelectedItem)
+                    if ((order.Code == OrderCode.OutputErrorCalculate_for_Sigmoid || order.Code == OrderCode.OutputErrorCalculate_for_Softmax) && order.Layer1Name == (string)orderLayer1ComboBox.SelectedItem)
                     {
                         isErrorRateCalculate = true;
                     }
-                    if ((order.Code == OrderCode.HiddenErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.HiddenErrorRateCalculate_for_Softmax) && order.Layer1Name == (string)orderLayer1ComboBox.SelectedItem)
+                    if ((order.Code == OrderCode.HiddenErrorCalculate_for_Sigmoid || order.Code == OrderCode.HiddenErrorCalculate_for_Softmax) && order.Layer1Name == (string)orderLayer1ComboBox.SelectedItem)
                     {
                         isErrorRateCalculate = true;
                     }
@@ -1022,7 +1022,7 @@ namespace ConnectionistModel
                 Connection selectedConnection = simulator.ConnectionDictionary[(string)orderConnection1ComboBox.SelectedItem];
                 foreach(Order order in newProcess)
                 {
-                    if ((order.Code == OrderCode.OutputErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.HiddenErrorRateCalculate_for_Sigmoid || order.Code == OrderCode.OutputErrorRateCalculate_for_Softmax || order.Code == OrderCode.HiddenErrorRateCalculate_for_Softmax) && order.Layer1Name == selectedConnection.ReceiveLayer.Name)
+                    if ((order.Code == OrderCode.OutputErrorCalculate_for_Sigmoid || order.Code == OrderCode.HiddenErrorCalculate_for_Sigmoid || order.Code == OrderCode.OutputErrorCalculate_for_Softmax || order.Code == OrderCode.HiddenErrorCalculate_for_Softmax) && order.Layer1Name == selectedConnection.ReceiveLayer.Name)
                     {
                         weightRenewalButton.Enabled = true;
                     }
@@ -1176,20 +1176,20 @@ namespace ConnectionistModel
                         {
                             newOrder = new Order();
                             newOrder.Layer1Name = outputLayerName;
-                            newOrder.Code = OrderCode.OutputErrorRateCalculate_for_Sigmoid;
+                            newOrder.Code = OrderCode.OutputErrorCalculate_for_Sigmoid;
                             newProcess.Add(newOrder);
                         }
                         else if (bpErrorSoftmaxRadioButton.Checked)
                         {
                             newOrder = new Order();
                             newOrder.Layer1Name = outputLayerName;
-                            newOrder.Code = OrderCode.OutputErrorRateCalculate_for_Softmax;
+                            newOrder.Code = OrderCode.OutputErrorCalculate_for_Softmax;
                             newProcess.Add(newOrder);
                         }
 
                         newOrder = new Order();
                         newOrder.Layer1Name = hiddenLayerName;
-                        newOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Sigmoid;
+                        newOrder.Code = OrderCode.HiddenErrorCalculate_for_Sigmoid;
                         newProcess.Add(newOrder);
 
                         newOrder = new Order();
@@ -1435,19 +1435,19 @@ namespace ConnectionistModel
                         {
                             newOrder = new Order();
                             newOrder.Layer1Name = outputLayerName;
-                            newOrder.Code = OrderCode.OutputErrorRateCalculate_for_Sigmoid;
+                            newOrder.Code = OrderCode.OutputErrorCalculate_for_Sigmoid;
                             newProcess.Add(newOrder);
                         }
                         else if (bpttErrorSoftmaxRadioButton.Checked)
                         {
                             newOrder = new Order();
                             newOrder.Layer1Name = outputLayerName;
-                            newOrder.Code = OrderCode.OutputErrorRateCalculate_for_Softmax;
+                            newOrder.Code = OrderCode.OutputErrorCalculate_for_Softmax;
                             newProcess.Add(newOrder);
                         }
                         newOrder = new Order();
                         newOrder.Layer1Name = hiddenLayerName;
-                        newOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Sigmoid;
+                        newOrder.Code = OrderCode.HiddenErrorCalculate_for_Sigmoid;
                         newProcess.Add(newOrder);
 
                         newOrder = new Order();
@@ -1632,21 +1632,21 @@ namespace ConnectionistModel
                 {
                     newOrder = new Order();
                     newOrder.Layer1Name = (string)backwardLayerListBox.Items[0];
-                    newOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Sigmoid;
+                    newOrder.Code = OrderCode.HiddenErrorCalculate_for_Sigmoid;
                     newProcess.Add(newOrder);
                 }
                 else if (backwardFirstLayerOutputSigmoidRadioButton.Checked)
                 {
                     newOrder = new Order();
                     newOrder.Layer1Name = (string)backwardLayerListBox.Items[0];
-                    newOrder.Code = OrderCode.OutputErrorRateCalculate_for_Sigmoid;
+                    newOrder.Code = OrderCode.OutputErrorCalculate_for_Sigmoid;
                     newProcess.Add(newOrder);
                 }
                 else if (backwardFirstLayerOutputSoftmaxRadioButton.Checked)
                 {
                     newOrder = new Order();
                     newOrder.Layer1Name = (string)backwardLayerListBox.Items[0];
-                    newOrder.Code = OrderCode.OutputErrorRateCalculate_for_Softmax;
+                    newOrder.Code = OrderCode.OutputErrorCalculate_for_Softmax;
                     newProcess.Add(newOrder);
                 }
                 
@@ -1654,7 +1654,7 @@ namespace ConnectionistModel
                 {
                     newOrder = new Order();
                     newOrder.Layer1Name = (string)backwardLayerListBox.Items[layerIndex];
-                    newOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Sigmoid;
+                    newOrder.Code = OrderCode.HiddenErrorCalculate_for_Sigmoid;
                     newProcess.Add(newOrder);
                 }
 
@@ -1662,7 +1662,7 @@ namespace ConnectionistModel
                 {
                     newOrder = new Order();
                     newOrder.Layer1Name = (string)backwardLayerListBox.Items[backwardLayerListBox.Items.Count - 1];
-                    newOrder.Code = OrderCode.HiddenErrorRateCalculate_for_Sigmoid;
+                    newOrder.Code = OrderCode.HiddenErrorCalculate_for_Sigmoid;
                     newProcess.Add(newOrder);                    
                 }
 
